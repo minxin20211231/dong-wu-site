@@ -1,0 +1,74 @@
+/*
+ * 懂屋 Know Your Home — 全站樣式
+ * 色票來源：品牌素材/懂屋_色票卡_DEFINED_v1.html（design.md 視覺實體單一來源）
+ * 任何顏色/字體/動畫變動都要先改色票卡規範，再同步到這
+ */
+
+:root {
+  --bg: #1C1815;
+  --bg-deeper: #0E0B09;
+  --bg-light: #F5F0E8;
+  --bg-cream: #E8DCC8;
+  --accent: #B8977E;
+  --accent2: #D4886A;
+  --text: #F5F0E8;
+  --muted: rgba(245, 240, 232, 0.55);
+  --border: rgba(184, 151, 126, 0.22);
+
+  --glow: rgba(184, 151, 126, 0.30);
+  --glow2: rgba(212, 136, 106, 0.20);
+
+  --radius: 16px;
+  --transition: 0.35s cubic-bezier(.4, 0, .2, 1);
+  --spring: cubic-bezier(.34, 1.56, .64, 1);
+
+  --font-sans: -apple-system, 'PingFang TC', 'Microsoft JhengHei', 'Noto Sans TC', sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body { background: var(--bg-deeper); }
+
+body {
+  font-family: var(--font-sans);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+a:hover { color: var(--accent2); }
+
+img { max-width: 100%; display: block; }
+
+/* 主容器 */
+.container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* 鯨光暈背景（首屏氛圍） */
+.glow-bg {
+  position: relative;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.glow-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 20% 30%, var(--glow) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 70%, var(--glow2) 0%, transparent 55%);
+  opacity: 0.6;
+}

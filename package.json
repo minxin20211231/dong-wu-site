@@ -1,0 +1,16 @@
+{
+  "name": "dong-wu-site",
+  "type": "module",
+  "version": "0.0.1",
+  "description": "懂屋 Know Your Home — 裝修知識庫品牌站",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "^5.0.0"
+  }
+}
