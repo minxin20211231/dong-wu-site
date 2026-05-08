@@ -1,0 +1,43 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import PostLayout from '../../layouts/PostLayout.astro';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const allPosts = await getCollection('posts');
+  // dev 看 draft；prod 過濾掉 draft
+  const posts = import.meta.env.DEV
+    ? allPosts
+    : allPosts.filter((post) => !post.data.draft);
+
+  return posts.map((post) => ({
+    params: { slug: post.data.id },
+    props: { post },
+  }));
+}
+
+interface Props {
+  post: CollectionEntry<'posts'>;
+}
+
+const { post } = Astro.props;
+const { Content, headings } = await post.render();
+
+// 只取 H2 給目錄（H3 太細、會讓側邊欄太長）
+const tocHeadings = headings.filter((h) => h.depth === 2);
+---
+
+<PostLayout
+  title={post.data.title}
+  description={post.data.description}
+  publishDate={post.data.publishDate}
+  updateDate={post.data.updateDate}
+  dim={post.data.dim}
+  tags={post.data.tags}
+  heroImage={post.data.heroImage}
+  heroAlt={post.data.heroAlt}
+  headings={tocHeadings}
+>
+  <Content />
+</PostLayout>

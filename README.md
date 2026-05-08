@@ -41,7 +41,7 @@ dong-wu-site/
 ## 內容生產原則
 
 - 每篇文章 = `src/content/posts/<id>.md`
-- 標題、分類、來源書 metadata 跟 `懂屋KYH/MVP工具包/03_AI診斷書/kyh_qa_all.json` 對齊
+- 標題、分類、來源書 metadata 跟 `懂屋KYH/365QA/kyh_qa_all.json` 對齊
 - 寫作風格遵循 `human-writing-style` skill（去 AI 感）
 - 視覺自動套用 design.md，文章內不重新刻設計
 
@@ -49,5 +49,5 @@ dong-wu-site/
 
 - 完整計劃書：`000_Agent/plans/2026-05-01-懂屋官網上線.md`
 - 品牌視覺規範：`懂屋KYH/品牌素材/懂屋_品牌視覺規範_DEFINED_v1.0.md`
-- 375 題問答庫：`懂屋KYH/MVP工具包/03_AI診斷書/kyh_qa_all.json`
+- 365QA 題庫：`懂屋KYH/365QA/kyh_qa_all.json`（內部 375 題，對外口徑 365）
 - 電子書素材：`懂屋KYH/電子書｜新成屋導航手冊/`

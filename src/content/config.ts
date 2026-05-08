@@ -19,6 +19,9 @@ const posts = defineCollection({
     updateDate: z.date().optional(),
     description: z.string().optional(),
     draft: z.boolean().default(false),
+    tags: z.array(z.string()).min(1).max(3).optional(),
+    heroImage: z.string().optional(),
+    heroAlt: z.string().optional(),
   }),
 });
 

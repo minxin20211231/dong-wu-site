@@ -1,0 +1,744 @@
+---
+/*
+ * PostLayout — 部落格文章專用 layout
+ *
+ * 設計原則：閱讀優先（白底黑字）
+ * - 文章頁脫離首頁的「深海黑鯨金」品牌氛圍
+ * - 採用閱讀型雜誌排版：白底、黑字、單欄、適中行距
+ * - 連結沿用品牌 accent 色（#B8977E）建立識別
+ *
+ * 不修改 global.css；本 layout 用 inline <style> 覆蓋
+ */
+import '../styles/global.css';
+
+interface TocHeading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  title: string;
+  description?: string;
+  publishDate: Date;
+  updateDate?: Date;
+  dim: string;
+  tags?: string[];
+  heroImage?: string;
+  heroAlt?: string;
+  headings?: TocHeading[];
+}
+
+const { title, description, publishDate, updateDate, dim, tags, heroImage, heroAlt, headings = [] } = Astro.props;
+
+const fullTitle = `${title}｜懂屋 Know Your Home`;
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="generator" content={Astro.generator} />
+  <title>{fullTitle}</title>
+  {description && <meta name="description" content={description} />}
+
+  <meta property="og:title" content={fullTitle} />
+  {description && <meta property="og:description" content={description} />}
+  <meta property="og:type" content="article" />
+  <meta property="og:locale" content="zh_TW" />
+  <meta property="og:site_name" content="懂屋 Know Your Home" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={fullTitle} />
+  {description && <meta name="twitter:description" content={description} />}
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+</head>
+<body class="post-body">
+  <div class="post-progress-bar" aria-hidden="true">
+    <div class="post-progress-fill" id="post-progress"></div>
+  </div>
+
+  <header class="post-topbar">
+    <div class="post-topbar-inner">
+      <a href="/" class="post-brand">懂屋 · Know Your Home</a>
+    </div>
+  </header>
+
+  <main class="post-main">
+    <article class="post-article">
+      <p class="post-dim">{dim}</p>
+      <h1 class="post-title">{title}</h1>
+
+      {heroImage && (
+        <figure class="post-hero">
+          <img src={heroImage} alt={heroAlt || title} loading="eager" />
+        </figure>
+      )}
+
+      <p class="post-meta">
+        <time datetime={publishDate.toISOString()}>{fmt(publishDate)}</time>
+        {updateDate && <span> · 更新於 <time datetime={updateDate.toISOString()}>{fmt(updateDate)}</time></span>}
+      </p>
+
+      {tags && tags.length > 0 && (
+        <p class="post-tags">
+          {tags.map((tag) => <span class="post-tag">#{tag}</span>)}
+        </p>
+      )}
+
+      {headings.length > 0 && (
+        <nav class="post-toc-inline" data-toc-inline aria-label="文章目錄">
+          <p class="post-toc-title">這篇讓我學到</p>
+          <ol>
+            {headings.map((h) => (
+              <li><a href={`#${h.slug}`} data-toc-link={h.slug}>{h.text}</a></li>
+            ))}
+          </ol>
+        </nav>
+      )}
+
+      <div class="post-content">
+        <slot />
+      </div>
+    </article>
+
+    {headings.length > 0 && (
+      <aside class="post-toc-floating" aria-label="浮動目錄">
+        <p class="post-toc-title">這篇讓我學到</p>
+        <ol>
+          {headings.map((h) => (
+            <li><a href={`#${h.slug}`} data-toc-link={h.slug}>{h.text}</a></li>
+          ))}
+        </ol>
+      </aside>
+    )}
+
+    <aside class="post-cta-box">
+      <div class="post-cta-inner">
+        <p class="post-cta-eyebrow">懂屋 · 免費裝修決策工具</p>
+        <h3 class="post-cta-title">裝修不知從何開始？</h3>
+        <p class="post-cta-text">5 分鐘 AI 裝修診斷，找出你的裝修決策優先順序。</p>
+        <span class="post-cta-btn post-cta-btn-disabled">免費裝修診斷（即將上線）</span>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="post-footer">
+    <div class="post-footer-inner">
+      <div class="post-footer-brand">
+        <p class="post-footer-name">懂屋 Know Your Home</p>
+        <p class="post-footer-slogan">新成屋屋主的裝修決策系統</p>
+      </div>
+
+      <nav class="post-footer-nav">
+        <a href="#" aria-disabled="true" class="disabled">免費裝修診斷（即將上線）</a>
+        <a href="https://minxindesign.com.tw" target="_blank" rel="noopener">設計師工作室</a>
+        <a href="#" aria-disabled="true" class="disabled">訂閱週報（即將上線）</a>
+      </nav>
+
+      <p class="post-footer-copy">© 2026 懂屋 Know Your Home · 旻欣室內裝修設計工作室</p>
+    </div>
+  </footer>
+</body>
+</html>
+
+<style is:global>
+  /* 文章頁專用：覆蓋 global.css 的深底配色 */
+  body.post-body {
+    background: #FFFFFF;
+    color: #1A1A1A;
+  }
+
+  body.post-body a {
+    color: #B8977E;
+  }
+
+  body.post-body a:hover {
+    color: #D4886A;
+    text-decoration: underline;
+  }
+
+  /* 閱讀進度條（最頂端、scroll-linked） */
+  .post-progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: rgba(184, 151, 126, 0.12);
+    z-index: 100;
+    pointer-events: none;
+  }
+
+  .post-progress-fill {
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, #B8977E 0%, #D4886A 100%);
+    transition: width 0.08s ease-out;
+  }
+
+  /* 頂部導覽 */
+  .post-topbar {
+    border-bottom: 1px solid #EAEAEA;
+    background: #FFFFFF;
+  }
+
+  .post-topbar-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 16px 24px;
+  }
+
+  .post-brand {
+    font-size: 0.875rem;
+    letter-spacing: 0.15em;
+    color: #1A1A1A;
+    font-weight: 500;
+  }
+
+  .post-brand:hover {
+    color: #B8977E;
+  }
+
+  /* 主容器 */
+  .post-main {
+    background: #FFFFFF;
+    min-height: calc(100vh - 120px);
+    padding: 48px 24px 96px;
+  }
+
+  .post-article {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .post-dim {
+    display: inline-block;
+    font-size: 0.8rem;
+    color: #B8977E;
+    letter-spacing: 0.1em;
+    margin-bottom: 16px;
+    padding: 4px 10px;
+    border: 1px solid #B8977E;
+    border-radius: 999px;
+  }
+
+  .post-title {
+    font-size: clamp(1.6rem, 3.4vw, 2.4rem);
+    line-height: 1.4;
+    color: #1A1A1A;
+    font-weight: 700;
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+  }
+
+  .post-hero {
+    margin: 24px 0 32px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #FAFAFA;
+  }
+
+  .post-hero img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .post-meta {
+    color: #888888;
+    font-size: 0.875rem;
+    margin-bottom: 16px;
+  }
+
+  .post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 48px;
+  }
+
+  .post-tag {
+    display: inline-block;
+    font-size: 0.8rem;
+    color: #B8977E;
+    background: #FAF7F2;
+    padding: 3px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.02em;
+  }
+
+  /* 文章內文 typography */
+  .post-content {
+    font-size: 1.0625rem;
+    line-height: 1.85;
+    color: #1A1A1A;
+  }
+
+  .post-content h2 {
+    font-size: 1.4rem;
+    line-height: 1.5;
+    font-weight: 700;
+    color: #1A1A1A;
+    margin: 56px 0 16px;
+    padding-top: 24px;
+    border-top: 1px solid #EAEAEA;
+  }
+
+  .post-content h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1A1A1A;
+    margin: 32px 0 12px;
+  }
+
+  .post-content p {
+    margin: 0 0 20px;
+  }
+
+  .post-content strong {
+    font-weight: 700;
+    color: #000000;
+  }
+
+  .post-content ul,
+  .post-content ol {
+    margin: 0 0 24px;
+    padding-left: 24px;
+  }
+
+  .post-content li {
+    margin: 8px 0;
+  }
+
+  .post-content blockquote {
+    margin: 28px 0;
+    padding: 16px 20px;
+    border-left: 3px solid #B8977E;
+    background: #FAF7F2;
+    color: #444;
+    font-size: 0.95em;
+    border-radius: 0 4px 4px 0;
+  }
+
+  .post-content blockquote p:last-child {
+    margin-bottom: 0;
+  }
+
+  .post-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 28px 0;
+    font-size: 0.95em;
+    background: #FFFFFF;
+  }
+
+  .post-content table th,
+  .post-content table td {
+    text-align: left;
+    padding: 10px 12px;
+    border: 1px solid #E5E5E5;
+    vertical-align: top;
+  }
+
+  .post-content table th {
+    background: #F8F5F1;
+    font-weight: 700;
+    color: #1A1A1A;
+  }
+
+  .post-content table tr:nth-child(even) td {
+    background: #FBFAF8;
+  }
+
+  .post-content code {
+    background: #F4F1ED;
+    color: #1A1A1A;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-family: 'Menlo', 'Monaco', 'Consolas', monospace;
+  }
+
+  .post-content pre {
+    background: #F8F5F1;
+    padding: 16px;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 24px 0;
+  }
+
+  .post-content pre code {
+    background: transparent;
+    padding: 0;
+  }
+
+  .post-content hr {
+    border: 0;
+    border-top: 1px solid #EAEAEA;
+    margin: 48px 0;
+  }
+
+  .post-content img {
+    width: 100%;
+    height: auto;
+    margin: 24px 0;
+    border-radius: 10px;
+    background: #FAFAFA;
+  }
+
+  .post-content p img {
+    margin: 0;
+  }
+
+  /* 通用 CTA box（每篇文末自動繼承） */
+  .post-cta-box {
+    max-width: 720px;
+    margin: 64px auto 0;
+    padding: 0 24px;
+  }
+
+  .post-cta-inner {
+    background: #FAF7F2;
+    border: 1px solid #E8DCC8;
+    border-radius: 12px;
+    padding: 32px 28px;
+    text-align: center;
+  }
+
+  .post-cta-eyebrow {
+    font-size: 0.75rem;
+    color: #B8977E;
+    letter-spacing: 0.15em;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+
+  .post-cta-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #1A1A1A;
+    margin-bottom: 8px;
+  }
+
+  .post-cta-text {
+    color: #555;
+    font-size: 0.95rem;
+    margin-bottom: 24px;
+  }
+
+  .post-cta-btn {
+    display: inline-block;
+    background: #D4886A;
+    color: #FFFFFF !important;
+    padding: 12px 28px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: background 0.2s;
+  }
+
+  .post-cta-btn:hover {
+    background: #B8977E;
+    text-decoration: none !important;
+  }
+
+  .post-cta-btn-disabled {
+    background: #C4B8A8;
+    cursor: not-allowed;
+    pointer-events: none;
+    color: #FFFFFF;
+  }
+
+  /* 內嵌 TOC（米色框、置於引言後） */
+  .post-toc-inline {
+    background: #FAF7F2;
+    border: 1px solid #E8DCC8;
+    border-radius: 8px;
+    padding: 24px 28px;
+    margin: 32px 0 40px;
+  }
+
+  .post-toc-title {
+    text-align: center;
+    font-weight: 700;
+    color: #1A1A1A;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #E8DCC8;
+    font-size: 1.2rem;
+    letter-spacing: 0.05em;
+  }
+
+  .post-toc-inline ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    counter-reset: toc-item;
+  }
+
+  .post-toc-inline ol li {
+    counter-increment: toc-item;
+    margin: 10px 0;
+    padding-left: 0;
+  }
+
+  .post-toc-inline ol li a {
+    color: #1A1A1A !important;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    display: inline-block;
+  }
+
+  .post-toc-inline ol li a::before {
+    content: counter(toc-item) ". ";
+    color: #B8977E;
+    font-weight: 600;
+    margin-right: 4px;
+  }
+
+  .post-toc-inline ol li a:hover {
+    color: #D4886A !important;
+    text-decoration: underline;
+  }
+
+  .post-toc-inline ol li a.toc-active {
+    color: #D4886A !important;
+    font-weight: 600;
+  }
+
+  /* 浮動 TOC（桌面右側 sticky） */
+  .post-toc-floating {
+    display: none;  /* 預設隱藏，桌面 1280+ 才顯示 */
+    position: fixed;
+    top: 96px;
+    right: 32px;
+    width: 240px;
+    max-height: calc(100vh - 140px);
+    overflow-y: auto;
+    background: #FFFFFF;
+    border: 1px solid #E8DCC8;
+    border-radius: 8px;
+    padding: 16px 18px;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+
+  .post-toc-floating .post-toc-title {
+    background: #FAF7F2;
+    margin: -16px -18px 12px;
+    padding: 12px 18px;
+    border-radius: 8px 8px 0 0;
+    border-bottom: 1px solid #E8DCC8;
+    font-size: 1rem;
+  }
+
+  .post-toc-floating ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    counter-reset: toc-float;
+  }
+
+  .post-toc-floating ol li {
+    counter-increment: toc-float;
+    margin: 8px 0;
+  }
+
+  .post-toc-floating ol li a {
+    color: #555 !important;
+    font-size: 0.85rem;
+    line-height: 1.55;
+    display: block;
+    padding: 4px 0 4px 12px;
+    border-left: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .post-toc-floating ol li a::before {
+    content: counter(toc-float) ". ";
+    color: #B8977E;
+    margin-right: 2px;
+  }
+
+  .post-toc-floating ol li a:hover {
+    color: #B8977E !important;
+    text-decoration: none !important;
+  }
+
+  .post-toc-floating ol li a.toc-active {
+    color: #D4886A !important;
+    border-left-color: #D4886A;
+    font-weight: 600;
+  }
+
+  @media (min-width: 1280px) {
+    .post-toc-floating {
+      display: block;
+    }
+  }
+
+  /* 文章底部 footer */
+  .post-footer {
+    border-top: 1px solid #EAEAEA;
+    background: #FAFAFA;
+    margin-top: 64px;
+  }
+
+  .post-footer-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 40px 24px 32px;
+  }
+
+  .post-footer-brand {
+    margin-bottom: 24px;
+  }
+
+  .post-footer-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1A1A1A;
+    margin-bottom: 4px;
+  }
+
+  .post-footer-slogan {
+    font-size: 0.875rem;
+    color: #666;
+  }
+
+  .post-footer-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #EAEAEA;
+  }
+
+  .post-footer-nav a {
+    font-size: 0.875rem;
+    color: #555 !important;
+  }
+
+  .post-footer-nav a:hover {
+    color: #B8977E !important;
+  }
+
+  .post-footer-nav a.disabled {
+    color: #AAA !important;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .post-footer-copy {
+    font-size: 0.8rem;
+    color: #888;
+  }
+
+  /* 手機版微調 */
+  @media (max-width: 600px) {
+    .post-main {
+      padding: 32px 20px 64px;
+    }
+
+    .post-content {
+      font-size: 1rem;
+    }
+
+    .post-content table {
+      font-size: 0.875em;
+    }
+  }
+</style>
+
+<script>
+  // 1) 把內嵌 TOC 從引言後移到第一個 H2 前
+  // 2) IntersectionObserver 處理滾動 highlight（內嵌 + 浮動 TOC 同步）
+  function initToc() {
+    const inlineToc = document.querySelector('[data-toc-inline]');
+    const content = document.querySelector('.post-content');
+    if (!inlineToc || !content) return;
+
+    const firstH2 = content.querySelector('h2');
+    if (firstH2 && firstH2.parentNode) {
+      firstH2.parentNode.insertBefore(inlineToc, firstH2);
+    }
+
+    const headings = content.querySelectorAll('h2');
+    const tocLinks = document.querySelectorAll('[data-toc-link]');
+    if (headings.length === 0 || tocLinks.length === 0) return;
+
+    const setActive = (slug: string) => {
+      tocLinks.forEach((link) => {
+        const isActive = link.getAttribute('data-toc-link') === slug;
+        link.classList.toggle('toc-active', isActive);
+      });
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // 找出最靠近頂部、且仍在視窗內的 heading
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => a.target.getBoundingClientRect().top - b.target.getBoundingClientRect().top);
+        if (visible.length > 0) {
+          const id = visible[0].target.id;
+          if (id) setActive(id);
+        }
+      },
+      {
+        rootMargin: '-80px 0px -65% 0px',
+        threshold: 0,
+      }
+    );
+
+    headings.forEach((h) => {
+      if (h.id) observer.observe(h);
+    });
+
+    // 初始化 — 預設 active 第一個
+    if (headings[0]?.id) setActive(headings[0].id);
+  }
+
+  // 閱讀進度條 — scroll-linked，動畫平滑
+  function initProgressBar() {
+    const bar = document.getElementById('post-progress');
+    if (!bar) return;
+
+    let ticking = false;
+    const update = () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = docHeight > 0 ? Math.min(100, (scrollTop / docHeight) * 100) : 0;
+      bar.style.width = `${progress}%`;
+      ticking = false;
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(update);
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    update();
+  }
+
+  // Astro 5 view transitions 友善
+  document.addEventListener('DOMContentLoaded', () => {
+    initToc();
+    initProgressBar();
+  });
+  document.addEventListener('astro:page-load', () => {
+    initToc();
+    initProgressBar();
+  });
+</script>

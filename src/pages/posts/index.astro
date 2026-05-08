@@ -1,0 +1,297 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import '../../styles/global.css';
+
+// dev 看 draft、prod 過濾
+const filter = import.meta.env.DEV
+  ? undefined
+  : ({ data }: CollectionEntry<'posts'>) => !data.draft;
+
+const posts = await getCollection('posts', filter);
+
+// 依發佈日新→舊
+const sorted = posts.sort(
+  (a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf()
+);
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="generator" content={Astro.generator} />
+  <title>所有文章｜懂屋 Know Your Home</title>
+  <meta name="description" content="懂屋整理的所有裝修知識文章，依時間排序，隨時可查。" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+</head>
+<body class="post-body">
+  <header class="post-topbar">
+    <div class="post-topbar-inner">
+      <a href="/" class="post-brand">懂屋 · Know Your Home</a>
+    </div>
+  </header>
+
+  <main class="list-main">
+    <div class="list-inner">
+      <p class="list-eyebrow">文章列表</p>
+      <h1 class="list-title">所有裝修知識</h1>
+      <p class="list-sub">{posts.length} 篇文章 · 依發佈日新到舊</p>
+
+      <div class="post-cards">
+        {sorted.map((post) => (
+          <a href={`/posts/${post.data.id}/`} class="post-card">
+            <div class="post-card-meta">
+              <span class="post-card-dim">{post.data.dim}</span>
+              <time class="post-card-date" datetime={post.data.publishDate.toISOString()}>
+                {fmt(post.data.publishDate)}
+              </time>
+            </div>
+            <h2 class="post-card-title">{post.data.title}</h2>
+            {post.data.description && (
+              <p class="post-card-desc">{post.data.description}</p>
+            )}
+            <span class="post-card-arrow">閱讀全文 →</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </main>
+
+  <footer class="post-footer">
+    <div class="post-footer-inner">
+      <div class="post-footer-brand">
+        <p class="post-footer-name">懂屋 Know Your Home</p>
+        <p class="post-footer-slogan">新成屋屋主的裝修決策系統</p>
+      </div>
+
+      <nav class="post-footer-nav">
+        <a href="#" aria-disabled="true" class="disabled">免費裝修診斷（即將上線）</a>
+        <a href="https://minxindesign.com.tw" target="_blank" rel="noopener">設計師工作室</a>
+        <a href="#" aria-disabled="true" class="disabled">訂閱週報（即將上線）</a>
+      </nav>
+
+      <p class="post-footer-copy">© 2026 懂屋 Know Your Home · 旻欣室內裝修設計工作室</p>
+    </div>
+  </footer>
+</body>
+</html>
+
+<style is:global>
+  /* 列表頁專用：複用文章頁的白底配色 */
+  body.post-body {
+    background: #FFFFFF;
+    color: #1A1A1A;
+  }
+
+  body.post-body a {
+    color: #B8977E;
+    text-decoration: none;
+  }
+
+  body.post-body a:hover {
+    color: #D4886A;
+  }
+
+  /* topbar 與 footer 樣式（與 PostLayout 同步） */
+  .post-topbar {
+    border-bottom: 1px solid #EAEAEA;
+    background: #FFFFFF;
+  }
+
+  .post-topbar-inner {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 16px 24px;
+  }
+
+  .post-brand {
+    font-size: 0.875rem;
+    letter-spacing: 0.15em;
+    color: #1A1A1A !important;
+    font-weight: 500;
+  }
+
+  .post-brand:hover {
+    color: #B8977E !important;
+  }
+
+  /* 列表主容器 */
+  .list-main {
+    background: #FFFFFF;
+    min-height: calc(100vh - 200px);
+    padding: 64px 24px 96px;
+  }
+
+  .list-inner {
+    max-width: 880px;
+    margin: 0 auto;
+  }
+
+  .list-eyebrow {
+    font-size: 0.8rem;
+    color: #B8977E;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .list-title {
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 700;
+    color: #1A1A1A;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+
+  .list-sub {
+    color: #888;
+    font-size: 0.95rem;
+    margin-bottom: 48px;
+  }
+
+  /* 文章卡片清單 */
+  .post-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .post-card {
+    display: block;
+    padding: 28px 28px 24px;
+    border: 1px solid #EAEAEA;
+    border-radius: 12px;
+    background: #FFFFFF;
+    color: #1A1A1A !important;
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+  }
+
+  .post-card:hover {
+    border-color: #D4886A;
+    box-shadow: 0 4px 16px rgba(184, 151, 126, 0.12);
+    transform: translateY(-2px);
+    text-decoration: none !important;
+  }
+
+  .post-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .post-card-dim {
+    font-size: 0.75rem;
+    color: #B8977E;
+    letter-spacing: 0.08em;
+    padding: 3px 10px;
+    border: 1px solid #B8977E;
+    border-radius: 999px;
+  }
+
+  .post-card-date {
+    font-size: 0.85rem;
+    color: #888;
+  }
+
+  .post-card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1A1A1A;
+    line-height: 1.5;
+    margin-bottom: 12px;
+    letter-spacing: -0.005em;
+  }
+
+  .post-card-desc {
+    color: #555;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    margin-bottom: 16px;
+  }
+
+  .post-card-arrow {
+    font-size: 0.875rem;
+    color: #B8977E;
+    font-weight: 600;
+  }
+
+  .post-card:hover .post-card-arrow {
+    color: #D4886A;
+  }
+
+  /* footer 與 PostLayout 同步 */
+  .post-footer {
+    border-top: 1px solid #EAEAEA;
+    background: #FAFAFA;
+  }
+
+  .post-footer-inner {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 40px 24px 32px;
+  }
+
+  .post-footer-brand {
+    margin-bottom: 24px;
+  }
+
+  .post-footer-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1A1A1A;
+    margin-bottom: 4px;
+  }
+
+  .post-footer-slogan {
+    font-size: 0.875rem;
+    color: #666;
+  }
+
+  .post-footer-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #EAEAEA;
+  }
+
+  .post-footer-nav a {
+    font-size: 0.875rem;
+    color: #555 !important;
+  }
+
+  .post-footer-nav a:hover {
+    color: #B8977E !important;
+  }
+
+  .post-footer-nav a.disabled {
+    color: #AAA !important;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .post-footer-copy {
+    font-size: 0.8rem;
+    color: #888;
+  }
+
+  @media (max-width: 600px) {
+    .list-main {
+      padding: 40px 20px 64px;
+    }
+
+    .post-card {
+      padding: 20px 20px 18px;
+    }
+
+    .post-card-title {
+      font-size: 1.1rem;
+    }
+  }
+</style>
