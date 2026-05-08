@@ -1,0 +1,38 @@
+---
+/*
+ * 每篇文章獨立 .astro 檔
+ *
+ * 為什麼不用動態路由 [...slug].astro：
+ * Astro 5 + Windows 環境下、中括號檔名在 prod build 時 glob 解析失敗，
+ * 動態路由整個被略過。改用每篇獨立檔避開該 bug。
+ *
+ * 新文章發布流程：
+ * 1. src/content/posts/{ID}.md 寫內容
+ * 2. cp 這個檔為 src/pages/posts/{ID}.astro，改 getEntry id
+ */
+import { getCollection } from 'astro:content';
+import PostLayout from '../../layouts/PostLayout.astro';
+
+export const prerender = true;
+
+const posts = await getCollection('posts');
+const post = posts.find((p) => p.data.id === 'D001');
+if (!post) throw new Error('Post D001 not found in collection');
+
+const { Content, headings } = await post.render();
+const tocHeadings = headings.filter((h) => h.depth === 2);
+---
+
+<PostLayout
+  title={post.data.title}
+  description={post.data.description}
+  publishDate={post.data.publishDate}
+  updateDate={post.data.updateDate}
+  dim={post.data.dim}
+  tags={post.data.tags}
+  heroImage={post.data.heroImage}
+  heroAlt={post.data.heroAlt}
+  headings={tocHeadings}
+>
+  <Content />
+</PostLayout>

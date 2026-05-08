@@ -1,0 +1,31 @@
+---
+/*
+ * D002 預算膨脹文 — 獨立 .astro 路由
+ * 詳見 D001.astro 的註解（同樣繞過 Astro 5 + Windows 中括號 bug）
+ */
+import { getCollection } from 'astro:content';
+import PostLayout from '../../layouts/PostLayout.astro';
+
+export const prerender = true;
+
+const posts = await getCollection('posts');
+const post = posts.find((p) => p.data.id === 'D002');
+if (!post) throw new Error('Post D002 not found in collection');
+
+const { Content, headings } = await post.render();
+const tocHeadings = headings.filter((h) => h.depth === 2);
+---
+
+<PostLayout
+  title={post.data.title}
+  description={post.data.description}
+  publishDate={post.data.publishDate}
+  updateDate={post.data.updateDate}
+  dim={post.data.dim}
+  tags={post.data.tags}
+  heroImage={post.data.heroImage}
+  heroAlt={post.data.heroAlt}
+  headings={tocHeadings}
+>
+  <Content />
+</PostLayout>

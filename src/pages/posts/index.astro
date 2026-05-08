@@ -37,24 +37,39 @@ const fmt = (d: Date) =>
 
   <main class="list-main">
     <div class="list-inner">
-      <p class="list-eyebrow">文章列表</p>
-      <h1 class="list-title">所有裝修知識</h1>
-      <p class="list-sub">{posts.length} 篇文章 · 依發佈日新到舊</p>
+      <header class="list-header">
+        <h1 class="list-title">所有文章</h1>
+        <p class="list-sub">{posts.length} 篇 · 依發佈日新到舊</p>
+      </header>
 
-      <div class="post-cards">
+      <div class="post-grid">
         {sorted.map((post) => (
           <a href={`/posts/${post.data.id}/`} class="post-card">
-            <div class="post-card-meta">
-              <span class="post-card-dim">{post.data.dim}</span>
-              <time class="post-card-date" datetime={post.data.publishDate.toISOString()}>
-                {fmt(post.data.publishDate)}
-              </time>
+            <div class="post-card-cover">
+              {post.data.heroImage ? (
+                <img src={post.data.heroImage} alt={post.data.heroAlt || post.data.title} loading="lazy" />
+              ) : (
+                <div class="post-card-cover-fallback">
+                  <span>{post.data.dim}</span>
+                </div>
+              )}
             </div>
-            <h2 class="post-card-title">{post.data.title}</h2>
-            {post.data.description && (
-              <p class="post-card-desc">{post.data.description}</p>
-            )}
-            <span class="post-card-arrow">閱讀全文 →</span>
+
+            <div class="post-card-body">
+              <p class="post-card-dim">{post.data.dim}</p>
+              <h2 class="post-card-title">{post.data.title}</h2>
+              {post.data.tags && post.data.tags.length > 0 && (
+                <p class="post-card-tags">
+                  {post.data.tags.map((tag) => <span class="post-card-tag">#{tag}</span>)}
+                </p>
+              )}
+              <div class="post-card-foot">
+                <time class="post-card-date" datetime={post.data.publishDate.toISOString()}>
+                  {fmt(post.data.publishDate)}
+                </time>
+                <span class="post-card-more">繼續閱讀 →</span>
+              </div>
+            </div>
           </a>
         ))}
       </div>
@@ -103,7 +118,7 @@ const fmt = (d: Date) =>
   }
 
   .post-topbar-inner {
-    max-width: 1080px;
+    max-width: 1180px;
     margin: 0 auto;
     padding: 16px 24px;
   }
@@ -123,105 +138,164 @@ const fmt = (d: Date) =>
   .list-main {
     background: #FFFFFF;
     min-height: calc(100vh - 200px);
-    padding: 64px 24px 96px;
+    padding: 56px 24px 96px;
   }
 
   .list-inner {
-    max-width: 880px;
+    max-width: 1180px;
     margin: 0 auto;
   }
 
-  .list-eyebrow {
-    font-size: 0.8rem;
-    color: #B8977E;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    margin-bottom: 12px;
+  .list-header {
+    margin-bottom: 48px;
   }
 
   .list-title {
-    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-size: clamp(2rem, 4vw, 2.8rem);
     font-weight: 700;
     color: #1A1A1A;
-    margin-bottom: 8px;
     letter-spacing: -0.01em;
+    margin-bottom: 8px;
   }
 
   .list-sub {
     color: #888;
     font-size: 0.95rem;
-    margin-bottom: 48px;
   }
 
-  /* 文章卡片清單 */
-  .post-cards {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+  /* 文章卡片 grid */
+  .post-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+
+  @media (min-width: 720px) {
+    .post-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 28px 24px;
+    }
+  }
+
+  @media (min-width: 1080px) {
+    .post-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
 
   .post-card {
-    display: block;
-    padding: 28px 28px 24px;
-    border: 1px solid #EAEAEA;
-    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
     background: #FFFFFF;
     color: #1A1A1A !important;
-    transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+    overflow: hidden;
+    transition: transform 0.18s ease;
   }
 
   .post-card:hover {
-    border-color: #D4886A;
-    box-shadow: 0 4px 16px rgba(184, 151, 126, 0.12);
-    transform: translateY(-2px);
     text-decoration: none !important;
+    transform: translateY(-4px);
   }
 
-  .post-card-meta {
+  .post-card:hover .post-card-cover img {
+    transform: scale(1.04);
+  }
+
+  .post-card:hover .post-card-title {
+    color: #D4886A;
+  }
+
+  .post-card:hover .post-card-more {
+    color: #D4886A;
+  }
+
+  /* 卡片首圖（比例對齊 OG 標準 1200×630） */
+  .post-card-cover {
+    position: relative;
+    aspect-ratio: 1200 / 630;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #FAF7F2;
+    margin-bottom: 18px;
+  }
+
+  .post-card-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .post-card-cover-fallback {
+    width: 100%;
+    height: 100%;
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 12px;
+    justify-content: center;
+    background: linear-gradient(135deg, #FAF7F2 0%, #E8DCC8 100%);
+    color: #B8977E;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+  }
+
+  /* 標題下方 #tag 文字行 */
+  .post-card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 0;
+  }
+
+  .post-card-tag {
+    font-size: 0.8rem;
+    color: #999;
+    letter-spacing: 0.02em;
+  }
+
+  /* 卡片內文 */
+  .post-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 0 4px;
   }
 
   .post-card-dim {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     color: #B8977E;
     letter-spacing: 0.08em;
-    padding: 3px 10px;
-    border: 1px solid #B8977E;
-    border-radius: 999px;
-  }
-
-  .post-card-date {
-    font-size: 0.85rem;
-    color: #888;
-  }
-
-  .post-card-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #1A1A1A;
-    line-height: 1.5;
-    margin-bottom: 12px;
-    letter-spacing: -0.005em;
-  }
-
-  .post-card-desc {
-    color: #555;
-    font-size: 0.95rem;
-    line-height: 1.7;
-    margin-bottom: 16px;
-  }
-
-  .post-card-arrow {
-    font-size: 0.875rem;
-    color: #B8977E;
     font-weight: 600;
   }
 
-  .post-card:hover .post-card-arrow {
-    color: #D4886A;
+  .post-card-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #1A1A1A;
+    line-height: 1.55;
+    letter-spacing: -0.005em;
+    margin: 0;
+    transition: color 0.18s ease;
+  }
+
+  .post-card-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 6px;
+    padding-top: 12px;
+    border-top: 1px solid #F0F0F0;
+  }
+
+  .post-card-date {
+    font-size: 0.825rem;
+    color: #888;
+  }
+
+  .post-card-more {
+    font-size: 0.825rem;
+    color: #B8977E;
+    font-weight: 600;
+    transition: color 0.18s ease;
   }
 
   /* footer 與 PostLayout 同步 */
@@ -231,7 +305,7 @@ const fmt = (d: Date) =>
   }
 
   .post-footer-inner {
-    max-width: 880px;
+    max-width: 1180px;
     margin: 0 auto;
     padding: 40px 24px 32px;
   }
@@ -283,15 +357,11 @@ const fmt = (d: Date) =>
 
   @media (max-width: 600px) {
     .list-main {
-      padding: 40px 20px 64px;
-    }
-
-    .post-card {
-      padding: 20px 20px 18px;
+      padding: 36px 20px 64px;
     }
 
     .post-card-title {
-      font-size: 1.1rem;
+      font-size: 1.2rem;
     }
   }
 </style>
