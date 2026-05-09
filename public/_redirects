@@ -1,0 +1,6 @@
+# Cloudflare Pages 301 redirects
+# 舊 URL → 新 URL（SEO 友善 slug）
+/posts/D001    /smart-home-customization/    301
+/posts/D001/   /smart-home-customization/    301
+/posts/D002    /new-house-budget-leak/       301
+/posts/D002/   /new-house-budget-leak/       301

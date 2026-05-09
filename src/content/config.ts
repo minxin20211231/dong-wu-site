@@ -12,6 +12,7 @@ const posts = defineCollection({
   type: 'content',
   schema: z.object({
     id: z.string(),
+    slug: z.string().optional(),
     title: z.string(),
     dim: z.enum(DIMENSIONS),
     src: z.string().optional(),

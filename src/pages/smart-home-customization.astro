@@ -1,17 +1,11 @@
 ---
 /*
- * 每篇文章獨立 .astro 檔
- *
- * 為什麼不用動態路由 [...slug].astro：
- * Astro 5 + Windows 環境下、中括號檔名在 prod build 時 glob 解析失敗，
- * 動態路由整個被略過。改用每篇獨立檔避開該 bug。
- *
- * 新文章發布流程：
- * 1. src/content/posts/{ID}.md 寫內容
- * 2. cp 這個檔為 src/pages/posts/{ID}.astro，改 getEntry id
+ * D001 — 預售屋客變智能家居
+ * URL slug = smart-home-customization
+ * 詳見 _archive 的設計註記（避開 Astro 5 + Windows 中括號 bug，每篇獨立 .astro）
  */
 import { getCollection } from 'astro:content';
-import PostLayout from '../../layouts/PostLayout.astro';
+import PostLayout from '../layouts/PostLayout.astro';
 
 export const prerender = true;
 
