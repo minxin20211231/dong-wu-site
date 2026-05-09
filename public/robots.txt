@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# 舊路由已 301 redirect，無需爬
+Disallow: /posts/D001
+Disallow: /posts/D002
+
+Sitemap: https://dong-wu.com/sitemap-index.xml
