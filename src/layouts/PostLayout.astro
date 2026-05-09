@@ -66,6 +66,11 @@ const fmt = (d: Date) =>
   <header class="post-topbar">
     <div class="post-topbar-inner">
       <a href="/" class="post-brand">懂屋 · Know Your Home</a>
+      <nav class="post-nav" aria-label="主導覽">
+        <a href="/about/" class="post-nav-link">關於懂屋</a>
+        <a href="/posts/" class="post-nav-link">所有文章</a>
+        <a href="#" class="post-nav-cta" aria-disabled="true" tabindex="-1">訂閱電子報</a>
+      </nav>
     </div>
   </header>
 
@@ -186,12 +191,19 @@ const fmt = (d: Date) =>
   .post-topbar {
     border-bottom: 1px solid #EAEAEA;
     background: #FFFFFF;
+    position: sticky;
+    top: 0;
+    z-index: 50;
   }
 
   .post-topbar-inner {
-    max-width: 720px;
+    max-width: 1180px;
     margin: 0 auto;
     padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
   }
 
   .post-brand {
@@ -199,10 +211,78 @@ const fmt = (d: Date) =>
     letter-spacing: 0.15em;
     color: #1A1A1A;
     font-weight: 500;
+    flex-shrink: 0;
   }
 
   .post-brand:hover {
     color: #B8977E;
+  }
+
+  .post-nav {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+  }
+
+  .post-nav-link {
+    font-size: 0.875rem;
+    color: #555;
+    letter-spacing: 0.05em;
+    transition: color 0.18s ease;
+  }
+
+  .post-nav-link:hover {
+    color: #B8977E;
+  }
+
+  .post-nav-cta {
+    display: inline-flex;
+    align-items: center;
+    padding: 9px 22px;
+    border: 1px solid #DDD;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    color: #AAA !important;
+    letter-spacing: 0.05em;
+    cursor: not-allowed;
+    pointer-events: none;
+    background: transparent;
+  }
+
+  .post-nav-cta::after {
+    content: "（即將上線）";
+    font-size: 0.78em;
+    opacity: 0.65;
+    margin-left: 4px;
+  }
+
+  @media (max-width: 720px) {
+    .post-topbar-inner {
+      gap: 12px;
+    }
+    .post-nav {
+      gap: 14px;
+    }
+    .post-nav-link {
+      font-size: 0.8rem;
+    }
+    .post-nav-cta {
+      padding: 7px 14px;
+      font-size: 0.78rem;
+    }
+    .post-nav-cta::after {
+      display: none;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .post-brand {
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+    }
+    .post-nav-link[href="/about/"] {
+      display: none;
+    }
   }
 
   /* 主容器 */

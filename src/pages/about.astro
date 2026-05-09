@@ -1,0 +1,514 @@
+---
+import '../styles/global.css';
+---
+
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="generator" content={Astro.generator} />
+  <title>關於懂屋｜Know Your Home</title>
+  <meta name="description" content="懂屋是給新手屋主的裝修決策系統。我們相信好的設計不是被動等待，而是從理解開始。" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+</head>
+<body class="post-body">
+  <header class="post-topbar">
+    <div class="post-topbar-inner">
+      <a href="/" class="post-brand">懂屋 · Know Your Home</a>
+      <nav class="post-nav" aria-label="主導覽">
+        <a href="/about/" class="post-nav-link" aria-current="page">關於懂屋</a>
+        <a href="/posts/" class="post-nav-link">所有文章</a>
+        <a href="#" class="post-nav-cta" aria-disabled="true" tabindex="-1">訂閱電子報</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="about-main">
+    <article class="about-article">
+      <p class="about-eyebrow">ABOUT</p>
+      <h1 class="about-title">給新手屋主的裝修導航</h1>
+      <p class="about-lead">
+        懂屋是一個正在搭建的決策系統。<br />
+        從預算規劃、客變、風格選擇到驗收避雷——把屋主在每個環節最容易踩到的坑，整理成你查得到、看得懂、用得上的內容。
+      </p>
+
+      <section class="about-section">
+        <h2>為什麼會有懂屋</h2>
+        <p>
+          很多屋主第一次裝修都從同一個問題開始：「我到底要準備多少錢？」
+        </p>
+        <p>
+          然後從這個問題開始衍生一百個問題——客變要做什麼、設計師怎麼挑、預算被吃到哪去、合約有沒有陷阱、收納要做木作還是系統櫃。
+        </p>
+        <p>
+          這些問題的答案在網路上散落各處，但沒有一個地方把它們組成一張地圖。
+        </p>
+        <p>
+          懂屋想做這張地圖。
+        </p>
+      </section>
+
+      <section class="about-section">
+        <h2>懂屋會做什麼</h2>
+        <ul class="about-roadmap">
+          <li>
+            <span class="about-roadmap-status active">進行中</span>
+            <strong>365 天，每天 1 題</strong>
+            <span class="about-roadmap-desc">把裝修問題拆成每天 1 題，1 年累積完整知識庫</span>
+          </li>
+          <li>
+            <span class="about-roadmap-status">即將上線</span>
+            <strong>互動工具</strong>
+            <span class="about-roadmap-desc">預算組裝器、風格產生器、驗收導航、合約避雷針</span>
+          </li>
+          <li>
+            <span class="about-roadmap-status">即將上線</span>
+            <strong>新成屋導航手冊</strong>
+            <span class="about-roadmap-desc">電子書，把首購族最容易爆預算的環節整理成一本</span>
+          </li>
+        </ul>
+      </section>
+
+      <section class="about-section">
+        <h2>關於創辦人</h2>
+        <div class="about-founder">
+          <img src="https://minxindesign.com.tw/wp-content/uploads/2026/03/bibo-designer-profile-scaled.jpg" alt="鄭晏旻 Bibo" class="about-founder-photo" />
+          <div class="about-founder-bio">
+            <p class="about-founder-name">鄭晏旻（Bibo）</p>
+            <p class="about-founder-role">旻欣室內裝修設計工作室 · 設計師</p>
+            <p>
+              持有建築物室內設計乙級、建築物室內裝修工程管理乙級雙合格證照。
+              專注於透天裝潢、新成屋裝修與老屋翻新，喜歡把屋主的生活習慣融進設計裡，讓每個家住起來順手、看起來舒服。
+            </p>
+            <p>
+              懂屋是把多年實務累積的踩坑經驗，整理成屋主能直接用的決策工具。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="about-cta">
+        <p>準備好了嗎？</p>
+        <div class="about-cta-actions">
+          <a href="/posts/" class="about-cta-btn primary">開始看文章</a>
+          <a href="#" class="about-cta-btn secondary disabled" aria-disabled="true">訂閱電子報（即將上線）</a>
+        </div>
+      </section>
+    </article>
+  </main>
+
+  <footer class="post-footer">
+    <div class="post-footer-inner">
+      <div class="post-footer-brand">
+        <p class="post-footer-name">懂屋 Know Your Home</p>
+        <p class="post-footer-slogan">新成屋屋主的裝修決策系統</p>
+      </div>
+      <nav class="post-footer-nav">
+        <a href="/about/">關於懂屋</a>
+        <a href="/posts/">所有文章</a>
+        <a href="https://minxindesign.com.tw" target="_blank" rel="noopener">設計師工作室</a>
+        <a href="#" aria-disabled="true" class="disabled">訂閱電子報（即將上線）</a>
+      </nav>
+      <p class="post-footer-copy">© 2026 懂屋 Know Your Home · 旻欣室內裝修設計工作室</p>
+    </div>
+  </footer>
+</body>
+</html>
+
+<style is:global>
+  body.post-body {
+    background: #FFFFFF;
+    color: #1A1A1A;
+  }
+
+  body.post-body a {
+    color: #B8977E;
+    text-decoration: none;
+  }
+
+  body.post-body a:hover {
+    color: #D4886A;
+  }
+
+  /* topbar 樣式同 PostLayout */
+  .post-topbar {
+    border-bottom: 1px solid #EAEAEA;
+    background: #FFFFFF;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .post-topbar-inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .post-brand {
+    font-size: 0.875rem;
+    letter-spacing: 0.15em;
+    color: #1A1A1A !important;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+
+  .post-brand:hover {
+    color: #B8977E !important;
+  }
+
+  .post-nav {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+  }
+
+  .post-nav-link {
+    font-size: 0.875rem;
+    color: #555 !important;
+    letter-spacing: 0.05em;
+  }
+
+  .post-nav-link:hover {
+    color: #B8977E !important;
+  }
+
+  .post-nav-link[aria-current="page"] {
+    color: #1A1A1A !important;
+    font-weight: 600;
+  }
+
+  .post-nav-cta {
+    display: inline-flex;
+    align-items: center;
+    padding: 9px 22px;
+    border: 1px solid #DDD;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    color: #AAA !important;
+    letter-spacing: 0.05em;
+    cursor: not-allowed;
+    pointer-events: none;
+    background: transparent;
+  }
+
+  .post-nav-cta::after {
+    content: "（即將上線）";
+    font-size: 0.78em;
+    opacity: 0.65;
+    margin-left: 4px;
+  }
+
+  /* about 主體 */
+  .about-main {
+    background: #FFFFFF;
+    min-height: calc(100vh - 200px);
+    padding: 64px 24px 96px;
+  }
+
+  .about-article {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .about-eyebrow {
+    font-size: 0.8rem;
+    letter-spacing: 0.3em;
+    color: #B8977E;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  .about-title {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    margin-bottom: 24px;
+    color: #1A1A1A;
+  }
+
+  .about-lead {
+    font-size: 1.15rem;
+    line-height: 1.85;
+    color: #444;
+    margin-bottom: 56px;
+  }
+
+  .about-section {
+    margin-bottom: 56px;
+  }
+
+  .about-section h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #1A1A1A;
+    border-left: 3px solid #B8977E;
+    padding-left: 12px;
+  }
+
+  .about-section p {
+    font-size: 1rem;
+    line-height: 1.85;
+    color: #333;
+    margin-bottom: 16px;
+  }
+
+  /* roadmap 列表 */
+  .about-roadmap {
+    list-style: none;
+    padding: 0;
+    margin: 24px 0 0;
+  }
+
+  .about-roadmap li {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    grid-template-rows: auto auto;
+    gap: 4px 16px;
+    padding: 18px 0;
+    border-bottom: 1px solid #F0F0F0;
+  }
+
+  .about-roadmap li:last-child {
+    border-bottom: none;
+  }
+
+  .about-roadmap-status {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    align-self: center;
+    font-size: 0.72rem;
+    color: #999;
+    background: #F5F5F5;
+    padding: 6px 10px;
+    border-radius: 4px;
+    text-align: center;
+    letter-spacing: 0.05em;
+    font-weight: 500;
+  }
+
+  .about-roadmap-status.active {
+    color: #fff;
+    background: linear-gradient(135deg, #B8977E 0%, #D4886A 100%);
+  }
+
+  .about-roadmap strong {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #1A1A1A;
+  }
+
+  .about-roadmap-desc {
+    font-size: 0.9rem;
+    color: #666;
+    line-height: 1.6;
+  }
+
+  /* 創辦人 */
+  .about-founder {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    background: #FAFAFA;
+    padding: 28px;
+    border-radius: 12px;
+  }
+
+  .about-founder-photo {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .about-founder-bio {
+    flex: 1;
+    min-width: 240px;
+  }
+
+  .about-founder-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1A1A1A;
+    margin-bottom: 4px;
+  }
+
+  .about-founder-role {
+    font-size: 0.9rem;
+    color: #888;
+    margin-bottom: 14px;
+  }
+
+  .about-founder-bio p {
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: #444;
+    margin-bottom: 12px;
+  }
+
+  /* CTA */
+  .about-cta {
+    margin-top: 80px;
+    padding: 48px 32px;
+    background: linear-gradient(135deg, #FAF7F2 0%, #F5EFE5 100%);
+    border-radius: 16px;
+    text-align: center;
+  }
+
+  .about-cta p {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #1A1A1A;
+    margin-bottom: 24px;
+  }
+
+  .about-cta-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .about-cta-btn {
+    display: inline-block;
+    padding: 14px 32px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.05em;
+    transition: all 0.2s ease;
+  }
+
+  .about-cta-btn.primary {
+    background: linear-gradient(135deg, #B8977E 0%, #D4886A 100%);
+    color: #fff !important;
+    box-shadow: 0 6px 16px rgba(184, 151, 126, 0.25);
+  }
+
+  .about-cta-btn.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(212, 136, 106, 0.35);
+    color: #fff !important;
+  }
+
+  .about-cta-btn.secondary {
+    border: 1px solid #DDD;
+    color: #AAA !important;
+    background: transparent;
+  }
+
+  .about-cta-btn.disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  /* footer 同 PostLayout */
+  .post-footer {
+    border-top: 1px solid #EAEAEA;
+    background: #FAFAFA;
+  }
+
+  .post-footer-inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 40px 24px 32px;
+  }
+
+  .post-footer-brand {
+    margin-bottom: 24px;
+  }
+
+  .post-footer-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1A1A1A;
+    margin-bottom: 4px;
+  }
+
+  .post-footer-slogan {
+    font-size: 0.875rem;
+    color: #666;
+  }
+
+  .post-footer-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #EAEAEA;
+  }
+
+  .post-footer-nav a {
+    font-size: 0.875rem;
+    color: #555 !important;
+  }
+
+  .post-footer-nav a:hover {
+    color: #B8977E !important;
+  }
+
+  .post-footer-nav a.disabled {
+    color: #AAA !important;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .post-footer-copy {
+    font-size: 0.8rem;
+    color: #888;
+  }
+
+  /* RWD */
+  @media (max-width: 720px) {
+    .post-topbar-inner {
+      gap: 12px;
+    }
+    .post-nav {
+      gap: 14px;
+    }
+    .post-nav-link {
+      font-size: 0.8rem;
+    }
+    .post-nav-cta {
+      padding: 7px 14px;
+      font-size: 0.78rem;
+    }
+    .post-nav-cta::after {
+      display: none;
+    }
+    .about-main {
+      padding: 40px 20px 64px;
+    }
+    .about-roadmap li {
+      grid-template-columns: 1fr;
+    }
+    .about-roadmap-status {
+      grid-row: auto;
+      justify-self: start;
+      margin-bottom: 6px;
+    }
+    .about-cta {
+      padding: 32px 20px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .post-brand {
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+    }
+    .post-nav-link[href="/about/"] {
+      display: none;
+    }
+  }
+</style>
