@@ -44,7 +44,7 @@ const fmt = (d: Date) =>
 
       <div class="post-grid">
         {sorted.map((post) => (
-          <a href={post.data.slug ? `/${post.data.slug}/` : `/posts/${post.data.id}/`} class="post-card">
+          <a href={post.data.urlSlug ? `/${post.data.urlSlug}/` : `/posts/${post.data.id}/`} class="post-card">
             <div class="post-card-cover">
               {post.data.heroImage ? (
                 <img src={post.data.heroImage} alt={post.data.heroAlt || post.data.title} loading="lazy" />
