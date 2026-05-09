@@ -116,10 +116,10 @@ const fmt = (d: Date) =>
     color: #D4886A;
   }
 
-  /* topbar 與 footer 樣式（與 PostLayout 同步） */
+  /* topbar 樣式（與 PostLayout 同步 — 深海黑鯨金品牌色） */
   .post-topbar {
-    border-bottom: 1px solid #EAEAEA;
-    background: #FFFFFF;
+    border-bottom: 1px solid rgba(184, 151, 126, 0.22);
+    background: #1C1815;
     position: sticky;
     top: 0;
     z-index: 50;
@@ -136,10 +136,10 @@ const fmt = (d: Date) =>
   }
 
   .post-brand {
-    font-size: 0.875rem;
-    letter-spacing: 0.15em;
-    color: #1A1A1A !important;
-    font-weight: 500;
+    font-size: 0.9rem;
+    letter-spacing: 0.18em;
+    color: #F5F0E8 !important;
+    font-weight: 700;
     flex-shrink: 0;
   }
 
@@ -154,9 +154,10 @@ const fmt = (d: Date) =>
   }
 
   .post-nav-link {
-    font-size: 0.875rem;
-    color: #555 !important;
-    letter-spacing: 0.05em;
+    font-size: 0.9rem;
+    color: #F5F0E8 !important;
+    letter-spacing: 0.06em;
+    font-weight: 600;
     transition: color 0.18s ease;
   }
 
@@ -165,19 +166,20 @@ const fmt = (d: Date) =>
   }
 
   .post-nav-link[aria-current="page"] {
-    color: #1A1A1A !important;
-    font-weight: 600;
+    color: #B8977E !important;
+    font-weight: 700;
   }
 
   .post-nav-cta {
     display: inline-flex;
     align-items: center;
     padding: 9px 22px;
-    border: 1px solid #DDD;
+    border: 1px solid rgba(184, 151, 126, 0.45);
     border-radius: 999px;
     font-size: 0.85rem;
-    color: #AAA !important;
-    letter-spacing: 0.05em;
+    color: rgba(245, 240, 232, 0.55) !important;
+    letter-spacing: 0.06em;
+    font-weight: 600;
     cursor: not-allowed;
     pointer-events: none;
     background: transparent;
@@ -186,7 +188,7 @@ const fmt = (d: Date) =>
   .post-nav-cta::after {
     content: "（即將上線）";
     font-size: 0.78em;
-    opacity: 0.65;
+    opacity: 0.7;
     margin-left: 4px;
   }
 
