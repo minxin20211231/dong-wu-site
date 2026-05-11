@@ -1,6 +1,7 @@
 # build output
 dist/
 dist.bak*/
+dist_old_*/
 .output/
 
 # dependencies
@@ -16,6 +17,11 @@ pnpm-debug.log*
 .env
 .env.local
 .env.production
+
+# secrets — GCP service account JSON keys
+scripts/gsc-credentials.json
+scripts/*-credentials.json
+**/*-service-account*.json
 
 # macOS
 .DS_Store
