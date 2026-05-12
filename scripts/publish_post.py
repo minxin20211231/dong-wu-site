@@ -31,6 +31,40 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 DOMAIN = "https://dong-wu.com"
 SITEMAP_URL = f"{DOMAIN}/sitemap-0.xml"
 
+ASTRO_ROUTE_TEMPLATE = """---
+/*
+ * {post_id} — {title_short}
+ * URL slug = {url_slug}
+ * 自動產生於 publish_post.py（每篇獨立 .astro 繞 Astro 5 + Windows 中括號 bug）
+ */
+import {{ getCollection }} from 'astro:content';
+import PostLayout from '../layouts/PostLayout.astro';
+
+export const prerender = true;
+
+const posts = await getCollection('posts');
+const post = posts.find((p) => p.data.id === '{post_id}');
+if (!post) throw new Error('Post {post_id} not found in collection');
+
+const {{ Content, headings }} = await post.render();
+const tocHeadings = headings.filter((h) => h.depth === 2);
+---
+
+<PostLayout
+  title={{post.data.title}}
+  description={{post.data.description}}
+  publishDate={{post.data.publishDate}}
+  updateDate={{post.data.updateDate}}
+  dim={{post.data.dim}}
+  tags={{post.data.tags}}
+  heroImage={{post.data.heroImage}}
+  heroAlt={{post.data.heroAlt}}
+  headings={{tocHeadings}}
+>
+  <Content />
+</PostLayout>
+"""
+
 
 def run(cmd, check=True, capture=True):
     """跑 subprocess，預設 capture stdout/stderr，Windows UTF-8。"""
@@ -72,8 +106,23 @@ def parse_frontmatter(md_path: Path) -> dict:
     return fm
 
 
-def check_resources(post_id: str) -> dict:
-    """驗證上架三件套都存在，回傳 frontmatter dict + 路徑。"""
+def generate_route(post_id: str, url_slug: str, title: str, dry_run: bool = False) -> Path:
+    """缺路由就自動產生 src/pages/<urlSlug>.astro（純機械動作不需 Bibo 介入）。"""
+    astro = REPO_ROOT / "src" / "pages" / f"{url_slug}.astro"
+    title_short = title[:20] + ("..." if len(title) > 20 else "")
+    content = ASTRO_ROUTE_TEMPLATE.format(
+        post_id=post_id, url_slug=url_slug, title_short=title_short
+    )
+    if dry_run:
+        print(f"[DRY] 缺路由，會產生：{astro.relative_to(REPO_ROOT).as_posix()}")
+    else:
+        astro.write_text(content, encoding="utf-8", newline="\n")
+        print(f"[OK] 已產生路由：{astro.relative_to(REPO_ROOT).as_posix()}")
+    return astro
+
+
+def check_resources(post_id: str, dry_run: bool = False) -> dict:
+    """驗證/補齊上架三件套，回傳 frontmatter dict + 路徑。"""
     md = REPO_ROOT / "src" / "content" / "posts" / f"{post_id}.md"
     if not md.exists():
         sys.exit(f"[ERR] markdown 不存在：{md}")
@@ -88,7 +137,7 @@ def check_resources(post_id: str) -> dict:
 
     astro = REPO_ROOT / "src" / "pages" / f"{url_slug}.astro"
     if not astro.exists():
-        sys.exit(f"[ERR] 路由不存在：{astro}（依 SOP 6.3 複製範本後改 id）")
+        astro = generate_route(post_id, url_slug, fm.get("title", post_id), dry_run=dry_run)
 
     hero = REPO_ROOT / "public" / "images" / "posts" / post_id / "hero.jpg"
     if not hero.exists():
@@ -198,7 +247,7 @@ def main():
 
     print(f"[RUN] publish_post.py {args.post_id}{' [DRY RUN]' if args.dry_run else ''}\n")
 
-    info = check_resources(args.post_id)
+    info = check_resources(args.post_id, dry_run=args.dry_run)
 
     if args.dry_run:
         print("\n--dry-run：略過 commit/push/驗證/GSC")
