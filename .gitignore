@@ -23,6 +23,10 @@ scripts/gsc-credentials.json
 scripts/*-credentials.json
 **/*-service-account*.json
 
+# secrets — OAuth user credentials
+scripts/oauth-client.json
+scripts/oauth-token.json
+
 # macOS
 .DS_Store
 
