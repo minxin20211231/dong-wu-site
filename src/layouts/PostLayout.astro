@@ -35,6 +35,11 @@ const fullTitle = `${title}｜懂屋 Know Your Home`;
 
 const fmt = (d: Date) =>
   d.toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric' });
+
+const ogImageUrl = heroImage
+  ? new URL(heroImage, Astro.site).toString()
+  : new URL('/og-default.jpg', Astro.site).toString();
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString();
 ---
 
 <!DOCTYPE html>
@@ -45,16 +50,23 @@ const fmt = (d: Date) =>
   <meta name="generator" content={Astro.generator} />
   <title>{fullTitle}</title>
   {description && <meta name="description" content={description} />}
+  <link rel="canonical" href={canonicalUrl} />
 
   <meta property="og:title" content={fullTitle} />
   {description && <meta property="og:description" content={description} />}
   <meta property="og:type" content="article" />
   <meta property="og:locale" content="zh_TW" />
   <meta property="og:site_name" content="懂屋 Know Your Home" />
+  <meta property="og:url" content={canonicalUrl} />
+  <meta property="og:image" content={ogImageUrl} />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  {heroAlt && <meta property="og:image:alt" content={heroAlt} />}
 
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content={fullTitle} />
   {description && <meta name="twitter:description" content={description} />}
+  <meta name="twitter:image" content={ogImageUrl} />
 
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 </head>

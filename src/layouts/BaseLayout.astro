@@ -4,16 +4,23 @@ import '../styles/global.css';
 interface Props {
   title: string;
   description?: string;
+  image?: string;
+  imageAlt?: string;
 }
 
 const {
   title,
   description = '懂屋 Know Your Home — 你必須要知道的所有裝修知識都在這裡。從預算規劃、風格選擇到驗收避雷，新手屋主的裝修導航。',
+  image,
+  imageAlt,
 } = Astro.props;
 
 const fullTitle = title === '懂屋 Know Your Home'
   ? title
   : `${title}｜懂屋 Know Your Home`;
+
+const ogImageUrl = image ? new URL(image, Astro.site).toString() : null;
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString();
 ---
 
 <!DOCTYPE html>
@@ -24,16 +31,27 @@ const fullTitle = title === '懂屋 Know Your Home'
   <meta name="generator" content={Astro.generator} />
   <title>{fullTitle}</title>
   <meta name="description" content={description} />
+  <link rel="canonical" href={canonicalUrl} />
 
   <meta property="og:title" content={fullTitle} />
   <meta property="og:description" content={description} />
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="zh_TW" />
   <meta property="og:site_name" content="懂屋 Know Your Home" />
+  <meta property="og:url" content={canonicalUrl} />
+  {ogImageUrl && (
+    <>
+      <meta property="og:image" content={ogImageUrl} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      {imageAlt && <meta property="og:image:alt" content={imageAlt} />}
+    </>
+  )}
 
-  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:card" content={ogImageUrl ? 'summary_large_image' : 'summary'} />
   <meta name="twitter:title" content={fullTitle} />
   <meta name="twitter:description" content={description} />
+  {ogImageUrl && <meta name="twitter:image" content={ogImageUrl} />}
 
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
