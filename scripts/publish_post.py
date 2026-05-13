@@ -154,6 +154,181 @@ def check_resources(post_id: str, dry_run: bool = False) -> dict:
     }
 
 
+# ============================================================
+# SEO lint — B0 P0 機械化檢查（對應 SOP/seo_checklist.md §B P0）
+# ============================================================
+
+# 列入「空話 / TODO 殘留」黑名單的 heroAlt，命中即 fail
+HERO_ALT_BLACKLIST = {
+    "示意圖", "image", "img", "todo", "tbd", "首圖", "封面",
+    "cover", "圖片", "插圖", "示意",
+}
+
+# 內鏈計數時排除外站
+EXTERNAL_LINK_PREFIXES = ("http://", "https://", "mailto:", "tel:", "#")
+
+# 直答段字數允許範圍（中文字 + ASCII 字符各算 1）
+LEAD_PARA_MIN = 50
+LEAD_PARA_MAX = 200  # 放寬到 200（B0-09 原 50-80 太嚴；實務首段常 100-180）
+
+# title / description 長度上限（SEO 慣例）
+TITLE_MAX = 60       # 含品牌後綴會超，故只檢 frontmatter 原文
+DESC_MIN = 80
+DESC_MAX = 160
+
+# 內文圖檔大小上限（KB）— 對應 B0-08
+IMG_MAX_KB = 250
+
+
+def _read_md_body(md_path: Path) -> str:
+    """讀 markdown body（去掉 frontmatter）。"""
+    text = md_path.read_text(encoding="utf-8")
+    m = re.match(r"^---\s*\n.*?\n---\s*\n", text, re.DOTALL)
+    return text[m.end():] if m else text
+
+
+def _extract_images(body: str):
+    """抓 ![alt](url)；回傳 list of (alt, url)。"""
+    return re.findall(r"!\[([^\]]*)\]\(([^)\s]+)(?:\s+\"[^\"]*\")?\)", body)
+
+
+def _extract_links(body: str):
+    """抓 [text](url) 但排除圖片（負向 lookbehind for !）。"""
+    return re.findall(r"(?<!!)\[([^\]]+)\]\(([^)\s]+)(?:\s+\"[^\"]*\")?\)", body)
+
+
+def _first_paragraph(body: str) -> str:
+    """取第一個非空、非 heading、非 image-only 段落。"""
+    for chunk in re.split(r"\n\s*\n", body.strip()):
+        chunk = chunk.strip()
+        if not chunk:
+            continue
+        if chunk.startswith("#"):
+            continue
+        # image-only 段落跳過
+        if re.fullmatch(r"!\[[^\]]*\]\([^)]+\)", chunk):
+            continue
+        return chunk
+    return ""
+
+
+def seo_lint(info: dict) -> None:
+    """B0 P0 機械化檢查；任何 ❌ 直接 sys.exit。"""
+    fm = info["fm"]
+    md_path = info["md"]
+    body = _read_md_body(md_path)
+
+    errors: list[str] = []
+    warns: list[str] = []
+
+    def ok(code: str, msg: str):
+        print(f"  [SEO {code}] ✅ {msg}")
+
+    def fail(code: str, msg: str):
+        errors.append(f"[SEO {code}] ❌ {msg}")
+        print(f"  [SEO {code}] ❌ {msg}")
+
+    def warn(code: str, msg: str):
+        warns.append(f"[SEO {code}] ⚠️  {msg}")
+        print(f"  [SEO {code}] ⚠️  {msg}")
+
+    print("\n--- SEO lint（B0 P0）---")
+
+    # B0-01 title 長度（不含品牌後綴）
+    title = fm.get("title", "")
+    if not title:
+        fail("B0-01", "title 缺")
+    elif len(title) > TITLE_MAX:
+        warn("B0-01", f"title {len(title)} 字 > {TITLE_MAX}（SERP 截斷風險）")
+    else:
+        ok("B0-01", f"title {len(title)} 字")
+
+    # B0-02 description 長度
+    desc = fm.get("description", "")
+    if not desc:
+        fail("B0-02", "description 缺")
+    elif not (DESC_MIN <= len(desc) <= DESC_MAX):
+        fail("B0-02", f"description {len(desc)} 字 不在 {DESC_MIN}-{DESC_MAX} 範圍")
+    else:
+        ok("B0-02", f"description {len(desc)} 字")
+
+    # B0-11 publishDate + updateDate
+    if not fm.get("publishDate"):
+        fail("B0-11", "publishDate 缺")
+    else:
+        ok("B0-11", f"publishDate={fm['publishDate']}")
+    if not fm.get("updateDate"):
+        warn("B0-11", "updateDate 缺（Article Schema dateModified 將 fallback publishDate）")
+
+    # heroAlt 非空話（B0-07 首圖版）
+    hero_alt = fm.get("heroAlt", "").strip().lower()
+    if not hero_alt:
+        fail("B0-07h", "heroAlt 缺")
+    elif hero_alt in HERO_ALT_BLACKLIST:
+        fail("B0-07h", f"heroAlt 是空話「{fm['heroAlt']}」（黑名單），請寫具體場景")
+    else:
+        ok("B0-07h", f"heroAlt={fm['heroAlt'][:30]}...")
+
+    # B0-07 內文 img 全帶 alt
+    imgs = _extract_images(body)
+    if not imgs:
+        warn("B0-07", "內文沒有圖片（內容圖通常該有）")
+    else:
+        missing_alt = [u for a, u in imgs if not a.strip()]
+        if missing_alt:
+            fail("B0-07", f"{len(missing_alt)} 張圖無 alt：{missing_alt[:3]}")
+        else:
+            ok("B0-07", f"內文 {len(imgs)} 張圖全有 alt")
+
+    # B0-08 內文圖檔大小
+    public_dir = REPO_ROOT / "public"
+    oversize = []
+    for _alt, url in imgs:
+        if url.startswith("/"):
+            f = public_dir / url.lstrip("/")
+            if f.exists():
+                kb = f.stat().st_size / 1024
+                if kb > IMG_MAX_KB:
+                    oversize.append(f"{url} {kb:.0f}KB")
+    if oversize:
+        warn("B0-08", f"{len(oversize)} 張圖 > {IMG_MAX_KB}KB：{oversize[:3]}")
+    elif imgs:
+        ok("B0-08", f"全部圖檔 ≤ {IMG_MAX_KB}KB")
+
+    # B0-09 直答段字數
+    lead = _first_paragraph(body)
+    lead_len = len(lead)
+    if lead_len < LEAD_PARA_MIN:
+        fail("B0-09", f"首段 {lead_len} 字 < {LEAD_PARA_MIN}（GEO 引用提取不足）")
+    elif lead_len > LEAD_PARA_MAX:
+        warn("B0-09", f"首段 {lead_len} 字 > {LEAD_PARA_MAX}（長尾尚可、但可考慮拆段）")
+    else:
+        ok("B0-09", f"首段 {lead_len} 字")
+
+    # B0-10 內鏈 ≥ 2
+    links = _extract_links(body)
+    internal = [u for _t, u in links if not u.startswith(EXTERNAL_LINK_PREFIXES)]
+    if len(internal) < 2:
+        fail("B0-10", f"內鏈只有 {len(internal)} 條（需 ≥ 2，topic cluster）")
+    else:
+        ok("B0-10", f"內鏈 {len(internal)} 條")
+
+    # B0-06 H1 唯一（content collection 慣例：H1 不在 md 內，由 layout 從 title 產）
+    h1_count = len(re.findall(r"^# (?!#)", body, flags=re.MULTILINE))
+    if h1_count > 0:
+        fail("B0-06", f"md 內出現 {h1_count} 個 H1（H1 應由 layout 從 title 產，md 內只能用 H2+）")
+    else:
+        ok("B0-06", "md 內無 H1（layout 處理）")
+
+    print(f"--- SEO lint 結果：{len(errors)} fail / {len(warns)} warn ---")
+
+    if errors:
+        print("\n[ERR] SEO lint 未通過。修正下列項目，或加 --skip-lint 強跑：")
+        for e in errors:
+            print(f"  {e}")
+        sys.exit(1)
+
+
 def stage_and_commit(post_id: str, info: dict):
     """git add 三個路徑 + commit。"""
     paths = [
@@ -240,6 +415,7 @@ def main():
     ap = argparse.ArgumentParser(description="dong-wu.com 一鍵上架腳本")
     ap.add_argument("post_id", help="文章 ID，例：D003")
     ap.add_argument("--dry-run", action="store_true", help="只跑檢查、不 push")
+    ap.add_argument("--skip-lint", action="store_true", help="跳過 SEO lint（緊急上架用、留紀錄）")
     args = ap.parse_args()
 
     if not re.fullmatch(r"D\d{3,}", args.post_id):
@@ -248,6 +424,11 @@ def main():
     print(f"[RUN] publish_post.py {args.post_id}{' [DRY RUN]' if args.dry_run else ''}\n")
 
     info = check_resources(args.post_id, dry_run=args.dry_run)
+
+    if args.skip_lint:
+        print("\n[WARN] --skip-lint 啟用，略過 SEO lint")
+    else:
+        seo_lint(info)
 
     if args.dry_run:
         print("\n--dry-run：略過 commit/push/驗證/GSC")
