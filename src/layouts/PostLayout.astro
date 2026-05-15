@@ -77,12 +77,28 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString();
 
   <header class="post-topbar">
     <div class="post-topbar-inner">
-      <a href="/" class="post-brand">懂屋 · Know Your Home</a>
-      <nav class="post-nav" aria-label="主導覽">
+      <a href="/" class="post-brand">
+        <img src="/images/logo-dongwu-white.png" alt="" class="post-brand-logo" width="32" height="32" />
+        <span class="brand-full">懂屋 · Know Your Home</span>
+        <span class="brand-short">懂屋</span>
+      </a>
+      <nav class="post-nav post-nav-desktop" aria-label="主導覽">
         <a href="/about/" class="post-nav-link">關於懂屋</a>
         <a href="/posts/" class="post-nav-link">所有文章</a>
         <a href="#" class="post-nav-cta" aria-disabled="true" tabindex="-1">訂閱電子報</a>
       </nav>
+      <div class="post-nav-mobile">
+        <a href="#" class="post-nav-cta post-nav-cta-mobile" aria-disabled="true" tabindex="-1">訂閱電子報</a>
+        <details class="post-menu">
+          <summary class="post-menu-toggle" aria-label="開啟選單">
+            <span class="post-menu-bars" aria-hidden="true"></span>
+          </summary>
+          <nav class="post-menu-panel" aria-label="次要導覽">
+            <a href="/about/" class="post-menu-link">關於懂屋</a>
+            <a href="/posts/" class="post-menu-link">所有文章</a>
+          </nav>
+        </details>
+      </div>
     </div>
   </header>
 
@@ -216,9 +232,13 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString();
     align-items: center;
     justify-content: space-between;
     gap: 16px;
+    position: relative;
   }
 
   .post-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
     font-size: 0.9rem;
     letter-spacing: 0.18em;
     color: #F5F0E8;
@@ -228,6 +248,21 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString();
 
   .post-brand:hover {
     color: #B8977E;
+  }
+
+  .post-brand-logo {
+    height: 32px;
+    width: 32px;
+    display: block;
+    flex-shrink: 0;
+  }
+
+  .post-brand .brand-short {
+    display: none;
+  }
+
+  .post-nav-mobile {
+    display: none;
   }
 
   .post-nav {
@@ -272,30 +307,108 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString();
 
   @media (max-width: 720px) {
     .post-topbar-inner {
-      gap: 12px;
+      padding: 12px 16px;
+      gap: 10px;
     }
-    .post-nav {
-      gap: 14px;
-    }
-    .post-nav-link {
-      font-size: 0.8rem;
-    }
-    .post-nav-cta {
-      padding: 7px 14px;
-      font-size: 0.78rem;
-    }
-    .post-nav-cta::after {
-      display: none;
-    }
-  }
-
-  @media (max-width: 480px) {
     .post-brand {
-      font-size: 0.78rem;
-      letter-spacing: 0.1em;
+      font-size: 1.25rem;
+      letter-spacing: 0.06em;
+      gap: 10px;
     }
-    .post-nav-link[href="/about/"] {
+    .post-brand-logo {
+      height: 36px;
+      width: 36px;
+    }
+    .post-brand .brand-full {
       display: none;
+    }
+    .post-brand .brand-short {
+      display: inline;
+    }
+    .post-nav-desktop {
+      display: none;
+    }
+    .post-nav-mobile {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .post-nav-cta-mobile {
+      padding: 8px 14px;
+      font-size: 0.82rem;
+      letter-spacing: 0.04em;
+      background: #B8977E;
+      border-color: #B8977E;
+      color: #1C1815 !important;
+      cursor: default;
+    }
+    .post-nav-cta-mobile::after {
+      display: none;
+    }
+    .post-menu {
+      position: relative;
+    }
+    .post-menu-toggle {
+      list-style: none;
+      cursor: pointer;
+      width: 36px;
+      height: 36px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      border: 1px solid rgba(184, 151, 126, 0.32);
+    }
+    .post-menu-toggle::-webkit-details-marker {
+      display: none;
+    }
+    .post-menu-bars,
+    .post-menu-bars::before,
+    .post-menu-bars::after {
+      display: block;
+      width: 18px;
+      height: 2px;
+      background: #F5F0E8;
+      border-radius: 2px;
+    }
+    .post-menu-bars {
+      position: relative;
+    }
+    .post-menu-bars::before,
+    .post-menu-bars::after {
+      content: "";
+      position: absolute;
+      left: 0;
+    }
+    .post-menu-bars::before {
+      top: -6px;
+    }
+    .post-menu-bars::after {
+      top: 6px;
+    }
+    .post-menu[open] .post-menu-panel {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      background: #1C1815;
+      border: 1px solid rgba(184, 151, 126, 0.28);
+      border-radius: 12px;
+      padding: 14px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-width: 160px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+      z-index: 60;
+    }
+    .post-menu-link {
+      color: #F5F0E8;
+      font-size: 0.9rem;
+      letter-spacing: 0.04em;
+      font-weight: 600;
+    }
+    .post-menu-link:hover {
+      color: #B8977E;
     }
   }
 
@@ -421,6 +534,46 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString();
   }
 
   .post-content blockquote p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* 文末註解區塊（生詞解釋、補充說明） */
+  .post-content .post-footnote {
+    background: #FAF7F2;
+    border: 1px solid #E8DCC8;
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 48px 0 0;
+    font-size: 0.92rem;
+    color: #444;
+    line-height: 1.75;
+  }
+
+  .post-content .post-footnote + .post-footnote {
+    margin-top: 16px;
+  }
+
+  .post-content .post-footnote-label {
+    display: inline-block;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    color: #B8977E;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .post-content .post-footnote-title {
+    font-weight: 700;
+    color: #1A1A1A;
+    margin: 0 0 6px;
+    font-size: 1rem;
+  }
+
+  .post-content .post-footnote p {
+    margin: 0 0 8px;
+  }
+
+  .post-content .post-footnote p:last-child {
     margin-bottom: 0;
   }
 
