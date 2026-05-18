@@ -204,16 +204,40 @@ const articleSchema = {
 
   <footer class="post-footer">
     <div class="post-footer-inner">
-      <div class="post-footer-brand">
-        <p class="post-footer-name">懂屋 Know Your Home</p>
-        <p class="post-footer-slogan">新成屋屋主的裝修決策系統</p>
-      </div>
+      <div class="post-footer-grid">
+        <div class="post-footer-col post-footer-brand-col">
+          <p class="post-footer-name">懂屋 Know Your Home</p>
+          <p class="post-footer-slogan">新成屋屋主的裝修決策系統</p>
+        </div>
 
-      <nav class="post-footer-nav">
-        <a href="#" aria-disabled="true" class="disabled">免費裝修診斷（即將上線）</a>
-        <a href="https://minxindesign.com.tw" target="_blank" rel="noopener">設計師工作室</a>
-        <a href="#" aria-disabled="true" class="disabled">訂閱週報（即將上線）</a>
-      </nav>
+        <div class="post-footer-col">
+          <p class="post-footer-coltitle">站內導覽</p>
+          <nav class="post-footer-nav">
+            <a href="/about/">關於懂屋</a>
+            <a href="/posts/">所有文章</a>
+            <a href="https://minxindesign.com.tw" target="_blank" rel="noopener">設計師工作室</a>
+            <a href="#" aria-disabled="true" class="disabled">訂閱電子報（即將上線）</a>
+          </nav>
+        </div>
+
+        <div class="post-footer-col">
+          <p class="post-footer-coltitle">公司資訊</p>
+          <dl class="post-footer-info">
+            <div>
+              <dt>公司全名</dt>
+              <dd>旻欣室內裝修設計工作室</dd>
+            </div>
+            <div>
+              <dt>統一編號</dt>
+              <dd>92493311</dd>
+            </div>
+            <div>
+              <dt>設計師資歷</dt>
+              <dd>建築物室內設計乙級<br />建築物室內裝修工程管理乙級</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
 
       <p class="post-footer-copy">© 2026 懂屋 Know Your Home · 旻欣室內裝修設計工作室</p>
     </div>
@@ -871,7 +895,7 @@ const articleSchema = {
     }
   }
 
-  /* 文章底部 footer */
+  /* 文章底部 footer — 3 欄式（品牌 / 站內導覽 / 公司資訊） */
   .post-footer {
     border-top: 1px solid #EAEAEA;
     background: #FAFAFA;
@@ -879,39 +903,56 @@ const articleSchema = {
   }
 
   .post-footer-inner {
-    max-width: 720px;
+    max-width: 1180px;
     margin: 0 auto;
-    padding: 40px 24px 32px;
+    padding: 48px 24px 28px;
   }
 
-  .post-footer-brand {
-    margin-bottom: 24px;
+  .post-footer-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1.6fr;
+    gap: 48px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid #EAEAEA;
+    margin-bottom: 20px;
+  }
+
+  .post-footer-col {
+    min-width: 0;
+  }
+
+  .post-footer-coltitle {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #1A1A1A;
+    letter-spacing: 0.12em;
+    margin-bottom: 16px;
+    text-transform: uppercase;
   }
 
   .post-footer-name {
-    font-size: 1rem;
+    font-size: 1.05rem;
     font-weight: 700;
     color: #1A1A1A;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
   }
 
   .post-footer-slogan {
     font-size: 0.875rem;
     color: #666;
+    line-height: 1.6;
   }
 
   .post-footer-nav {
     display: flex;
-    flex-wrap: wrap;
-    gap: 24px;
-    margin-bottom: 24px;
-    padding-bottom: 24px;
-    border-bottom: 1px solid #EAEAEA;
+    flex-direction: column;
+    gap: 10px;
   }
 
   .post-footer-nav a {
     font-size: 0.875rem;
     color: #555 !important;
+    text-decoration: none;
   }
 
   .post-footer-nav a:hover {
@@ -924,9 +965,43 @@ const articleSchema = {
     pointer-events: none;
   }
 
-  .post-footer-copy {
-    font-size: 0.8rem;
+  .post-footer-info {
+    margin: 0;
+  }
+
+  .post-footer-info > div {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 12px;
+    padding: 6px 0;
+    font-size: 0.82rem;
+    line-height: 1.65;
+  }
+
+  .post-footer-info dt {
     color: #888;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  .post-footer-info dd {
+    margin: 0;
+    color: #333;
+  }
+
+  .post-footer-copy {
+    font-size: 0.78rem;
+    color: #888;
+  }
+
+  @media (max-width: 720px) {
+    .post-footer-grid {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+    .post-footer-info > div {
+      grid-template-columns: 90px 1fr;
+    }
   }
 
   /* 手機版微調 */
