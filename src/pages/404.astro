@@ -1,0 +1,190 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="找不到頁面" description="這個網址在懂屋找不到對應的內容。可能網址打錯了，或文章已經搬家。">
+  <header class="nf-topbar">
+    <div class="nf-topbar-inner">
+      <a href="/" class="nf-brand">
+        <img src="/images/logo-dongwu-white.png" alt="" class="nf-brand-logo" width="32" height="32" />
+        <span>懂屋 · Know Your Home</span>
+      </a>
+      <nav class="nf-nav" aria-label="主導覽">
+        <a href="/about/" class="nf-nav-link">關於懂屋</a>
+        <a href="/posts/" class="nf-nav-link">所有文章</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="nf-main">
+    <div class="nf-inner">
+      <p class="nf-code">404</p>
+      <h1 class="nf-title">這頁找不到了</h1>
+      <p class="nf-text">
+        這個網址在懂屋沒有對應的內容。可能是網址打錯，或文章已經調整位置。
+      </p>
+
+      <div class="nf-actions">
+        <a href="/" class="nf-btn primary">回首頁</a>
+        <a href="/posts/" class="nf-btn secondary">看所有文章</a>
+      </div>
+
+      <p class="nf-hint">
+        覺得是我們的問題？歡迎到
+        <a href="https://minxindesign.com.tw" target="_blank" rel="noopener">設計師工作室</a>
+        留言告訴我們。
+      </p>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .nf-topbar {
+    border-bottom: 1px solid rgba(184, 151, 126, 0.22);
+    background: #1C1815;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .nf-topbar-inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .nf-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    letter-spacing: 0.18em;
+    color: #F5F0E8;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .nf-brand-logo {
+    height: 32px;
+    width: 32px;
+    display: block;
+  }
+
+  .nf-nav {
+    display: flex;
+    gap: 28px;
+  }
+
+  .nf-nav-link {
+    font-size: 0.9rem;
+    color: #F5F0E8;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .nf-nav-link:hover {
+    color: #B8977E;
+  }
+
+  .nf-main {
+    background: #FFFFFF;
+    min-height: calc(100vh - 70px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 24px;
+  }
+
+  .nf-inner {
+    max-width: 560px;
+    text-align: center;
+  }
+
+  .nf-code {
+    font-size: 5rem;
+    font-weight: 700;
+    color: #B8977E;
+    line-height: 1;
+    margin-bottom: 16px;
+    letter-spacing: -0.02em;
+  }
+
+  .nf-title {
+    font-size: clamp(1.6rem, 3vw, 2rem);
+    font-weight: 700;
+    color: #1A1A1A;
+    margin-bottom: 16px;
+  }
+
+  .nf-text {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: #555;
+    margin-bottom: 32px;
+  }
+
+  .nf-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+  }
+
+  .nf-btn {
+    display: inline-block;
+    padding: 12px 28px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .nf-btn.primary {
+    background: linear-gradient(135deg, #B8977E 0%, #D4886A 100%);
+    color: #FFFFFF;
+    box-shadow: 0 6px 16px rgba(184, 151, 126, 0.25);
+  }
+
+  .nf-btn.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(212, 136, 106, 0.35);
+  }
+
+  .nf-btn.secondary {
+    border: 1px solid #DDD;
+    color: #555;
+    background: transparent;
+  }
+
+  .nf-btn.secondary:hover {
+    border-color: #B8977E;
+    color: #B8977E;
+  }
+
+  .nf-hint {
+    font-size: 0.875rem;
+    color: #888;
+    line-height: 1.7;
+  }
+
+  .nf-hint a {
+    color: #B8977E;
+    text-decoration: underline;
+  }
+
+  @media (max-width: 480px) {
+    .nf-code {
+      font-size: 4rem;
+    }
+    .nf-main {
+      padding: 48px 20px;
+    }
+  }
+</style>

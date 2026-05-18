@@ -1,21 +1,16 @@
 ---
-import '../styles/global.css';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const description = '懂屋 Know Your Home 由旻欣室內裝修設計工作室（統一編號 92493311）創辦人鄭晏旻（Bibo）打造，是給新手屋主的裝修決策系統，整合決策流程、專案管理工具與個人化數據。';
 ---
 
-<!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="generator" content={Astro.generator} />
-  <title>關於懂屋｜Know Your Home</title>
-  <meta name="description" content="懂屋是給新手屋主的裝修決策系統。我們相信好的設計不是被動等待，而是從理解開始。" />
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-</head>
-<body class="post-body">
+<BaseLayout title="關於懂屋" description={description}>
   <header class="post-topbar">
     <div class="post-topbar-inner">
-      <a href="/" class="post-brand">懂屋 · Know Your Home</a>
+      <a href="/" class="post-brand">
+        <img src="/images/logo-dongwu-white.png" alt="" class="post-brand-logo" width="32" height="32" />
+        <span>懂屋 · Know Your Home</span>
+      </a>
       <nav class="post-nav" aria-label="主導覽">
         <a href="/about/" class="post-nav-link" aria-current="page">關於懂屋</a>
         <a href="/posts/" class="post-nav-link">所有文章</a>
@@ -88,6 +83,33 @@ import '../styles/global.css';
         </div>
       </section>
 
+      <section class="about-section about-company">
+        <h2>公司資訊</h2>
+        <dl class="about-company-info">
+          <div>
+            <dt>公司全名</dt>
+            <dd>旻欣室內裝修設計工作室</dd>
+          </div>
+          <div>
+            <dt>統一編號</dt>
+            <dd>92493311</dd>
+          </div>
+          <div>
+            <dt>設計師資歷</dt>
+            <dd>
+              建築物室內設計乙級<br />
+              建築物室內裝修工程管理乙級
+            </dd>
+          </div>
+          <div>
+            <dt>官方網站</dt>
+            <dd>
+              <a href="https://minxindesign.com.tw" target="_blank" rel="noopener">minxindesign.com.tw</a>
+            </dd>
+          </div>
+        </dl>
+      </section>
+
       <section class="about-cta">
         <p>準備好了嗎？</p>
         <div class="about-cta-actions">
@@ -110,11 +132,10 @@ import '../styles/global.css';
         <a href="https://minxindesign.com.tw" target="_blank" rel="noopener">設計師工作室</a>
         <a href="#" aria-disabled="true" class="disabled">訂閱電子報（即將上線）</a>
       </nav>
-      <p class="post-footer-copy">© 2026 懂屋 Know Your Home · 旻欣室內裝修設計工作室</p>
+      <p class="post-footer-copy">© 2026 懂屋 Know Your Home · 旻欣室內裝修設計工作室 · 統編 92493311</p>
     </div>
   </footer>
-</body>
-</html>
+</BaseLayout>
 
 <style is:global>
   body.post-body {
@@ -151,10 +172,20 @@ import '../styles/global.css';
   }
 
   .post-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
     font-size: 0.9rem;
     letter-spacing: 0.18em;
     color: #F5F0E8 !important;
     font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .post-brand-logo {
+    height: 32px;
+    width: 32px;
+    display: block;
     flex-shrink: 0;
   }
 
@@ -357,6 +388,52 @@ import '../styles/global.css';
     margin-bottom: 12px;
   }
 
+  /* 公司資訊（E-E-A-T 信任訊號） */
+  .about-company-info {
+    background: #FAFAFA;
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin: 0;
+  }
+
+  .about-company-info > div {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid #EFEFEF;
+  }
+
+  .about-company-info > div:last-child {
+    border-bottom: none;
+  }
+
+  .about-company-info dt {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #555;
+    letter-spacing: 0.04em;
+  }
+
+  .about-company-info dd {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: #1A1A1A;
+  }
+
+  .about-company-info dd a {
+    color: #B8977E;
+    text-decoration: underline;
+  }
+
+  @media (max-width: 480px) {
+    .about-company-info > div {
+      grid-template-columns: 1fr;
+      gap: 4px;
+    }
+  }
+
   /* CTA */
   .about-cta {
     margin-top: 80px;
@@ -468,6 +545,12 @@ import '../styles/global.css';
   .post-footer-copy {
     font-size: 0.8rem;
     color: #888;
+  }
+
+  /* about 套 post-body 樣式（白底） */
+  body {
+    background: #FFFFFF;
+    color: #1A1A1A;
   }
 
   /* RWD */

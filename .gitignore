@@ -39,3 +39,7 @@ Thumbs.db
 
 # Astro
 .astro/
+
+# Python
+__pycache__/
+*.pyc

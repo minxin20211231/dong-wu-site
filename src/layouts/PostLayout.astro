@@ -38,8 +38,43 @@ const fmt = (d: Date) =>
 
 const ogImageUrl = heroImage
   ? new URL(heroImage, Astro.site).toString()
-  : new URL('/og-default.jpg', Astro.site).toString();
+  : null;
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString();
+const logoUrl = new URL('/images/logo-dongwu-white.png', Astro.site).toString();
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: title,
+  description: description || undefined,
+  image: ogImageUrl || undefined,
+  datePublished: publishDate.toISOString(),
+  dateModified: (updateDate || publishDate).toISOString(),
+  author: {
+    '@type': 'Person',
+    name: '鄭晏旻',
+    alternateName: 'Bibo',
+    url: new URL('/about/', Astro.site).toString(),
+    jobTitle: '室內設計師',
+    worksFor: {
+      '@type': 'Organization',
+      name: '旻欣室內裝修設計工作室',
+      url: 'https://minxindesign.com.tw',
+    },
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: '懂屋 Know Your Home',
+    logo: {
+      '@type': 'ImageObject',
+      url: logoUrl,
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': canonicalUrl,
+  },
+};
 ---
 
 <!DOCTYPE html>
@@ -58,17 +93,23 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString();
   <meta property="og:locale" content="zh_TW" />
   <meta property="og:site_name" content="懂屋 Know Your Home" />
   <meta property="og:url" content={canonicalUrl} />
-  <meta property="og:image" content={ogImageUrl} />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  {heroAlt && <meta property="og:image:alt" content={heroAlt} />}
+  {ogImageUrl && (
+    <>
+      <meta property="og:image" content={ogImageUrl} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      {heroAlt && <meta property="og:image:alt" content={heroAlt} />}
+    </>
+  )}
 
-  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:card" content={ogImageUrl ? 'summary_large_image' : 'summary'} />
   <meta name="twitter:title" content={fullTitle} />
   {description && <meta name="twitter:description" content={description} />}
-  <meta name="twitter:image" content={ogImageUrl} />
+  {ogImageUrl && <meta name="twitter:image" content={ogImageUrl} />}
 
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+  <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
 </head>
 <body class="post-body">
   <div class="post-progress-bar" aria-hidden="true">
