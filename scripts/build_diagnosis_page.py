@@ -11,7 +11,14 @@ build_diagnosis_page.py — 把文欣交付的診斷書 HTML 轉成 Astro page�
 3. 路徑批次替換（懂屋_XXX 中文資料夾 → /ai-diagnosis/英文資料夾）
 4. <style> → <style is:inline>、<script> → <script is:inline>
 5. 包 BaseLayout
-6. Email Gate 改造 placeholder（等 MailerLite credentials 進來再填）
+
+⚠️⚠️ 重跑會覆蓋以下「Email Gate 改造」——這些不在來源 HTML，是手動加在 .astro。
+   重跑後必須手動補回，否則訂閱功能失效：
+   a. MAILERLITE_CONFIG.endpoint = 'https://dongwu-subscribe.minxin20211231.workers.dev'
+   b. subscribeEmail() 函數 + submitEmailGate/submitEmailReminder 內的 subscribeEmail 呼叫
+   c. email gate / reminder banner 文案：「我寄了一封歡迎信到…（含 20 項清單）」（非「PDF 已寄到信箱」）
+   d. 移除結果頁「✉ 重寄到信箱」按鈕 + resendDiagnosis 函數
+   詳見 100_Todo/懂屋電子報訂閱_接通清單.md
 """
 
 from pathlib import Path
@@ -113,6 +120,8 @@ def main():
     print(f"輸出：{DEST}")
     print(f"  title: {meta['title']}")
     print(f"  size: {len(astro_content):,} 字元")
+    print("\n⚠️  已覆蓋 Email Gate 改造！必須手動補回 a-d（見本檔開頭 docstring）")
+    print("    否則訂閱失效：endpoint 變空、文案回「PDF」、resend 按鈕復活")
 
 
 if __name__ == "__main__":

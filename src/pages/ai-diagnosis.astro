@@ -4434,14 +4434,7 @@ async function subscribeEmail(email, source) {
   }
 }
 
-// 重寄診斷書 PDF 到已訂閱信箱（結果頁按鈕）
-function resendDiagnosis() {
-  let email = '';
-  try { email = localStorage.getItem('dongwu_email') || ''; } catch (e) {}
-  if (!email) { showToast('還沒有訂閱紀錄，請先在上方填 email'); return; }
-  subscribeEmail(email, 'resend');
-  showToast('已重新寄送到 ' + email);
-}
+// （已移除 resendDiagnosis：診斷書改網頁解鎖、無 PDF 可重寄，2026-05-25）
 
 function submitEmailReminder(e) {
   e.preventDefault();
@@ -5055,7 +5048,6 @@ function generateResults() {
     <!-- 列印 / 重寄 / Restart / Home -->
     <div style="text-align:center;margin-top:24px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
       <button class="result-action-btn secondary" onclick="printReport()" style="font-size:12px;display:inline-flex;align-items:center;gap:6px">🖨 列印 / 存 PDF</button>
-      <button class="result-action-btn secondary" onclick="resendDiagnosis()" style="font-size:12px;display:inline-flex;align-items:center;gap:6px">✉ 重寄到信箱</button>
       <button class="result-action-btn secondary" onclick="restartQuiz()" style="font-size:12px;display:inline-flex;align-items:center;gap:6px"><svg class="icon"><use href="#i-refresh"/></svg>重新填寫診斷書</button>
       <button class="result-action-btn secondary" onclick="goHome()" style="font-size:12px;display:inline-flex;align-items:center;gap:6px"><svg class="icon"><use href="#i-home"/></svg>回首頁</button>
     </div>
