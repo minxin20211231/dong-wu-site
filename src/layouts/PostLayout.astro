@@ -27,9 +27,10 @@ interface Props {
   heroImage?: string;
   heroAlt?: string;
   headings?: TocHeading[];
+  body?: string;
 }
 
-const { title, description, publishDate, updateDate, dim, tags, heroImage, heroAlt, headings = [] } = Astro.props;
+const { title, description, publishDate, updateDate, dim, tags, heroImage, heroAlt, headings = [], body } = Astro.props;
 
 const fullTitle = `${title}｜懂屋 Know Your Home`;
 
@@ -75,6 +76,49 @@ const articleSchema = {
     '@id': canonicalUrl,
   },
 };
+
+// FAQPage Schema — 從文章內文「## 常見問題 FAQ」區塊解析 ### Qn 問答，
+// 唯一來源是 markdown body（不在 frontmatter 重抄），全站文章共用同一機制。
+function stripMd(s: string): string {
+  return s
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, '')        // 圖片
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')      // 連結 → 文字
+    .replace(/\*\*([^*]+)\*\*/g, '$1')            // 粗體
+    .replace(/[*_`]/g, '')                         // 殘留標記
+    .replace(/^\s*[-–]\s+/gm, '')                  // 項目符號
+    .replace(/^\s*\d+\.\s+/gm, '')                 // 數字清單
+    .replace(/\s*\n\s*/g, ' ')                     // 換行 → 空格
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
+function extractFaq(src?: string): { q: string; a: string }[] {
+  if (!src) return [];
+  const sec = src.match(/##\s*常見問題\s*FAQ\s*\n([\s\S]*?)(?=\n---\s*\n|\n## (?!#)|$)/);
+  if (!sec) return [];
+  const out: { q: string; a: string }[] = [];
+  const re = /###\s*Q\d+[：:]\s*(.+?)\s*\n([\s\S]*?)(?=\n###\s*Q\d+|$)/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(sec[1])) !== null) {
+    const q = stripMd(m[1]);
+    const a = stripMd(m[2]);
+    if (q && a) out.push({ q, a });
+  }
+  return out;
+}
+
+const faqs = extractFaq(body);
+const faqSchema = faqs.length
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    }
+  : null;
 ---
 
 <!DOCTYPE html>
@@ -110,6 +154,7 @@ const articleSchema = {
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
   <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+  {faqSchema && <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />}
 </head>
 <body class="post-body">
   <div class="post-progress-bar" aria-hidden="true">

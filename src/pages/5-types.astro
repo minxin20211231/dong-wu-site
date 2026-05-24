@@ -1,0 +1,653 @@
+---
+// 自動生成 — 來源：文欣交付 2026-05-19 / 懂屋_四型屋主_概覽卡_v1.html
+// 重新生成請跑：python scripts/build_5types_page.py
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout
+  title="五型屋主｜你是哪一型裝修屋主"
+  description="資料控、直覺派、守備型、規劃型、自包派——五種裝修屋主性格，看看你是哪一型，以及最容易卡關的地方。免費 AI 診斷書幫你對號入座。"
+  image="/ai-diagnosis/assets/logo_gold.png"
+  imageAlt="懂屋 Know Your Home"
+>
+<style is:inline>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-dark:#1C1815;
+  --bg-light:#F5F0E8;
+  --bg-cream:#E8DCC8;
+  --accent:#B8977E;
+  --accent2:#D4886A;
+  --warn:#B85A3A;
+  --ok:#6B8F5A;
+  --text-on-cream:#2A2118;
+  --muted-on-cream:#5A4A3D;
+  --border-on-cream:rgba(28,24,21,.10);
+  --border-accent:rgba(184,151,126,.35);
+  --spring:cubic-bezier(.34,1.56,.64,1);
+}
+html{background:#1C1815}
+html,body{font-family:-apple-system,"PingFang TC","Noto Serif TC","Microsoft JhengHei",serif;}
+body{
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;
+  padding:48px 24px;gap:32px;
+  color:var(--text-on-cream);
+  background:#1C1815 url('/ai-diagnosis/assets/footer_whale.png') center top / cover no-repeat fixed;
+}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:linear-gradient(180deg,rgba(28,24,21,.25) 0%,rgba(28,24,21,.55) 50%,rgba(28,24,21,.9) 100%);
+}
+body > *{position:relative;z-index:1}
+/* ===== Top label ===== */
+.page-label{
+  color:#B8977E;font-size:11px;letter-spacing:5px;text-transform:uppercase;font-weight:800;
+  display:flex;gap:12px;align-items:center;
+}
+.page-label::before,.page-label::after{
+  content:'';width:36px;height:1px;background:rgba(184,151,126,.5);
+}
+
+/* ===== Type nav (sticky chips) ===== */
+.type-nav{
+  position:sticky;top:16px;z-index:50;
+  display:flex;gap:10px;flex-wrap:wrap;justify-content:center;
+  padding:10px 14px;border-radius:30px;
+  background:rgba(28,24,21,.85);backdrop-filter:blur(20px);
+  border:1px solid rgba(184,151,126,.25);
+  box-shadow:0 12px 32px rgba(0,0,0,.4);
+}
+.type-nav-item{
+  font-size:12px;letter-spacing:2px;font-weight:700;
+  color:rgba(245,240,232,.7);
+  padding:8px 16px;border-radius:30px;
+  border:1px solid rgba(184,151,126,.22);
+  text-decoration:none;transition:all .2s ease;
+}
+.type-nav-item:hover{
+  color:#fff;border-color:var(--accent2);
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+}
+
+/* ===== Cards container ===== */
+#cards-container{
+  display:flex;flex-direction:column;gap:48px;
+  align-items:center;
+}
+.card{scroll-margin-top:80px;}
+
+/* ===== Card ===== */
+.card{
+  width:720px;
+  background:var(--bg-cream);
+  border-radius:32px;
+  position:relative;overflow:hidden;
+  box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 0 1px rgba(184,151,126,.18);
+  isolation:isolate;
+}
+/* paper texture */
+.card::before{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='320'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.30 0 0 0 0 0.22 0 0 0 0 0.14 0 0 0 0.06 0'/></filter><rect width='100%' height='100%' filter='url(%23p)'/></svg>");
+  opacity:.55;mix-blend-mode:multiply;
+}
+/* soft accent glow top-right */
+.card::after{
+  content:'';position:absolute;
+  width:420px;height:420px;border-radius:50%;
+  filter:blur(80px);opacity:.28;pointer-events:none;z-index:0;
+  background:radial-gradient(circle,var(--accent2),transparent 70%);
+  top:-140px;right:-140px;
+}
+.card > *{position:relative;z-index:1}
+
+/* ===== Hero (title + character) ===== */
+.hero{
+  display:grid;grid-template-columns:1fr 1fr;gap:32px;
+  padding:48px 48px 24px;
+  align-items:start;
+}
+.hero-left{display:flex;flex-direction:column;gap:18px;padding-top:8px}
+.hero-left .tags{margin-top:auto;padding-top:12px}
+
+/* "YOUR HOUSE OWNER" 標籤 */
+.owner-badge{
+  display:inline-flex;align-items:center;
+  font-size:10px;letter-spacing:4px;font-weight:700;
+  color:var(--muted-on-cream);
+  background:rgba(255,255,255,.5);
+  border:1px solid rgba(28,24,21,.10);
+  padding:7px 16px;border-radius:30px;
+  align-self:flex-start;
+  text-transform:uppercase;
+}
+
+/* 主標題：宋體大字，cream 上直接顯示 */
+.role-name{
+  font-family:"Noto Serif TC",serif;
+  font-size:46px;font-weight:900;letter-spacing:2px;line-height:1.05;
+  color:var(--text-on-cream);
+  margin:4px 0 0;
+}
+
+/* SPELL block — plain text 無卡片 */
+.spell-block{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.spell-en{
+  font-size:11px;letter-spacing:6px;color:var(--accent);
+  font-weight:800;text-transform:uppercase;
+  font-family:"Archivo Black","Inter",sans-serif;
+}
+.spell-zh{
+  font-family:"Noto Serif TC",serif;
+  font-size:28px;font-weight:900;letter-spacing:6px;
+  color:var(--text-on-cream);line-height:1.1;
+}
+.spell-quote{
+  font-family:"Noto Serif TC",serif;
+  font-size:13.5px;color:var(--muted-on-cream);
+  font-style:italic;letter-spacing:1px;line-height:1.7;
+  margin-top:10px;display:flex;align-items:flex-start;gap:6px;
+}
+.spell-quote::before{
+  content:'\201C';font-size:32px;line-height:.6;color:var(--accent);
+  font-style:normal;font-weight:900;font-family:"Noto Serif TC",serif;
+  flex-shrink:0;margin-top:8px;
+}
+.spell-quote::after{
+  content:'\201D';font-size:32px;line-height:0;color:var(--accent);
+  font-style:normal;font-weight:900;font-family:"Noto Serif TC",serif;
+  flex-shrink:0;align-self:flex-end;margin-bottom:-8px;
+}
+
+.tags{display:flex;flex-wrap:nowrap;gap:6px;margin-top:8px;white-space:nowrap}
+.tag{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:11px;letter-spacing:.5px;
+  color:var(--muted-on-cream);font-weight:700;
+  background:rgba(255,255,255,.5);
+  border:1px solid rgba(28,24,21,.08);
+  padding:6px 11px;border-radius:30px;
+  flex-shrink:0;
+}
+.tag svg{width:12px;height:12px;color:var(--accent);flex-shrink:0}
+
+/* ===== Character art ===== */
+.character-frame{
+  border-radius:24px;
+  aspect-ratio:1/1.05;
+  position:relative;overflow:hidden;
+  background:#FBF6EE;
+  border:1px solid rgba(184,151,126,.18);
+  box-shadow:0 12px 30px rgba(28,24,21,.08);
+}
+.char-image-area{
+  position:relative;height:100%;width:100%;
+  overflow:hidden;border-radius:24px;
+}
+.char-image-area img{
+  width:100%;height:100%;display:block;
+  object-fit:cover;object-position:center center;
+}
+.corner-badge{
+  position:absolute;top:14px;left:14px;z-index:3;
+  font-size:9px;letter-spacing:3px;font-weight:800;
+  color:var(--accent);background:rgba(255,255,255,.85);
+  border:1px solid rgba(184,151,126,.3);
+  padding:4px 10px;border-radius:30px;
+  text-transform:uppercase;
+  backdrop-filter:blur(6px);
+}
+.character-fallback{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:8px;
+  color:rgba(245,240,232,.65);
+  font-size:13px;letter-spacing:2px;text-align:center;line-height:1.6;
+  padding:24px;
+}
+.character-fallback .icon{font-size:48px;opacity:.5}
+
+/* vertical tagline column on the right edge of frame */
+.vtagline{
+  writing-mode:vertical-rl;text-orientation:upright;
+  font-family:"Noto Serif TC",serif;
+  font-size:14px;letter-spacing:8px;line-height:1.4;
+  color:rgba(245,240,232,.92);font-weight:600;
+  padding:28px 0;
+  background:linear-gradient(180deg,#1C1815 0%,#2A2118 100%);
+  display:flex;align-items:flex-start;justify-content:center;
+  position:relative;z-index:3;
+  white-space:nowrap;
+}
+
+/* ===== Body — 兩張獨立卡 + 大圓 icon + 裝飾插畫 ===== */
+.section-stack{
+  margin:24px 48px 0;
+  display:flex;flex-direction:column;gap:18px;
+}
+.section-card{
+  background:#FFFEFC;
+  border:1px solid var(--border-on-cream);
+  border-radius:22px;
+  padding:28px 28px 28px 100px;
+  position:relative;overflow:hidden;
+  box-shadow:0 8px 24px rgba(28,24,21,.06);
+  min-height:140px;
+  display:flex;flex-direction:column;justify-content:center;gap:10px;
+}
+.section-card.warn{
+  background:#FFF5EE;
+  border-color:rgba(184,90,58,.18);
+}
+.section-card .big-icon{
+  position:absolute;left:28px;top:28px;
+  width:54px;height:54px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:24px;font-weight:900;
+  box-shadow:0 6px 16px rgba(184,151,126,.4);
+}
+.section-card.warn .big-icon{
+  background:linear-gradient(135deg,var(--warn),#D8704E);
+  box-shadow:0 6px 16px rgba(184,90,58,.35);
+}
+.section-card .deco-illust{
+  position:absolute;right:18px;top:50%;transform:translateY(-50%);
+  width:130px;height:130px;opacity:.65;pointer-events:none;
+}
+.section-card .deco-illust img{width:100%;height:100%;object-fit:contain}
+.section-title{
+  font-family:"Noto Serif TC",serif;
+  font-size:20px;font-weight:900;letter-spacing:2px;
+  color:var(--text-on-cream);
+}
+.section-text{
+  font-size:14.5px;line-height:1.85;
+  color:var(--text-on-cream);
+  letter-spacing:.5px;
+}
+.section-text strong{
+  color:var(--accent2);font-weight:700;
+}
+.section-card.warn .section-text strong{
+  color:var(--warn);
+}
+
+/* ===== Pairing — 獨立列（米奶底，跟前兩卡區隔）===== */
+.pairing{
+  margin:18px 48px 0;
+  background:#F4EAD8;
+  border:1px solid rgba(184,151,126,.22);
+  border-radius:22px;
+  padding:22px 28px;
+  display:grid;grid-template-columns:auto 1fr;align-items:center;gap:28px;
+  box-shadow:0 8px 24px rgba(28,24,21,.06);
+}
+.pairing .pair-chip{background:#fff}
+.pair-label{
+  display:flex;flex-direction:column;gap:2px;flex-shrink:0;
+}
+.pair-label-title{
+  font-size:13px;letter-spacing:2px;color:var(--text-on-cream);
+  font-weight:800;
+}
+.pair-label-sub{
+  font-size:10px;letter-spacing:2px;color:var(--muted-on-cream);
+  font-weight:600;
+}
+.pair-list{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.pair-chip{
+  display:flex;align-items:center;gap:10px;
+  background:var(--bg-cream);
+  border:1px solid var(--border-on-cream);
+  border-radius:40px;padding:6px 16px 6px 6px;
+  transition:transform .2s ease;
+}
+.pair-chip:hover{transform:translateY(-2px)}
+.pair-avatar{
+  width:48px;height:48px;border-radius:50%;
+  overflow:hidden;flex-shrink:0;
+  background:linear-gradient(135deg,#FFFFFF 0%,#FBF6EE 100%);
+  border:2px solid #fff;
+  box-shadow:0 2px 8px rgba(28,24,21,.12);
+  position:relative;
+}
+.pair-avatar img{
+  position:absolute;
+  width:300%;height:auto;
+  top:-22%;left:50%;
+  transform:translateX(-50%);
+}
+.pair-name{
+  font-size:13px;font-weight:700;color:var(--text-on-cream);
+  letter-spacing:1px;line-height:1.2;
+  display:flex;flex-direction:column;gap:1px;
+}
+.pair-name small{
+  font-size:9.5px;color:var(--muted-on-cream);
+  font-weight:600;letter-spacing:1.5px;
+}
+.pair-cta{
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;border-radius:14px;padding:10px 14px;
+  font-size:11px;letter-spacing:2px;font-weight:800;line-height:1.3;
+  text-align:center;flex-shrink:0;
+  box-shadow:0 6px 16px rgba(184,151,126,.4);
+}
+.pair-cta .arrow{font-size:14px;letter-spacing:0;margin-top:2px}
+
+/* ===== Footer share button ===== */
+.share-btn{
+  display:flex;align-items:center;gap:14px;
+  margin:24px 42px 16px;
+  padding:18px 24px;
+  border:none;cursor:pointer;
+  border-radius:18px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;text-align:left;
+  font-family:inherit;
+  box-shadow:0 10px 28px rgba(184,151,126,.4);
+  transition:transform .2s ease,box-shadow .2s ease;
+  width:calc(100% - 84px);
+}
+.share-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 14px 36px rgba(184,151,126,.5);
+}
+.share-btn:active{transform:translateY(0)}
+.share-icon{
+  width:42px;height:42px;border-radius:50%;
+  background:rgba(255,255,255,.18);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;font-size:20px;
+}
+.share-text{display:flex;flex-direction:column;gap:2px;flex:1}
+.share-title{
+  font-size:15px;font-weight:800;letter-spacing:2px;
+}
+.share-sub{
+  font-size:11px;letter-spacing:1.5px;opacity:.85;
+}
+.share-arrow{
+  font-size:18px;font-weight:900;
+}
+.share-btn{margin:24px 48px 0;width:calc(100% - 96px)}
+
+/* ===== Brand bottom — hashes 米色 + brand-row 深色 ===== */
+.brand-bottom{
+  margin-top:32px;
+  display:grid;grid-template-rows:auto auto;
+  font-size:10.5px;letter-spacing:3px;font-weight:700;
+  text-transform:uppercase;
+}
+.brand-bottom .brand-hashes{
+  display:flex;gap:18px;justify-content:center;flex-wrap:wrap;
+  padding:22px 48px;
+  background:var(--bg-cream);
+  color:var(--accent);font-weight:700;letter-spacing:2px;
+}
+.brand-bottom .brand-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:18px 28px;
+  background:var(--bg-dark);
+  color:rgba(245,240,232,.7);
+}
+.brand-bottom .brand-block{
+  display:flex;align-items:center;gap:10px;
+}
+.brand-bottom .brand-icon{
+  width:24px;height:24px;border-radius:6px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:13px;flex-shrink:0;
+}
+.brand-bottom .brand{
+  color:var(--accent);font-weight:900;letter-spacing:4px;font-size:13px;
+}
+.brand-bottom .brand-en{
+  color:rgba(245,240,232,.65);font-weight:700;letter-spacing:4px;font-size:10.5px;
+}
+.brand-bottom .brand-type{
+  color:rgba(245,240,232,.65);font-weight:700;letter-spacing:3px;
+}
+
+/* meta note */
+.meta-note{
+  color:rgba(245,240,232,.4);font-size:11px;letter-spacing:2px;
+  text-align:center;max-width:720px;line-height:1.7;
+}
+.meta-note code{
+  background:rgba(184,151,126,.12);
+  color:#B8977E;padding:2px 8px;border-radius:6px;
+  font-family:"Noto Sans Mono",monospace;font-size:10px;letter-spacing:0;
+}
+</style>
+
+
+
+
+<!-- Type nav -->
+<nav class="type-nav">
+  <a href="#type-01" class="type-nav-item">01 資料控</a>
+  <a href="#type-02" class="type-nav-item">02 直覺派</a>
+  <a href="#type-03" class="type-nav-item">03 守備型</a>
+  <a href="#type-04" class="type-nav-item">04 規劃型</a>
+  <a href="#type-05" class="type-nav-item">05 自包派</a>
+</nav>
+
+<div id="cards-container"></div>
+
+
+
+<script is:inline>
+const TYPES = [
+  {
+    num: '01',
+    name: '資料控屋主',
+    spell: '全網爬梳術',
+    spellEn: 'SPELL · 01',
+    quote: '「比過 5 家，才知道誰沒在打迷糊仗。」',
+    tags: ['# 考據癖', '# 收藏控', '# 求精準'],
+    img: '/ai-diagnosis/assets/character_resource.png',
+    skill: '<strong>三家報價單你會做成 Excel 對照表</strong>，連「坪計價」「實作計價」「材料另列」這種細節都不放過。Pinterest 收藏破 200 張、Mobile01 每篇後悔文都讀過。在你眼裡，沒有「裝修玄學」這種事 —— <strong>只是還沒查到夠多案例而已。</strong>',
+    stuck: '報價單越比越亂、案例越看越花，<strong>最後選擇癱瘓</strong>。決策延宕常常不是預算問題，<strong>是你還沒看到那張「夠齊」的圖。</strong>',
+    pairs: [
+      { img: '/ai-diagnosis/assets/character_intuitive.png', name: '直覺派', tagline: '一查一感覺', av: 'width:180%;top:-12%;left:50%;' },
+      { img: '/ai-diagnosis/assets/character_solo.png', name: '自包派', tagline: '情報共同體', av: 'width:180%;top:-12%;left:50%;' }
+    ],
+    hashtags: ['# 懂屋診斷', '# 資料控屋主', '# 找你的裝修搭檔']
+  },
+  {
+    num: '02',
+    name: '直覺派屋主',
+    spell: '氛圍直覺術',
+    spellEn: 'SPELL · 02',
+    quote: '「我說不出來，但走進去就知道對不對。」',
+    tags: ['# vibe優先', '# 手感派', '# 感覺領航'],
+    img: '/ai-diagnosis/assets/character_intuitive.png',
+    skill: 'Pinterest 收藏 200 張全是<strong>奶油風／韓系／侘寂</strong>。你說不出「拱形門洞要 1/4 圓還是半圓」，但材質和光線你身體比腦袋先反應。對你來說，<strong>家不是「組合出來的」，是「感覺對了才是家」。</strong>',
+    stuck: '設計師問「為什麼喜歡這個」，你只能說「就是那個感覺」。<strong>最大的雷就是沒有完整設計圖、只靠口頭溝通</strong>—— 做出來的成品跟你腦中差很遠。',
+    pairs: [
+      { img: '/ai-diagnosis/assets/character_resource.png', name: '資料控', tagline: '幫你說明感覺', av: 'width:180%;top:-12%;left:50%;' },
+      { img: '/ai-diagnosis/assets/character_planner.png', name: '規劃型', tagline: '感覺先走規劃補洞', av: 'width:180%;top:-12%;left:50%;' }
+    ],
+    hashtags: ['# 懂屋診斷', '# 直覺派屋主', '# 找你的裝修搭檔']
+  },
+  {
+    num: '03',
+    name: '守備型屋主',
+    spell: '萬全防護術',
+    spellEn: 'SPELL · 03',
+    quote: '「漏水沒人理之前，先把保固寫進合約。」',
+    tags: ['# 防雷王', '# 謹慎派', '# 保固至上'],
+    img: '/ai-diagnosis/assets/character_defender.png',
+    skill: '<strong>防水保固期、五年瑕疵擔保、驗屋報告</strong>你都查過。簽約前你會把每一條條款讀三遍，連「材料品牌寫不寫進報價單」「隱藏工程怎麼驗收」都不放過。<strong>沒寫進合約的承諾，你不信。</strong>',
+    stuck: '隱藏工程（水電、防水、結構）你絕對不省，但<strong>預算容易被「安全配備」吃掉</strong>，美感和個性被擠到後面 —— 做完很實用，但少了一點是「家」的感覺。',
+    pairs: [
+      { img: '/ai-diagnosis/assets/character_planner.png', name: '規劃型', tagline: '雙人謹慎同盟', av: 'width:180%;top:-5%;left:50%;' },
+      { img: '/ai-diagnosis/assets/character_solo.png', name: '自包派', tagline: '幫你顧雷區', av: 'width:180%;top:-12%;left:50%;' }
+    ],
+    hashtags: ['# 懂屋診斷', '# 守備型屋主', '# 找你的裝修搭檔']
+  },
+  {
+    num: '04',
+    name: '規劃型屋主',
+    spell: '十年推演術',
+    spellEn: 'SPELL · 04',
+    quote: '「樂齡、寵物、爸媽搬來住，我都已經算進來。」',
+    tags: ['# 長線思維', '# 未來題', '# 預判專家'],
+    img: '/ai-diagnosis/assets/character_planner.png',
+    skill: '別人想三房兩廳，你想的是<strong>全齡宅 + 樂齡動線 + 親子彈性</strong>。「五年後生第二胎要不要改格局？」「爸媽十年後輪椅進得來嗎？」「貓跳台之後不養貓還能變什麼？」你全在腦中演算。<strong>每個設計選擇都是「為未來預留」。</strong>',
+    stuck: '想得太遠時容易在「萬一」中<strong>陷入無止盡的取捨</strong>，決策延宕。或為了「保留彈性」，最後家失去了當下的個性 —— 變成一個「以後可能用得到」的倉庫。',
+    pairs: [
+      { img: '/ai-diagnosis/assets/character_intuitive.png', name: '直覺派', tagline: '感覺找路徑', av: 'width:180%;top:-12%;left:50%;' },
+      { img: '/ai-diagnosis/assets/character_defender.png', name: '守備型', tagline: '雙人謹慎同盟', av: 'width:180%;top:-5%;left:50%;' }
+    ],
+    hashtags: ['# 懂屋診斷', '# 規劃型屋主', '# 找你的裝修搭檔']
+  },
+  {
+    num: '05',
+    name: '自包派屋主',
+    spell: '親手掌舵術',
+    spellEn: 'SPELL · 05',
+    quote: '「省下的不是設計費，是時間換的。」',
+    tags: ['# 親力親為', '# 工班直連', '# 全程操盤'],
+    img: '/ai-diagnosis/assets/character_solo.png',
+    skill: '水電、泥作、木工、油漆、系統櫃 —— <strong>每個工項你親自比 3 家、估價、排程、監工</strong>。為了省下設計費和統包管理費，你願意花一年研究。對你來說，<strong>「品質、時間、金錢只能挑兩個」，你選擇了品質和金錢。</strong>',
+    stuck: '工序銜接、工程款怎麼分期、師傅放鳥怎麼辦、驗收糾紛 —— 全部自己扛。<strong>沒有設計師擋在你和工班中間</strong>，師傅放鳥或品質出包時，你才是第一線。<strong>漏估細項時，總價反而可能比找統包還貴。</strong>',
+    pairs: [
+      { img: '/ai-diagnosis/assets/character_resource.png', name: '資料控', tagline: '情報共同體', av: 'width:280%;top:-18%;left:50%;' },
+      { img: '/ai-diagnosis/assets/character_defender.png', name: '守備型', tagline: '幫你顧雷區', av: 'width:280%;top:-18%;left:50%;' }
+    ],
+    hashtags: ['# 懂屋診斷', '# 自包派屋主', '# 找你的裝修搭檔']
+  }
+];
+
+// 標籤 icon (3 種重複使用)
+const TAG_ICONS = {
+  target: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>',
+  recycle: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>',
+  star: '<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l2.6 7h7.4l-6 4.4 2.3 7.6L12 16l-6.3 5 2.3-7.6-6-4.4h7.4z"/></svg>',
+  spark: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v8M12 14v8M2 12h8M14 12h8M5 5l5 5M14 14l5 5M19 5l-5 5M10 14l-5 5"/></svg>'
+};
+
+// 裝飾插畫改用 codex 生成的 PNG（fallback 內嵌 SVG）
+const DECO_SKILL_IMG = '/ai-diagnosis/assets/icon_skill.png';
+const DECO_STUCK_IMG = '/ai-diagnosis/assets/icon_stuck.png';
+
+function renderCard(t, idx) {
+  const total = TYPES.length;
+  const tagIcons = ['target','recycle','star','spark'];
+  const tagsHtml = t.tags.map((x,i) =>
+    `<span class="tag">${TAG_ICONS[tagIcons[i]]||TAG_ICONS.star}<span>${x.replace(/^#\s*/,'')}</span></span>`
+  ).join('');
+  const pairsHtml = t.pairs.map(p =>
+    `<div class="pair-chip">
+       <div class="pair-avatar"><img src="${p.img}" alt="${p.name}" style="position:absolute;transform:translateX(-50%);${p.av || 'width:300%;top:-15%;left:50%;'}"></div>
+       <div class="pair-name"><span>${p.name}</span><small>${p.tagline}</small></div>
+     </div>`
+  ).join('');
+  const hashHtml = t.hashtags.map(x => `<span>${x}</span>`).join('');
+  return `
+    <div class="card" id="type-${t.num}">
+      <div class="hero">
+        <div class="hero-left">
+          <span class="owner-badge">YOUR HOUSE OWNER</span>
+          <h2 class="role-name">${t.name}</h2>
+          <div class="spell-block">
+            <div class="spell-en">${t.spellEn}</div>
+            <div class="spell-zh">${t.spell}</div>
+            <div class="spell-quote">${t.quote.replace(/^[「『]|[」』]$/g,'')}</div>
+          </div>
+          <div class="tags">${tagsHtml}</div>
+        </div>
+        <div class="character-frame">
+          <div class="char-image-area">
+            <img src="${t.img}" alt="${t.name}"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+            <div class="character-fallback" style="display:none">
+              <div class="icon">⏳</div>
+              <div>角色插畫生成中…<br>codex 完成後自動載入</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="section-stack">
+        <div class="section-card">
+          <div class="big-icon">✓</div>
+          <div class="section-title">絕招特徵</div>
+          <p class="section-text">${t.skill}</p>
+        </div>
+        <div class="section-card warn">
+          <div class="big-icon">⚠</div>
+          <div class="section-title">容易卡關的地方</div>
+          <p class="section-text">${t.stuck}</p>
+        </div>
+      </div>
+      <div class="pairing">
+        <div class="pair-label">
+          <div class="pair-label-title">黃金搭檔</div>
+          <div class="pair-label-sub">PARTNERS</div>
+        </div>
+        <div class="pair-list">${pairsHtml}</div>
+      </div>
+      <button class="share-btn" onclick="shareCard('${t.num}','${t.name}')">
+        <span class="share-icon">↗</span>
+        <span class="share-text">
+          <span class="share-title">分享給你的伴侶測測看</span>
+          <span class="share-sub">看看你們是不是裝修黃金組合</span>
+        </span>
+        <span class="share-arrow">→</span>
+      </button>
+      <div class="brand-bottom">
+        <div class="brand-hashes">${hashHtml}</div>
+        <div class="brand-row">
+          <div class="brand-block">
+            <img src="/ai-diagnosis/assets/logo_gold.png" alt="懂屋" style="width:28px;height:28px;object-fit:contain;flex-shrink:0">
+            <span class="brand">懂屋</span>
+            <span class="brand-en">KNOW YOUR HOME</span>
+          </div>
+          <div class="brand-type">OWNER TYPE ${t.num} / 0${total}</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+document.getElementById('cards-container').innerHTML =
+  TYPES.map(renderCard).join('');
+
+async function shareCard(num, name) {
+  const url = window.location.href.split('#')[0] + '#type-' + num;
+  const text = `我是「${name}」— 來測測你的裝修屋主類型，看我們是不是黃金組合 ↓`;
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: '懂屋・五型屋主診斷', text, url });
+      return;
+    } catch (e) { /* user cancelled */ }
+  }
+  try {
+    await navigator.clipboard.writeText(text + '\n' + url);
+    showToast('連結已複製，貼給你的伴侶吧 💌');
+  } catch (e) {
+    prompt('複製這段分享給伴侶：', text + '\n' + url);
+  }
+}
+
+function showToast(msg) {
+  let t = document.getElementById('toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'toast';
+    t.style.cssText = 'position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:rgba(28,24,21,.95);color:#F5F0E8;padding:14px 24px;border-radius:30px;font-size:13px;letter-spacing:1.5px;font-weight:600;z-index:9999;box-shadow:0 12px 32px rgba(0,0,0,.4);transition:opacity .3s;';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.style.opacity = '0'; }, 2400);
+}
+</script>
+
+
+</BaseLayout>

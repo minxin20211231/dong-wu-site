@@ -1,0 +1,218 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const description = '訂閱完成！這是懂屋送你的《20 項預算隱形清單》——避開報價單上沒寫、但一定會花到的隱形支出。';
+
+// 20 項預算隱形清單（來源：電子書附錄；工程管理費統一 5-10%）
+const stages = [
+  {
+    title: '開工前準備',
+    note: '最常被遺忘',
+    items: [
+      ['室內裝修許可證', '依法規需申請（含簽證費與規費），避開檢舉停工風險'],
+      ['大樓裝修保證金', '確認金額（通常完工後退回），需準備現金'],
+      ['公共區域保護', '電梯、走道牆面與地板保護（需符合管委會規範）'],
+      ['室內地板保護', '建議鋪三層（防潮布＋防震泡棉＋夾板）防重物砸傷'],
+      ['垃圾清運費', '確認報價是「一式」還是「以車計價」（含上樓搬運費）'],
+      ['冷氣排水測試', '必做！開工前確認暢通，釐清建商責任'],
+    ],
+  },
+  {
+    title: '基礎工程隱藏細節',
+    note: '報價單常省略',
+    items: [
+      ['插座迴路新增', '廚房高功率電器（烤箱／洗碗機）需獨立插座迴路'],
+      ['弱電箱整理', '網路線更新、Mesh 設備空間預留'],
+      ['冷媒管配置', '確認是否含洗洞與「超過 5 公尺」的超長管費用'],
+      ['門框／踢腳板修補', '拆除舊踢腳板需含批土油漆修補費'],
+      ['冷熱水管試壓', '確認接頭無滲漏（尤其浴室與廚房）'],
+    ],
+  },
+  {
+    title: '裝修與收尾階段',
+    note: '入住前最後關卡',
+    items: [
+      ['天花板高度補償', '遇樑柱過低需包樑，工法複雜單價較高'],
+      ['窗簾盒預留', '預留電動窗簾電源與足夠深度（雙層簾約 25cm）'],
+      ['油漆跳色費', '標準報價通常全室一色，跳色需補工資'],
+      ['系統櫃五金', '確認是否含緩衝滑軌、鉸鍊（一般／進口價差大）'],
+      ['玻璃與鏡面', '玄關鏡、衣櫃門片玻璃通常另計'],
+      ['燈具安裝費', '自購燈具通常需另付安裝工資（約 $300-500／盞）'],
+      ['工程粗清', '施工中的廢料清運（不含細清）'],
+      ['完工細清', '必做！入住前深度清潔（含櫃內、窗溝）'],
+      ['工程管理費', '專業監工與協調費用（通常為總價 5-10%）'],
+    ],
+  },
+];
+
+let n = 0;
+---
+
+<BaseLayout title="訂閱完成" description={description}>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="/" class="brand">
+        <img src="/images/logo-dongwu-white.png" alt="" class="brand-logo" width="32" height="32" />
+        <span>懂屋 · Know Your Home</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="glow-bg">
+    <section class="hero container">
+      <p class="eyebrow">SUBSCRIBED</p>
+      <h1 class="hero-title">訂閱完成，歡迎上船 🐳</h1>
+      <p class="hero-lead">
+        我是懂屋的設計師 Bibo，之後每週信裡見。<br />
+        先把這份送你 👇
+      </p>
+    </section>
+
+    <section class="checklist container">
+      <div class="checklist-head">
+        <h2 class="checklist-title">《20 項預算隱形清單》</h2>
+        <p class="checklist-sub">拿到報價單時逐項核對，是不是已經列入、或設計師有沒有口頭說明。</p>
+        <p class="checklist-warn">⚠️ 若報價單缺少其中 5 項以上，未來追加預算的風險很高。</p>
+        <button class="print-btn" onclick="window.print()">🖨️ 列印 / 存成 PDF</button>
+      </div>
+
+      {stages.map((stage) => (
+        <div class="stage">
+          <div class="stage-head">
+            <h3 class="stage-title">{stage.title}</h3>
+            <span class="stage-note">{stage.note}</span>
+          </div>
+          <ul class="item-list">
+            {stage.items.map((item) => {
+              n += 1;
+              return (
+                <li class="item">
+                  <span class="item-num">{n}</span>
+                  <div class="item-body">
+                    <strong class="item-name">{item[0]}</strong>
+                    <span class="item-desc">{item[1]}</span>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      ))}
+    </section>
+
+    <section class="next container">
+      <h2 class="next-title">接下來你可以</h2>
+      <div class="next-grid">
+        <a href="/ai-diagnosis/" class="next-card">
+          <span class="next-emoji">🧭</span>
+          <strong>回去看你的裝修診斷書</strong>
+          <span class="next-desc">重看你的專屬診斷結果</span>
+        </a>
+        <a href="/customization-checklist-by-stage/" class="next-card">
+          <span class="next-emoji">📋</span>
+          <strong>預售屋客變必做清單</strong>
+          <span class="next-desc">交屋前要搞定的事，分階段列給你</span>
+        </a>
+        <a href="/customization-kitchen-utilities/" class="next-card">
+          <span class="next-emoji">🍳</span>
+          <strong>客變廚房水電配置</strong>
+          <span class="next-desc">高功率電器的迴路與管線眉角</span>
+        </a>
+        <a href="/customization-bathroom-wet-dry/" class="next-card">
+          <span class="next-emoji">🚿</span>
+          <strong>客變衛浴乾濕分離</strong>
+          <span class="next-desc">交屋前先處理，省下二次拆改</span>
+        </a>
+        <a href="https://www.threads.net/@bibo_burpee" class="next-card" target="_blank" rel="noopener">
+          <span class="next-emoji">💬</span>
+          <strong>追蹤設計師日常</strong>
+          <span class="next-desc">Threads @bibo_burpee</span>
+        </a>
+        <div class="next-card next-card--soon">
+          <span class="next-emoji">🎥</span>
+          <strong>裝修預算健檢直播</strong>
+          <span class="next-desc">6/4（三）晚上開講，報名連結近期開放</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <style>
+    .topbar { border-bottom: 1px solid var(--border); background: var(--bg-deeper); }
+    .topbar-inner { max-width: 1080px; margin: 0 auto; padding: 14px 24px; display: flex; align-items: center; }
+    .brand { display: flex; align-items: center; gap: 10px; color: var(--text); font-weight: 700; font-size: 15px; letter-spacing: .5px; }
+    .brand-logo { width: 32px; height: 32px; object-fit: contain; }
+
+    .hero { text-align: center; padding: 80px 24px 40px; }
+    .eyebrow { font-size: 12px; letter-spacing: 4px; color: var(--accent); font-weight: 600; margin-bottom: 18px; }
+    .hero-title {
+      font-size: clamp(28px, 5vw, 44px); font-weight: 900; line-height: 1.2; margin-bottom: 18px;
+      background: linear-gradient(135deg, var(--text) 30%, var(--accent) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .hero-lead { font-size: 16px; color: var(--muted); line-height: 1.8; }
+
+    .checklist { max-width: 720px; padding: 30px 24px 20px; }
+    .checklist-head { text-align: center; margin-bottom: 36px; }
+    .checklist-title { font-size: clamp(22px, 4vw, 30px); font-weight: 800; margin-bottom: 12px; }
+    .checklist-sub { font-size: 14px; color: var(--muted); line-height: 1.7; margin-bottom: 12px; }
+    .checklist-warn {
+      font-size: 13.5px; color: var(--accent2); font-weight: 600; line-height: 1.6;
+      background: rgba(212,136,106,.08); border: 1px solid rgba(212,136,106,.25);
+      border-radius: 10px; padding: 12px 16px; margin: 0 auto 20px; max-width: 520px;
+    }
+    .print-btn {
+      background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; border: none;
+      border-radius: 50px; padding: 11px 26px; font-size: 14px; font-weight: 700; cursor: pointer;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .print-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px var(--glow); }
+
+    .stage { margin-bottom: 32px; }
+    .stage-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+    .stage-title { font-size: 18px; font-weight: 800; color: var(--text); }
+    .stage-note { font-size: 12px; color: var(--accent); letter-spacing: 1px; }
+
+    .item-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .item {
+      display: flex; gap: 14px; align-items: flex-start;
+      background: rgba(255,252,248,.04); border: 1px solid var(--border);
+      border-radius: 12px; padding: 14px 16px; transition: border-color var(--transition);
+    }
+    .item:hover { border-color: rgba(184,151,126,.4); }
+    .item-num {
+      flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #1C1815;
+      display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 900;
+    }
+    .item-body { display: flex; flex-direction: column; gap: 3px; }
+    .item-name { font-size: 15px; font-weight: 700; color: var(--text); }
+    .item-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+    .next { padding: 50px 24px 90px; max-width: 920px; }
+    .next-title { text-align: center; font-size: 22px; font-weight: 800; margin-bottom: 28px; }
+    .next-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+    .next-card {
+      display: flex; flex-direction: column; gap: 5px;
+      background: rgba(255,252,248,.04); border: 1px solid var(--border);
+      border-radius: 14px; padding: 20px; color: var(--text); transition: all var(--transition);
+    }
+    a.next-card:hover { transform: translateY(-4px); border-color: rgba(184,151,126,.45); box-shadow: 0 12px 32px var(--glow2); }
+    .next-emoji { font-size: 24px; }
+    .next-card strong { font-size: 15px; font-weight: 700; }
+    .next-desc { font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+    .next-card--soon { opacity: .6; cursor: default; }
+
+    @media print {
+      .topbar, .hero, .next, .print-btn { display: none; }
+      :root { --bg-deeper: #fff; --bg: #fff; --text: #1C1815; --muted: #555; }
+      body { background: #fff; color: #1C1815; }
+      .item, .checklist-warn { border-color: #ccc; background: #fff; }
+      .item-name, .stage-title { color: #1C1815; }
+    }
+    @media (max-width: 640px) {
+      .hero { padding-top: 56px; }
+      .stage-head { flex-direction: column; gap: 2px; }
+    }
+  </style>
+</BaseLayout>

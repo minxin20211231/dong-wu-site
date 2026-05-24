@@ -60,6 +60,7 @@ const tocHeadings = headings.filter((h) => h.depth === 2);
   heroImage={{post.data.heroImage}}
   heroAlt={{post.data.heroAlt}}
   headings={{tocHeadings}}
+  body={{post.body}}
 >
   <Content />
 </PostLayout>
