@@ -4279,8 +4279,11 @@ function showResults() {
     });
   }, 200);
 
-  // 背景預先截好屋主類型卡片圖（給分享用），延遲讓角色圖與字體載入完
-  setTimeout(precacheCardImage, 1800);
+  // 背景預先抓好對應類型的分享卡片圖（給分享按鈕用）
+  setTimeout(() => {
+    const k = document.querySelector('.arch-card')?.dataset.archKey;
+    if (k) precacheShareImage(k);
+  }, 400);
 }
 
 // ══════════ TOC ══════════
@@ -4357,56 +4360,21 @@ function buildResultsTOC() {
 }
 
 // ══════════ ARCHETYPE SHARE ══════════
-// ══════════ 屋主類型卡片截圖（分享整張卡，而非只有角色圖）══════════
-let _h2cPromise = null;
-function loadHtml2Canvas() {
-  if (window.html2canvas) return Promise.resolve(window.html2canvas);
-  if (_h2cPromise) return _h2cPromise;
-  _h2cPromise = new Promise((resolve, reject) => {
-    const s = document.createElement('script');
-    s.src = '/ai-diagnosis/vendor/html2canvas.min.js';  // 本地同源，不依賴 CDN
-    s.onload = () => resolve(window.html2canvas);
-    s.onerror = reject;
-    document.head.appendChild(s);
-  });
-  return _h2cPromise;
-}
-
+// 分享「預先渲染好的靜態卡片圖」(/ai-diagnosis/share/{key}.jpg)。
+// 不用 html2canvas 即時截圖——它在手機上會把卡片渲染變形；靜態圖是 Playwright
+// 截真實渲染、像素級正確、5 型各一張。
 let _cardImageFile = null;   // 快取的卡片圖 File
-let _cardImageBusy = false;
+let _cardImageKey = null;
 
-async function generateCardImage() {
-  const card = document.querySelector('.arch-card');
-  if (!card) return null;
-  let h2c;
-  try { h2c = await loadHtml2Canvas(); } catch (e) { return null; }
-  // 截圖時暫時隱藏「分享」按鈕，避免它出現在分享圖裡
-  const shareBtn = card.querySelector('.arch-share-btn');
-  const prev = shareBtn ? shareBtn.style.display : null;
-  if (shareBtn) shareBtn.style.display = 'none';
-  let file = null;
+// 結果頁顯示後背景先抓好對應類型的卡片圖快取（iOS Safari 分享需在手勢當下、避免非同步延遲）
+async function precacheShareImage(key) {
+  if (!key || (_cardImageKey === key && _cardImageFile)) return;
   try {
-    const canvas = await h2c(card, {
-      backgroundColor: '#1C1815',
-      scale: Math.min(window.devicePixelRatio || 1, 2),
-      useCORS: true,
-      logging: false,
-    });
-    const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
-    if (blob) file = new File([blob], '懂屋_屋主類型.png', { type: 'image/png' });
-  } catch (e) { /* 截圖失敗 → 分享退回純文字+連結 */ }
-  if (shareBtn) shareBtn.style.display = prev;
-  return file;
-}
-
-// 結果頁顯示後，背景先把卡片截好快取起來。
-// 目的：iOS Safari 要求 navigator.share 在點擊當下觸發，若點擊後才非同步截圖會失去手勢而失敗。
-function precacheCardImage() {
-  if (_cardImageBusy || _cardImageFile) return;
-  _cardImageBusy = true;
-  generateCardImage()
-    .then(f => { _cardImageFile = f; })
-    .finally(() => { _cardImageBusy = false; });
+    const resp = await fetch(`/ai-diagnosis/share/${key}.jpg`);
+    const blob = await resp.blob();
+    _cardImageFile = new File([blob], '懂屋_屋主類型.jpg', { type: 'image/jpeg' });
+    _cardImageKey = key;
+  } catch (e) { /* 失敗則分享時再抓 */ }
 }
 
 async function shareArchetype(key, name, imgSrc) {
@@ -4414,8 +4382,15 @@ async function shareArchetype(key, name, imgSrc) {
   const text = `我是「${name}」— 來測測你的裝修屋主類型，看看我們是不是黃金組合 ↓`;
   const title = '懂屋・5 型屋主診斷';
 
-  // 優先用預快取的卡片圖；還沒好就現場截一次
-  let file = _cardImageFile || await generateCardImage();
+  // 用預先渲染好的靜態卡片圖（優先快取，否則現抓）
+  let file = (_cardImageKey === key && _cardImageFile) ? _cardImageFile : null;
+  if (!file) {
+    try {
+      const resp = await fetch(`/ai-diagnosis/share/${key}.jpg`);
+      const blob = await resp.blob();
+      file = new File([blob], `懂屋_${name}.jpg`, { type: 'image/jpeg' });
+    } catch (e) { /* 抓不到則退回純文字+連結 */ }
+  }
 
   // 行動裝置：Web Share API 分享卡片圖 + 文字 + 連結
   if (navigator.share) {
@@ -4693,7 +4668,7 @@ function renderArchetypeCard(arch) {
   const cleanQuote = t.quote.replace(/^[「『"]|[」』"]$/g,'');
   return `
   <div class="anim-in" data-chapter="屋主類型" style="margin:32px auto;max-width:720px">
-    <div class="arch-card">
+    <div class="arch-card" data-arch-key="${arch.primary}">
       <div class="arch-hero">
         <div class="arch-hero-left">
           <span class="arch-owner-badge">YOUR HOUSE OWNER</span>
