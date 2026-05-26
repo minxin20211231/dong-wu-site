@@ -51,3 +51,7 @@ Thumbs.db
 # Python
 __pycache__/
 *.pyc
+
+# OG 首圖產生器（本地工具）
+_make_og.py
+_verify_*.mjs

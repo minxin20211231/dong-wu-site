@@ -96,8 +96,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 <BaseLayout
   title="{title}"
   description="{desc}"
-  image="/ai-diagnosis/assets/logo_gold.png"
-  imageAlt="懂屋 Know Your Home"
+  image="/ai-diagnosis/assets/og-diagnosis.jpg"
+  imageAlt="免費 AI 裝修診斷書｜懂屋 Know Your Home"
 >
 {body}
 </BaseLayout>
