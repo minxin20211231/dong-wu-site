@@ -4468,7 +4468,7 @@ const MAILERLITE_CONFIG = {
   endpoint: 'https://dongwu-subscribe.minxin20211231.workers.dev', // Worker 已部署 2026-05-24
 };
 
-async function subscribeEmail(email, source) {
+async function subscribeEmail(email, source, name) {
   if (!MAILERLITE_CONFIG.endpoint) {
     console.info('[MailerLite] endpoint 尚未設定，略過實際送出（email 已暫存本地）');
     return { ok: false, pending: true };
@@ -4477,7 +4477,7 @@ async function subscribeEmail(email, source) {
     const res = await fetch(MAILERLITE_CONFIG.endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email, source: source || 'ai-diagnosis' }),
+      body: JSON.stringify({ email: email, name: name || '', source: source || 'ai-diagnosis' }),
     });
     return { ok: res.ok };
   } catch (err) {
@@ -4492,12 +4492,15 @@ function submitEmailReminder(e) {
   e.preventDefault();
   const input = document.getElementById('emailReminderInput');
   const email = input.value.trim();
+  const nameEl = document.getElementById('nameReminderInput');
+  const name = nameEl ? nameEl.value.trim() : '';
   if (!email || !/.+@.+\..+/.test(email)) {
     input.focus();
     return false;
   }
   try { localStorage.setItem('dongwu_email', email); } catch(err) {}
-  subscribeEmail(email, 'reminder');
+  try { if (name) localStorage.setItem('dongwu_name', name); } catch(err) {}
+  subscribeEmail(email, 'reminder', name);
   const banner = document.getElementById('emailReminderBottom');
   if (banner) {
     banner.classList.add('sent');
@@ -4515,12 +4518,15 @@ function submitEmailGate(e) {
   e.preventDefault();
   const input = document.getElementById('emailGateInput');
   const email = input.value.trim();
+  const nameEl = document.getElementById('nameGateInput');
+  const name = nameEl ? nameEl.value.trim() : '';
   if (!email || !/.+@.+\..+/.test(email)) {
     input.focus();
     return false;
   }
   try { localStorage.setItem('dongwu_email', email); } catch(err) {}
-  subscribeEmail(email, 'gate');
+  try { if (name) localStorage.setItem('dongwu_name', name); } catch(err) {}
+  subscribeEmail(email, 'gate', name);
 
   // 解鎖 locked-zone（動畫淡入）
   const zone = document.getElementById('lockedZone');
@@ -4878,6 +4884,7 @@ function generateResults() {
           <div class="email-gate-sub">每週一封懂屋裝修知識信，<br>訂閱後立即解鎖完整 8 頁 PDF</div>
         </div>
         <form class="email-gate-form" onsubmit="submitEmailGate(event)">
+          <input type="text" placeholder="你的名字（怎麼稱呼你）" id="nameGateInput" autocomplete="name">
           <input type="email" required placeholder="your@email.com" id="emailGateInput" autocomplete="email">
           <button type="submit">訂閱 + 領 PDF <span>→</span></button>
         </form>
@@ -5096,6 +5103,7 @@ function generateResults() {
       <h3 class="email-reminder-title">把這份診斷書收進信箱</h3>
       <p class="email-reminder-sub">每週一封懂屋裝修知識信<br>幫你在簽約前、開工前都還能再翻一次</p>
       <form class="email-reminder-form" onsubmit="submitEmailReminder(event)">
+        <input type="text" placeholder="你的名字（怎麼稱呼你）" id="nameReminderInput" autocomplete="name">
         <input type="email" required placeholder="your@email.com" id="emailReminderInput" autocomplete="email">
         <button type="submit">訂閱 + 領 PDF <span>→</span></button>
       </form>
