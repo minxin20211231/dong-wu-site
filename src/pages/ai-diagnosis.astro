@@ -4135,17 +4135,12 @@ function startQuiz() {
   _toggleSiteHeader(false);
   buildQuiz();
 
-  // Try restoring saved progress
-  const hasSaved = loadFromLocal();
-  if (hasSaved) {
-    const savedPhase = parseInt(localStorage.getItem('dongwu_phase') || '0');
-    restoreUIState();
-    currentPhase = savedPhase;
-    showPhase(savedPhase);
-  } else {
-    currentPhase = 0;
-    showPhase(0);
-  }
+  // 每次進入都是全新空白問卷：清掉上次的記憶與選取，從第 1 部分開始
+  Object.keys(answers).forEach(k => delete answers[k]);
+  Object.keys(checkedSets).forEach(k => delete checkedSets[k]);
+  clearLocal();
+  currentPhase = 0;
+  showPhase(0);
 }
 
 function restoreUIState() {

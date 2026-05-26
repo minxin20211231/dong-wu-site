@@ -1,8 +1,16 @@
 # build output
 dist/
-dist.bak*/
-dist_old_*/
 .output/
+# dist 備份夾（build 輸出，繞 Astro5 Windows silent skip 時產生，不進版控）
+dist.bak*/
+dist_old*/
+dist_bak*/
+dist_tmp*/
+dist_silentskip*/
+
+# 本地部署/維護工具（含 account id 與本機路徑，不進 public repo）
+deploy_pages.py
+_cleanup_dist_bak.py
 
 # dependencies
 node_modules/
