@@ -171,10 +171,10 @@ const faqSchema = faqs.length
       <nav class="post-nav post-nav-desktop" aria-label="主導覽">
         <a href="/about/" class="post-nav-link">關於懂屋</a>
         <a href="/posts/" class="post-nav-link">所有文章</a>
-        <a href="#" class="post-nav-cta" aria-disabled="true" tabindex="-1">訂閱電子報</a>
+        <a href="/subscribe/" class="post-nav-cta">訂閱電子報</a>
       </nav>
       <div class="post-nav-mobile">
-        <a href="#" class="post-nav-cta post-nav-cta-mobile" aria-disabled="true" tabindex="-1">訂閱電子報</a>
+        <a href="/subscribe/" class="post-nav-cta post-nav-cta-mobile">訂閱電子報</a>
         <details class="post-menu">
           <summary class="post-menu-toggle" aria-label="開啟選單">
             <span class="post-menu-bars" aria-hidden="true"></span>
@@ -261,7 +261,7 @@ const faqSchema = faqs.length
             <a href="/about/">關於懂屋</a>
             <a href="/posts/">所有文章</a>
             <a href="https://minxindesign.com.tw" target="_blank" rel="noopener">設計師工作室</a>
-            <a href="#" aria-disabled="true" class="disabled">訂閱電子報（即將上線）</a>
+            <a href="/subscribe/">訂閱電子報</a>
           </nav>
         </div>
 
@@ -393,22 +393,21 @@ const faqSchema = faqs.length
     display: inline-flex;
     align-items: center;
     padding: 9px 22px;
-    border: 1px solid rgba(184, 151, 126, 0.45);
+    border: 1px solid rgba(184, 151, 126, 0.55);
     border-radius: 999px;
     font-size: 0.85rem;
-    color: rgba(245, 240, 232, 0.55) !important;
+    color: #F5F0E8 !important;
     letter-spacing: 0.06em;
     font-weight: 600;
-    cursor: not-allowed;
-    pointer-events: none;
     background: transparent;
+    text-decoration: none;
+    transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
   }
 
-  .post-nav-cta::after {
-    content: "（即將上線）";
-    font-size: 0.78em;
-    opacity: 0.7;
-    margin-left: 4px;
+  .post-nav-cta:hover {
+    background: #B8977E;
+    border-color: #B8977E;
+    color: #1C1815 !important;
   }
 
   @media (max-width: 720px) {
@@ -446,10 +445,6 @@ const faqSchema = faqs.length
       background: #B8977E;
       border-color: #B8977E;
       color: #1C1815 !important;
-      cursor: default;
-    }
-    .post-nav-cta-mobile::after {
-      display: none;
     }
     .post-menu {
       position: relative;

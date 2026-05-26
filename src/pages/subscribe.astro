@@ -1,0 +1,158 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const description = '訂閱懂屋電子報，每週收到新手屋主的裝修知識信，並立刻拿到《20 項預算隱形清單》——避開報價單上沒寫、但一定會花到的隱形支出。';
+---
+
+<BaseLayout title="訂閱電子報" description={description}>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="/" class="brand">
+        <img src="/images/logo-dongwu-white.png" alt="" class="brand-logo" width="32" height="32" />
+        <span class="brand-text">懂屋 · Know Your Home</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="glow-bg">
+    <section class="hero container">
+      <p class="eyebrow">NEWSLETTER</p>
+      <h1 class="hero-title">免費訂閱懂屋電子報</h1>
+      <p class="hero-lead">
+        我是懂屋的設計師 Bibo。每週一封信，<br />
+        把新手屋主最常踩的裝修雷區，<br />
+        用你看得懂的話講給你聽。
+      </p>
+
+      <form id="subscribeForm" class="sub-form" novalidate>
+        <input
+          id="subscribeName"
+          type="text"
+          name="name"
+          class="sub-input"
+          placeholder="你的名字（怎麼稱呼你）"
+          autocomplete="name"
+        />
+        <input
+          id="subscribeInput"
+          type="email"
+          name="email"
+          class="sub-input"
+          placeholder="電子郵件"
+          autocomplete="email"
+          required
+        />
+        <button type="submit" class="sub-btn">加入訂閱</button>
+        <p id="subscribeError" class="sub-error" hidden>請輸入正確的 Email 格式</p>
+        <p class="sub-note">免費・隨時可以取消・我們不會發垃圾信</p>
+      </form>
+    </section>
+
+    <section class="gift container">
+      <div class="gift-card">
+        <span class="gift-emoji">🎁</span>
+        <div class="gift-body">
+          <strong class="gift-title">訂閱就送《20 項預算隱形清單》</strong>
+          <p class="gift-desc">
+            報價單上沒寫、但一定會花到的隱形支出，整理成一張逐項核對表。
+            訂閱後立刻在感謝頁拿到，也可以列印成 PDF。
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <style>
+    .topbar { border-bottom: 1px solid var(--border); background: var(--bg-deeper); }
+    .topbar-inner { max-width: 1080px; margin: 0 auto; padding: 14px 24px; display: flex; align-items: center; }
+    .brand { display: flex; align-items: center; gap: 10px; color: var(--text); font-weight: 700; font-size: 15px; letter-spacing: .5px; text-decoration: none; }
+    .brand-logo { width: 32px; height: 32px; object-fit: contain; }
+
+    .hero { text-align: center; padding: 80px 24px 30px; max-width: 600px; }
+    .eyebrow { font-size: 12px; letter-spacing: 4px; color: var(--accent); font-weight: 600; margin-bottom: 18px; }
+    .hero-title {
+      font-size: clamp(28px, 5vw, 42px); font-weight: 900; line-height: 1.2; margin-bottom: 18px;
+      background: linear-gradient(135deg, var(--text) 30%, var(--accent) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .hero-lead { font-size: 16px; color: var(--muted); line-height: 1.8; margin-bottom: 34px; }
+
+    .sub-form { max-width: 420px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+    .sub-input {
+      width: 100%; padding: 14px 16px; font-size: 15px;
+      background: rgba(255,252,248,.05); border: 1px solid var(--border);
+      border-radius: 12px; color: var(--text); transition: border-color var(--transition);
+    }
+    .sub-input::placeholder { color: var(--muted); }
+    .sub-input:focus { outline: none; border-color: var(--accent); }
+    .sub-btn {
+      width: 100%; padding: 15px 24px; font-size: 16px; font-weight: 800; cursor: pointer;
+      background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #1C1815;
+      border: none; border-radius: 12px; transition: transform .2s, box-shadow .2s; margin-top: 2px;
+    }
+    .sub-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px var(--glow); }
+    .sub-btn:disabled { opacity: .6; cursor: default; transform: none; box-shadow: none; }
+    .sub-error { font-size: 13px; color: var(--accent2); margin-top: 2px; }
+    .sub-note { font-size: 12.5px; color: var(--muted); margin-top: 6px; letter-spacing: .5px; }
+
+    .gift { max-width: 600px; padding: 16px 24px 90px; }
+    .gift-card {
+      display: flex; gap: 16px; align-items: flex-start;
+      background: rgba(255,252,248,.04); border: 1px solid var(--border);
+      border-radius: 16px; padding: 22px 24px;
+    }
+    .gift-emoji { font-size: 30px; line-height: 1; flex-shrink: 0; }
+    .gift-title { display: block; font-size: 16px; font-weight: 800; color: var(--text); margin-bottom: 8px; }
+    .gift-desc { font-size: 13.5px; color: var(--muted); line-height: 1.7; }
+
+    @media (max-width: 560px) {
+      .hero { padding-top: 56px; }
+    }
+  </style>
+
+  <script>
+    const WORKER_ENDPOINT = 'https://dongwu-subscribe.minxin20211231.workers.dev';
+    const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    const form = document.getElementById('subscribeForm') as HTMLFormElement;
+    const nameInput = document.getElementById('subscribeName') as HTMLInputElement;
+    const input = document.getElementById('subscribeInput') as HTMLInputElement;
+    const errorEl = document.getElementById('subscribeError') as HTMLElement;
+    const btn = form?.querySelector('.sub-btn') as HTMLButtonElement;
+
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = input.value.trim().toLowerCase();
+      const name = nameInput.value.trim();
+
+      if (!EMAIL_RE.test(email)) {
+        errorEl.textContent = '請輸入正確的 Email 格式';
+        errorEl.hidden = false;
+        input.focus();
+        return;
+      }
+      errorEl.hidden = true;
+      btn.disabled = true;
+      btn.textContent = '送出中…';
+
+      try { localStorage.setItem('dongwu_email', email); } catch (err) {}
+      try { if (name) localStorage.setItem('dongwu_name', name); } catch (err) {}
+
+      try {
+        const res = await fetch(WORKER_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, name, source: 'subscribe-page' }),
+        });
+        // MailerLite 對新建與已存在的 email 都回 ok；皆導去感謝頁拿清單
+        window.location.href = '/subscribed/';
+        void res;
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = '加入訂閱';
+        errorEl.textContent = '送出失敗，請稍後再試一次';
+        errorEl.hidden = false;
+      }
+    });
+  </script>
+</BaseLayout>
