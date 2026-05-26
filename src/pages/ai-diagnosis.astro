@@ -3653,11 +3653,11 @@ const QUESTIONS = [
   {
     id: 'budget', type: 'radio',
     title: '裝修大概想花多少？',
-    hint: '以 30 坪新成屋為基準，不含家電家具',
+    hint: '選每坪單價，會用你前面填的坪數換算總價，不含家電家具',
     options: [
-      { val:'A', text:'標準型｜150–210 萬（5–7 萬/坪）', fb:'這個預算可以做到「入住即可生活」，系統櫃 + 基礎木作 + 燈具冷氣窗簾都到位。' },
-      { val:'B', text:'精緻型｜210–240 萬（7–8 萬/坪）', fb:'這個預算可以做全屋系統櫃 + 完整木作 + 軟裝，但要排好優先順序才不會超支。' },
-      { val:'C', text:'客製型｜240 萬以上（8–9 萬/坪）', fb:'這個預算可以全室訂製。能不能分辨哪些花得到、哪些感受不到差別，是這個級距的關鍵。' }
+      { val:'A', text:'標準型｜每坪 5–7 萬', fb:'這個預算可以做到「入住即可生活」，系統櫃 + 基礎木作 + 燈具冷氣窗簾都到位。' },
+      { val:'B', text:'精緻型｜每坪 7–8 萬', fb:'這個預算可以做全屋系統櫃 + 完整木作 + 軟裝，但要排好優先順序才不會超支。' },
+      { val:'C', text:'客製型｜每坪 8–9 萬', fb:'這個預算可以全室訂製。能不能分辨哪些花得到、哪些感受不到差別，是這個級距的關鍵。' }
     ]
   },
   // 8 — Q6 家電
@@ -4722,10 +4722,15 @@ function generateResults() {
   const personality = getPersonality(budget, fear);
 
   // Budget numbers (3 級制：標準/精緻/客製)
-  const budgetMap = { A: [150,210], B: [210,240], C: [240,270] };
+  // 每坪單價區間（與 Part 2 選項一致）：標準 5–7、精緻 7–8、客製 8–9 萬/坪
+  // 頭條預算＝實際坪數 × 每坪單價，並守 80 萬承接下限；沒填坪數時回退 30 坪估值
+  const perSqmRange = { A: [5,7], B: [7,8], C: [8,9] };
   const budgetTierLabel = { A:'標準', B:'精緻', C:'客製' }[budget] || '標準';
-  const [bLow, bHigh] = budgetMap[budget] || [150,210];
-  const midB = sqm > 0 ? Math.round(sqm * (bLow + bHigh) / 2 * 10000 / 10000) : null;
+  const [pLow, pHigh] = perSqmRange[budget] || [5,7];
+  const baseSqm = sqm > 0 ? sqm : 30;
+  const bLow = Math.max(Math.round(baseSqm * pLow), 80);
+  const bHigh = Math.max(Math.round(baseSqm * pHigh), 80);
+  const midB = Math.round(baseSqm * (pLow + pHigh) / 2);
 
   // Timeline weeks
   const tlMap = { A: '4–6 週', B: '8–12 週', C: '16–24 週' };
