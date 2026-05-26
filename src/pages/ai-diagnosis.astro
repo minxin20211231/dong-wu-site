@@ -4278,6 +4278,9 @@ function showResults() {
       card.addEventListener('click', () => card.classList.toggle('flipped'));
     });
   }, 200);
+
+  // 背景預先截好屋主類型卡片圖（給分享用），延遲讓角色圖與字體載入完
+  setTimeout(precacheCardImage, 1800);
 }
 
 // ══════════ TOC ══════════
@@ -4354,35 +4357,89 @@ function buildResultsTOC() {
 }
 
 // ══════════ ARCHETYPE SHARE ══════════
+// ══════════ 屋主類型卡片截圖（分享整張卡，而非只有角色圖）══════════
+let _h2cPromise = null;
+function loadHtml2Canvas() {
+  if (window.html2canvas) return Promise.resolve(window.html2canvas);
+  if (_h2cPromise) return _h2cPromise;
+  _h2cPromise = new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = '/ai-diagnosis/vendor/html2canvas.min.js';  // 本地同源，不依賴 CDN
+    s.onload = () => resolve(window.html2canvas);
+    s.onerror = reject;
+    document.head.appendChild(s);
+  });
+  return _h2cPromise;
+}
+
+let _cardImageFile = null;   // 快取的卡片圖 File
+let _cardImageBusy = false;
+
+async function generateCardImage() {
+  const card = document.querySelector('.arch-card');
+  if (!card) return null;
+  let h2c;
+  try { h2c = await loadHtml2Canvas(); } catch (e) { return null; }
+  // 截圖時暫時隱藏「分享」按鈕，避免它出現在分享圖裡
+  const shareBtn = card.querySelector('.arch-share-btn');
+  const prev = shareBtn ? shareBtn.style.display : null;
+  if (shareBtn) shareBtn.style.display = 'none';
+  let file = null;
+  try {
+    const canvas = await h2c(card, {
+      backgroundColor: '#1C1815',
+      scale: Math.min(window.devicePixelRatio || 1, 2),
+      useCORS: true,
+      logging: false,
+    });
+    const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
+    if (blob) file = new File([blob], '懂屋_屋主類型.png', { type: 'image/png' });
+  } catch (e) { /* 截圖失敗 → 分享退回純文字+連結 */ }
+  if (shareBtn) shareBtn.style.display = prev;
+  return file;
+}
+
+// 結果頁顯示後，背景先把卡片截好快取起來。
+// 目的：iOS Safari 要求 navigator.share 在點擊當下觸發，若點擊後才非同步截圖會失去手勢而失敗。
+function precacheCardImage() {
+  if (_cardImageBusy || _cardImageFile) return;
+  _cardImageBusy = true;
+  generateCardImage()
+    .then(f => { _cardImageFile = f; })
+    .finally(() => { _cardImageBusy = false; });
+}
+
 async function shareArchetype(key, name, imgSrc) {
   const url = window.location.href.split('#')[0] + '#arch-' + key;
   const text = `我是「${name}」— 來測測你的裝修屋主類型，看看我們是不是黃金組合 ↓`;
   const title = '懂屋・5 型屋主診斷';
 
-  // 嘗試用 Web Share API 分享圖片 + 文字 + 連結（行動裝置）
+  // 優先用預快取的卡片圖；還沒好就現場截一次
+  let file = _cardImageFile || await generateCardImage();
+
+  // 行動裝置：Web Share API 分享卡片圖 + 文字 + 連結
   if (navigator.share) {
     try {
-      let files = [];
-      // 嘗試把角色圖打包成 File 一起分享
-      if (navigator.canShare) {
-        try {
-          const resp = await fetch(imgSrc);
-          const blob = await resp.blob();
-          const file = new File([blob], `${name}.png`, { type: blob.type || 'image/png' });
-          if (navigator.canShare({ files: [file] })) {
-            files = [file];
-          }
-        } catch (e) { /* image fetch failed, fallback to text-only */ }
+      const data = { title, text, url };
+      if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+        data.files = [file];
       }
-      await navigator.share({ title, text, url, ...(files.length ? { files } : {}) });
+      await navigator.share(data);
       return;
-    } catch (e) { /* user cancelled, no toast needed */ return; }
+    } catch (e) { /* 使用者取消 */ return; }
   }
 
-  // 桌機 fallback：複製連結 + 顯示 IG 限動引導
+  // 桌機 fallback：下載卡片圖 + 複製連結
+  if (file) {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(file);
+    a.download = file.name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  }
   try {
     await navigator.clipboard.writeText(`${text}\n${url}`);
-    showShareToast(`連結已複製！可貼到 IG 限動 / LINE / Threads 分享`);
+    showShareToast(file ? '卡片圖已下載、連結已複製！可貼到 IG 限動 / LINE' : '連結已複製！可貼到 IG 限動 / LINE / Threads 分享');
   } catch (e) {
     prompt('複製這段傳給朋友：', `${text}\n${url}`);
   }
