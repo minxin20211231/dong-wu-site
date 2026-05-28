@@ -204,11 +204,42 @@ let n = 0;
     .next-card--soon { opacity: .6; cursor: default; }
 
     @media print {
-      .topbar, .hero, .next, .print-btn { display: none; }
-      :root { --bg-deeper: #fff; --bg: #fff; --text: #1C1815; --muted: #555; }
-      body { background: #fff; color: #1C1815; }
-      .item, .checklist-warn { border-color: #ccc; background: #fff; }
-      .item-name, .stage-title { color: #1C1815; }
+      /* 隱藏不需列印的區塊 */
+      .topbar, .hero, .next, .print-btn { display: none !important; }
+
+      /* 強制列印背景色與顏色，避免瀏覽器自動移除導致文字變淡 */
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+      body, main { background: #fff !important; color: #1C1815 !important; }
+
+      .checklist { padding-top: 0; }
+      .checklist-title { color: #1C1815 !important; }
+      .checklist-sub { color: #333 !important; }
+
+      /* 警告框：白底深紅邊框＋深紅字，PDF 可讀且醒目 */
+      .checklist-warn {
+        background: #fff !important;
+        border: 1.5px solid #c44d3a !important;
+        color: #c44d3a !important;
+      }
+
+      .stage-head { border-bottom-color: #999 !important; }
+      .stage-title { color: #1C1815 !important; }
+      .stage-note { color: #888 !important; }
+
+      /* 清單項目：白底＋深灰邊框＋避免單項被分頁切斷 */
+      .item {
+        background: #fff !important;
+        border: 1px solid #bbb !important;
+        page-break-inside: avoid;
+      }
+      /* 編號圓圈：gradient 列印不穩，改純黑底白字 */
+      .item-num {
+        background: #1C1815 !important;
+        color: #fff !important;
+      }
+      .item-name { color: #1C1815 !important; }
+      .item-desc { color: #444 !important; }
     }
     @media (max-width: 640px) {
       .hero { padding-top: 56px; }
