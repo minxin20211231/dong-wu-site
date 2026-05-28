@@ -4260,6 +4260,7 @@ function showResults() {
   document.getElementById('progress-bar').style.width = '100%';
   window.scrollTo(0,0);
   saveToLocal();
+  trackEvent('quiz_complete', 'ai-diagnosis');
 
   const content = generateResults();
   document.getElementById('results-content').innerHTML = content;
@@ -4443,6 +4444,36 @@ const MAILERLITE_CONFIG = {
   endpoint: 'https://dongwu-subscribe.minxin20211231.workers.dev', // Worker 已部署 2026-05-24
 };
 
+// ══════════ 漏斗事件追蹤（diagnosis_events @ D1）══════════
+// session_id 串「進入頁面 → 完成 18 題 → 解鎖 email → 訂閱成功」四段
+// 永不存 email / 答案明細（Phase 1 範圍），失敗不阻塞使用者流程
+function getOrCreateSessionId() {
+  try {
+    let sid = localStorage.getItem('dongwu_diag_session');
+    if (!sid && typeof crypto !== 'undefined' && crypto.randomUUID) {
+      sid = crypto.randomUUID();
+      localStorage.setItem('dongwu_diag_session', sid);
+    }
+    return sid || '';
+  } catch (err) {
+    return '';
+  }
+}
+
+function trackEvent(event_type, source) {
+  if (!MAILERLITE_CONFIG.endpoint) return;
+  const session_id = getOrCreateSessionId();
+  if (!session_id) return;
+  try {
+    fetch(MAILERLITE_CONFIG.endpoint + '/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ session_id, event_type, source: source || '' }),
+      keepalive: true,
+    }).catch(() => {});
+  } catch (err) {}
+}
+
 async function subscribeEmail(email, source, name) {
   if (!MAILERLITE_CONFIG.endpoint) {
     console.info('[MailerLite] endpoint 尚未設定，略過實際送出（email 已暫存本地）');
@@ -4452,7 +4483,12 @@ async function subscribeEmail(email, source, name) {
     const res = await fetch(MAILERLITE_CONFIG.endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email, name: name || '', source: source || 'ai-diagnosis' }),
+      body: JSON.stringify({
+        email: email,
+        name: name || '',
+        source: source || 'ai-diagnosis',
+        session_id: getOrCreateSessionId(),
+      }),
     });
     return { ok: res.ok };
   } catch (err) {
@@ -4475,6 +4511,7 @@ function submitEmailReminder(e) {
   }
   try { localStorage.setItem('dongwu_email', email); } catch(err) {}
   try { if (name) localStorage.setItem('dongwu_name', name); } catch(err) {}
+  trackEvent('email_unlock', 'reminder');
   subscribeEmail(email, 'reminder', name);
   const banner = document.getElementById('emailReminderBottom');
   if (banner) {
@@ -4501,6 +4538,7 @@ function submitEmailGate(e) {
   }
   try { localStorage.setItem('dongwu_email', email); } catch(err) {}
   try { if (name) localStorage.setItem('dongwu_name', name); } catch(err) {}
+  trackEvent('email_unlock', 'gate');
   subscribeEmail(email, 'gate', name);
 
   // 解鎖 locked-zone（動畫淡入）
