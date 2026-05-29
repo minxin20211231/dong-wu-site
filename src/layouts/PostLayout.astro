@@ -119,6 +119,18 @@ const faqSchema = faqs.length
       })),
     }
   : null;
+
+// BreadcrumbList — 首頁 › 所有文章 › 本文，供 SERP 顯示路徑層級
+const postsUrl = new URL('/posts/', Astro.site).toString();
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: '首頁', item: new URL('/', Astro.site).toString() },
+    { '@type': 'ListItem', position: 2, name: '所有文章', item: postsUrl },
+    { '@type': 'ListItem', position: 3, name: title, item: canonicalUrl },
+  ],
+};
 ---
 
 <!DOCTYPE html>
@@ -155,6 +167,7 @@ const faqSchema = faqs.length
 
   <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
   {faqSchema && <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />}
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
 </head>
 <body class="post-body">
   <div class="post-progress-bar" aria-hidden="true">
@@ -190,6 +203,13 @@ const faqSchema = faqs.length
 
   <main class="post-main">
     <article class="post-article">
+      <nav class="post-breadcrumb" aria-label="麵包屑">
+        <a href="/">首頁</a>
+        <span class="post-breadcrumb-sep" aria-hidden="true">›</span>
+        <a href="/posts/">所有文章</a>
+        <span class="post-breadcrumb-sep" aria-hidden="true">›</span>
+        <span class="post-breadcrumb-current" aria-current="page">{dim}</span>
+      </nav>
       <p class="post-dim">{dim}</p>
       <h1 class="post-title">{title}</h1>
 
@@ -242,7 +262,7 @@ const faqSchema = faqs.length
         <p class="post-cta-eyebrow">懂屋 · 免費裝修決策工具</p>
         <h3 class="post-cta-title">裝修不知從何開始？</h3>
         <p class="post-cta-text">5 分鐘 AI 裝修診斷，找出你的裝修決策優先順序。</p>
-        <span class="post-cta-btn post-cta-btn-disabled">免費裝修診斷（即將上線）</span>
+        <a href="/ai-diagnosis/" class="post-cta-btn">免費裝修診斷</a>
       </div>
     </aside>
   </main>
@@ -523,6 +543,35 @@ const faqSchema = faqs.length
   .post-article {
     max-width: 720px;
     margin: 0 auto;
+  }
+
+  .post-breadcrumb {
+    font-size: 0.8rem;
+    color: #999;
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    line-height: 1.5;
+  }
+
+  .post-breadcrumb a {
+    color: #888 !important;
+    text-decoration: none;
+  }
+
+  .post-breadcrumb a:hover {
+    color: #B8977E !important;
+    text-decoration: underline;
+  }
+
+  .post-breadcrumb-sep {
+    color: #CCC;
+  }
+
+  .post-breadcrumb-current {
+    color: #555;
   }
 
   .post-dim {
