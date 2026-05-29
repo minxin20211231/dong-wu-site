@@ -13,16 +13,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <a href="/subscribe/" class="home-nav-cta">訂閱電子報</a>
       </nav>
       <div class="home-nav-mobile">
-        <a href="/ai-diagnosis/" class="home-nav-cta home-nav-cta-mobile">免費診斷</a>
+        <a href="/ai-diagnosis/" class="home-nav-cta home-nav-cta-mobile home-nav-cta-primary">免費診斷</a>
+        <a href="/subscribe/" class="home-nav-cta home-nav-cta-mobile">訂閱電子報</a>
         <details class="home-menu">
           <summary class="home-menu-toggle" aria-label="開啟選單">
             <span class="home-menu-bars" aria-hidden="true"></span>
           </summary>
           <nav class="home-menu-panel" aria-label="次要導覽">
-            <a href="/ai-diagnosis/" class="home-menu-link">免費裝修診斷</a>
             <a href="/about/" class="home-menu-link">關於懂屋</a>
             <a href="/posts/" class="home-menu-link">所有文章</a>
-            <a href="/subscribe/" class="home-menu-link">訂閱電子報</a>
           </nav>
         </details>
       </div>
@@ -178,15 +177,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     .home-nav-mobile {
       display: inline-flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
+    /* 兩顆 pill 並列：免費診斷（實心）+ 訂閱電子報（外框），縮小以容納漢堡 */
     .home-nav-cta-mobile {
-      padding: 8px 14px;
-      font-size: 0.82rem;
-      letter-spacing: 0.04em;
-      background: #B8977E;
-      border-color: #B8977E;
-      color: #1C1815 !important;
+      padding: 7px 12px;
+      font-size: 0.78rem;
+      letter-spacing: 0.02em;
     }
     .home-nav-cta-mobile::after {
       display: none;
@@ -232,30 +229,51 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     .home-menu-bars::after {
       top: 6px;
     }
+    .home-menu-bars,
+    .home-menu-bars::before,
+    .home-menu-bars::after {
+      transition: transform 0.2s ease, top 0.2s ease, background 0.2s ease;
+    }
+    /* 開啟時漢堡變 X（雷蒙風） */
+    .home-menu[open] .home-menu-bars {
+      background: transparent;
+    }
+    .home-menu[open] .home-menu-bars::before {
+      top: 0;
+      transform: rotate(45deg);
+    }
+    .home-menu[open] .home-menu-bars::after {
+      top: 0;
+      transform: rotate(-45deg);
+    }
+    /* 全寬下拉面板 — 大列好點，手機友善 */
     .home-menu[open] .home-menu-panel {
-      position: absolute;
-      top: calc(100% + 8px);
+      position: fixed;
+      top: 57px;
+      left: 0;
       right: 0;
       background: #1C1815;
-      border: 1px solid rgba(184, 151, 126, 0.28);
-      border-radius: 12px;
-      padding: 14px 18px;
+      border-top: 1px solid rgba(184, 151, 126, 0.28);
+      padding: 4px 0 8px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
-      min-width: 160px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.5);
       z-index: 60;
     }
     .home-menu-link {
+      display: block;
+      padding: 16px 24px;
       color: #F5F0E8 !important;
-      font-size: 0.9rem;
+      font-size: 1rem;
       letter-spacing: 0.04em;
       font-weight: 600;
       text-decoration: none;
+      border-bottom: 1px solid rgba(184, 151, 126, 0.12);
     }
+    .home-menu-link:active,
     .home-menu-link:hover {
       color: #B8977E !important;
+      background: rgba(184, 151, 126, 0.08);
     }
   }
 
