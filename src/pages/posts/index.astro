@@ -39,17 +39,20 @@ const fmt = (d: Date) =>
       <nav class="post-nav post-nav-desktop" aria-label="主導覽">
         <a href="/about/" class="post-nav-link">關於懂屋</a>
         <a href="/posts/" class="post-nav-link" aria-current="page">所有文章</a>
+        <a href="/ai-diagnosis/" class="post-nav-cta post-nav-cta-primary">免費裝修診斷</a>
         <a href="/subscribe/" class="post-nav-cta">訂閱電子報</a>
       </nav>
       <div class="post-nav-mobile">
-        <a href="/subscribe/" class="post-nav-cta post-nav-cta-mobile">訂閱電子報</a>
+        <a href="/ai-diagnosis/" class="post-nav-cta post-nav-cta-mobile">免費診斷</a>
         <details class="post-menu">
           <summary class="post-menu-toggle" aria-label="開啟選單">
             <span class="post-menu-bars" aria-hidden="true"></span>
           </summary>
           <nav class="post-menu-panel" aria-label="次要導覽">
+            <a href="/ai-diagnosis/" class="post-menu-link">免費裝修診斷</a>
             <a href="/about/" class="post-menu-link">關於懂屋</a>
             <a href="/posts/" class="post-menu-link" aria-current="page">所有文章</a>
+            <a href="/subscribe/" class="post-menu-link">訂閱電子報</a>
           </nav>
         </details>
       </div>
@@ -223,6 +226,19 @@ const fmt = (d: Date) =>
   .post-nav-cta:hover {
     background: #B8977E;
     border-color: #B8977E;
+    color: #1C1815 !important;
+  }
+
+  /* 主按鈕：實心金，比訂閱（外框）更突出 */
+  .post-nav-cta-primary {
+    background: #B8977E;
+    border-color: #B8977E;
+    color: #1C1815 !important;
+  }
+
+  .post-nav-cta-primary:hover {
+    background: #C9A98E;
+    border-color: #C9A98E;
     color: #1C1815 !important;
   }
 

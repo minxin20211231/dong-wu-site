@@ -9,17 +9,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <nav class="home-nav home-nav-desktop" aria-label="主導覽">
         <a href="/about/" class="home-nav-link">關於懂屋</a>
         <a href="/posts/" class="home-nav-link">所有文章</a>
+        <a href="/ai-diagnosis/" class="home-nav-cta home-nav-cta-primary">免費裝修診斷</a>
         <a href="/subscribe/" class="home-nav-cta">訂閱電子報</a>
       </nav>
       <div class="home-nav-mobile">
-        <a href="/subscribe/" class="home-nav-cta home-nav-cta-mobile">訂閱電子報</a>
+        <a href="/ai-diagnosis/" class="home-nav-cta home-nav-cta-mobile">免費診斷</a>
         <details class="home-menu">
           <summary class="home-menu-toggle" aria-label="開啟選單">
             <span class="home-menu-bars" aria-hidden="true"></span>
           </summary>
           <nav class="home-menu-panel" aria-label="次要導覽">
+            <a href="/ai-diagnosis/" class="home-menu-link">免費裝修診斷</a>
             <a href="/about/" class="home-menu-link">關於懂屋</a>
             <a href="/posts/" class="home-menu-link">所有文章</a>
+            <a href="/subscribe/" class="home-menu-link">訂閱電子報</a>
           </nav>
         </details>
       </div>
@@ -43,11 +46,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
       <div class="hero-actions">
         <a href="/ai-diagnosis/" class="hero-cta">開始免費診斷 →</a>
-        <a href="/posts/" class="hero-link">先看文章 →</a>
         <div class="status-pill">
           <span class="dot"></span>
           AI 裝修診斷書 · 免費
         </div>
+        <a href="/posts/" class="hero-link">先看文章 →</a>
       </div>
 
       <p class="brand-foot">
@@ -139,6 +142,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .home-nav-cta:hover {
     background: #B8977E;
     border-color: #B8977E;
+    color: #1C1815 !important;
+  }
+
+  /* 主按鈕：實心金，比訂閱（外框）更突出 */
+  .home-nav-cta-primary {
+    background: #B8977E;
+    border-color: #B8977E;
+    color: #1C1815 !important;
+  }
+
+  .home-nav-cta-primary:hover {
+    background: #C9A98E;
+    border-color: #C9A98E;
     color: #1C1815 !important;
   }
 
