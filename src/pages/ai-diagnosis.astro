@@ -16,7 +16,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   --accent: #B8977E;
   --accent2: #D4886A;
   --text: #F5F0E8;
-  --muted: rgba(245,240,232,0.5);
+  --muted: rgba(245,240,232,0.88);
   --border: rgba(184,151,126,0.15);
   --glow1: rgba(184,151,126,0.3);
   --glow2: rgba(212,136,106,0.2);
@@ -48,7 +48,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 .site-header.scrolled .header-brand .header-logo{width:28px;height:28px}
 .header-brand:hover .header-logo{transform:rotate(45deg)}
 .header-brand-text{font-size:14px;letter-spacing:3px;transition:color .35s ease}
-.header-brand-text .en{font-size:9px;letter-spacing:2px;color:var(--accent);font-weight:700;display:block;margin-top:1px;transition:color .35s ease}
+.header-brand-text .en{font-size:11px;letter-spacing:2px;color:var(--accent);font-weight:700;display:block;margin-top:1px;transition:color .35s ease}
 .site-header.scrolled .header-brand-text .en{color:#A68768}
 .header-nav{flex:1;display:flex;gap:4px;justify-content:center}
 .header-nav a{font-size:13px;padding:8px 14px;border-radius:18px;color:var(--muted);transition:color .25s,background .25s;cursor:pointer;font-weight:600;letter-spacing:.5px}
@@ -196,7 +196,7 @@ body {
   color: var(--text);
   font-family: -apple-system, 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
   min-height: 100vh;
-  overflow-x: hidden;
+  overflow-x: clip;
   position: relative;
 }
 body::before {
@@ -1913,7 +1913,7 @@ body > * { position: relative; z-index: 1; }
   margin-bottom: 16px;
 }
 .card-label {
-  font-size: 10px; letter-spacing: 3px; color: var(--accent);
+  font-size: 15px; letter-spacing: 2px; color: var(--accent);
   text-transform: uppercase; font-weight: 600; margin-bottom: 12px;
 }
 .card-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
@@ -1934,8 +1934,8 @@ body > * { position: relative; z-index: 1; }
 /* Budget bars */
 .budget-item { margin-bottom: 16px; }
 .budget-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
-.budget-name { font-size: 13px; font-weight: 600; }
-.budget-amount { font-size: 13px; color: var(--accent); font-weight: 700; }
+.budget-name { font-size: 16px; font-weight: 600; }
+.budget-amount { font-size: 16px; color: var(--accent); font-weight: 700; }
 .budget-bar-bg { height: 8px; background: rgba(184,151,126,0.1); border-radius: 4px; overflow: hidden; }
 .budget-bar {
   height: 100%; border-radius: 4px;
@@ -1956,8 +1956,8 @@ body > * { position: relative; z-index: 1; }
 .tl-num { font-size: 10px; color: var(--accent); font-weight: 700; letter-spacing: 1px; }
 .tl-name { font-size: 12px; font-weight: 700; margin: 4px 0; }
 .tl-dur { font-size: 12px; color: var(--accent); font-weight: 600; margin-bottom: 6px; }
-.tl-detail { font-size: 12px; color: var(--text); line-height: 1.6; margin-bottom: 4px; }
-.tl-note { font-size: 11px; color: var(--accent2); line-height: 1.5; font-style: italic; }
+.tl-detail { font-size: 14px; color: var(--text); line-height: 1.6; margin-bottom: 4px; }
+.tl-note { font-size: 13px; color: var(--accent2); line-height: 1.5; font-style: italic; }
 
 /* Modules - Change 3: detailed module cards */
 .module-tag {
@@ -2002,7 +2002,7 @@ body > * { position: relative; z-index: 1; }
 }
 .flip-front {
   padding: 12px 14px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   color: #fff;
   line-height: 1.5;
@@ -2028,7 +2028,7 @@ body > * { position: relative; z-index: 1; }
   max-height: 0;
   overflow: hidden;
   padding: 0 14px;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.7;
   color: var(--text);
   transition: max-height 0.45s cubic-bezier(.4,0,.2,1), padding 0.35s ease, opacity .3s ease;
@@ -2113,8 +2113,8 @@ body > * { position: relative; z-index: 1; }
   background: linear-gradient(180deg, rgba(28,24,21,0) 40%, rgba(28,24,21,0.7) 100%);
 }
 .style-result-eyebrow {
-  font-size:10px; letter-spacing:5px; font-weight:800;
-  color: rgba(245,240,232,.8); text-transform:uppercase;
+  font-size:13px; letter-spacing:3px; font-weight:800;
+  color: rgba(245,240,232,.9); text-transform:uppercase;
 }
 .style-result-headline {
   font-family: "Noto Serif TC", serif;
@@ -2127,16 +2127,16 @@ body > * { position: relative; z-index: 1; }
 }
 .style-result-row:first-child { border-top:none; padding-top:0; }
 .style-result-label {
-  font-size:11px; letter-spacing:3px; color: var(--accent);
+  font-size:16px; letter-spacing:1.5px; color: var(--accent);
   font-weight:800; padding-top: 3px; text-transform:uppercase;
 }
 .style-result-value {
-  font-size:14px; line-height:1.75; color: var(--text);
+  font-size:18px; line-height:1.75; color: var(--text);
 }
 .style-result-warn {
   margin-top: 4px; padding: 12px 14px; border-radius: 12px;
   background: rgba(184,90,58,.10); border: 1px solid rgba(184,90,58,.25);
-  color: var(--accent2); font-size: 13px; line-height: 1.7;
+  color: var(--accent2); font-size: 15px; line-height: 1.7;
 }
 
 /* ══════════ EMAIL GATE + LOCKED ZONE ══════════ */
@@ -2584,9 +2584,9 @@ body > * { position: relative; z-index: 1; }
   background: linear-gradient(90deg, transparent, var(--accent), transparent);
 }
 .results-brand-label {
-  font-size: 10px;
-  letter-spacing: 6px;
-  opacity: 0.85;
+  font-size: 14px;
+  letter-spacing: 3px;
+  opacity: 0.9;
 }
 .results-brand-title {
   font-size: 28px;
@@ -2634,8 +2634,8 @@ body > * { position: relative; z-index: 1; }
 /* — Card label 雜誌小標款：寬 tracking（拿掉後綴小橫線，減少視覺雜訊） — */
 .card-label {
   display: inline-block;
-  font-size: 10px;
-  letter-spacing: 4px;
+  font-size: 15px;
+  letter-spacing: 2px;
   font-weight: 700;
   color: var(--accent);
   text-transform: uppercase;
@@ -2651,7 +2651,7 @@ body > * { position: relative; z-index: 1; }
   margin-bottom: 12px;
 }
 .card-body {
-  font-size: 14.5px;
+  font-size: 16px;
   line-height: 1.85;
   color: rgba(245,240,232,0.78);
 }
@@ -2713,10 +2713,10 @@ body > * { position: relative; z-index: 1; }
   letter-spacing: -0.01em;
 }
 .ov-key {
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 2px;
   margin-top: 8px;
-  opacity: 0.55;
+  opacity: 0.85;
   text-transform: uppercase;
 }
 @media (max-width: 500px) {
@@ -2733,15 +2733,15 @@ body > * { position: relative; z-index: 1; }
 }
 .personal-tip:last-child { margin-bottom: 0; }
 .tip-ref {
-  font-size: 11px;
-  letter-spacing: 1.2px;
+  font-size: 14px;
+  letter-spacing: 1px;
   color: var(--accent);
   opacity: 0.9;
   margin-bottom: 6px;
   font-weight: 600;
 }
 .tip-content {
-  font-size: 13.5px;
+  font-size: 15px;
   line-height: 1.85;
   color: rgba(245,240,232,0.82);
 }
@@ -2763,16 +2763,16 @@ body > * { position: relative; z-index: 1; }
 }
 .tl-phase:last-child { border-right: none; }
 .tl-num {
-  font-size: 9px;
-  letter-spacing: 2.5px;
+  font-size: 12px;
+  letter-spacing: 2px;
   opacity: 0.7;
 }
 .tl-name {
-  font-size: 13px;
+  font-size: 15px;
   margin: 6px 0 4px;
 }
 .tl-dur {
-  font-size: 12px;
+  font-size: 14px;
   font-variant-numeric: tabular-nums;
 }
 
@@ -2786,21 +2786,21 @@ body > * { position: relative; z-index: 1; }
   margin-bottom: 18px;
 }
 .module-detail-card .mod-title {
-  font-size: 13px;
+  font-size: 15px;
   letter-spacing: 1px;
   margin-bottom: 8px;
   text-transform: uppercase;
 }
 .module-detail-card .mod-item {
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.85;
 }
 
 /* — Budget bar refined — */
 .budget-item { margin-bottom: 18px; }
-.budget-name { font-size: 14px; }
+.budget-name { font-size: 16px; }
 .budget-amount {
-  font-size: 13.5px;
+  font-size: 16px;
   font-variant-numeric: tabular-nums;
 }
 .budget-bar-bg {
@@ -2816,8 +2816,8 @@ body > * { position: relative; z-index: 1; }
   border-radius: 14px;
 }
 .save-col-title {
-  font-size: 11px;
-  letter-spacing: 3px;
+  font-size: 15px;
+  letter-spacing: 2px;
   text-transform: uppercase;
   padding-bottom: 12px;
   margin-bottom: 14px;
@@ -2825,7 +2825,7 @@ body > * { position: relative; z-index: 1; }
 }
 .flip-hint {
   margin-bottom: 16px;
-  font-size: 11px;
+  font-size: 14px;
   letter-spacing: 1px;
   opacity: 0.7;
 }
@@ -2881,9 +2881,9 @@ body > * { position: relative; z-index: 1; }
   justify-content: center;
 }
 .result-action-btn {
-  padding: 10px 18px;
-  border-radius: 10px;
-  font-size: 12.5px;
+  padding: 14px 24px;
+  border-radius: 12px;
+  font-size: 15px;
 }
 
 /* — Lead card refined: 更高雅 — */
@@ -2962,11 +2962,11 @@ body > * { position: relative; z-index: 1; }
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 10px 14px 10px 16px;
+  padding: 12px 16px 12px 18px;
 }
 .results-toc .toc-label {
-  font-size: 10px;
-  letter-spacing: 3px;
+  font-size: 13px;
+  letter-spacing: 2px;
   color: var(--accent);
   font-weight: 700;
   text-transform: uppercase;
@@ -2989,9 +2989,9 @@ body > * { position: relative; z-index: 1; }
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 12px;
+  padding: 7px 14px;
   border-radius: 16px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--muted);
   background: transparent;
@@ -3012,18 +3012,18 @@ body > * { position: relative; z-index: 1; }
   box-shadow: 0 0 12px rgba(184,151,126,0.15);
 }
 .toc-item .toc-num {
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 1px;
   opacity: 0.7;
   font-variant-numeric: tabular-nums;
 }
 .results-toc .toc-meta {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--muted);
   letter-spacing: 2px;
   font-variant-numeric: tabular-nums;
   flex-shrink: 0;
-  opacity: 0.7;
+  opacity: 0.85;
 }
 .toc-progress-track {
   height: 2px;
@@ -3040,7 +3040,7 @@ body > * { position: relative; z-index: 1; }
 }
 @media (max-width: 520px) {
   .results-toc .toc-label { display: none; }
-  .results-toc .toc-meta { font-size: 10px; }
+  .results-toc .toc-meta { font-size: 12px; }
 }
 
 /* Toast notification */
@@ -3357,7 +3357,7 @@ body > * { position: relative; z-index: 1; }
   <div class="land-scene outcome-scene land-anim scene-cream">
     <div class="outcome-inner">
       <div class="section-label">填完你會收到</div>
-      <h2 class="scene-title" style="margin-bottom:14px">10 頁 PDF<br>只屬於你家</h2>
+      <h2 class="scene-title" style="margin-bottom:14px">完整診斷報告<br>只屬於你家</h2>
       <p style="font-size:15px;color:var(--muted);line-height:1.7;max-width:520px;margin:0 auto">不是樣板回答，是根據你的 18 題答案<strong style="color:var(--text)">量身打造</strong>的。<br>帶去給設計師看，他會說「你是我遇過最有準備的屋主」</p>
 
       <div class="outcome-grid">
@@ -3500,8 +3500,8 @@ body > * { position: relative; z-index: 1; }
           <div class="outcome-item">
             <div class="outcome-check"><svg><use href="#i-check"/></svg></div>
             <div class="outcome-item-body">
-              <div class="outcome-item-title">完整 PDF 寄到信箱</div>
-              <div class="outcome-item-desc">訂閱電子報立即解鎖 + 寄到你信箱</div>
+              <div class="outcome-item-title">完整診斷報告當場解鎖</div>
+              <div class="outcome-item-desc">訂閱電子報，立即在頁面解鎖完整版</div>
             </div>
           </div>
         </div>
@@ -3553,7 +3553,7 @@ body > * { position: relative; z-index: 1; }
         </div>
         <div class="faq-item">
           <div class="faq-q" onclick="toggleFaq(this)">可以印成 PDF 帶去見設計師嗎？<svg class="icon faq-q-chevron"><use href="#i-chevron-down"/></svg></div>
-          <div class="faq-a">可以。填完訂閱電子報後，<strong>完整 8 頁 PDF 會直接寄到你信箱</strong>，帶去給設計師、印出來、分享給另一半都很方便。也可以把你的「屋主類型」圖卡分享到 IG 限動 / LINE，讓朋友也來測一下</div>
+          <div class="faq-a">可以。填完訂閱電子報後，<strong>完整診斷報告立即在頁面解鎖</strong>，用瀏覽器「列印 / 存 PDF」就能帶去給設計師、印出來、分享給另一半。也可以把你的「屋主類型」圖卡分享到 IG 限動 / LINE，讓朋友也來測一下</div>
         </div>
         <div class="faq-item">
           <div class="faq-q" onclick="toggleFaq(this)">還在看房階段、房子還沒買能填嗎？<svg class="icon faq-q-chevron"><use href="#i-chevron-down"/></svg></div>
@@ -4962,12 +4962,12 @@ function generateResults() {
       <div class="email-gate-inner">
         <div class="email-gate-text">
           <div class="email-gate-title">訂閱裝修電子報免費領完整診斷書</div>
-          <div class="email-gate-sub">每週一封懂屋裝修知識信，<br>訂閱後立即解鎖完整 8 頁 PDF</div>
+          <div class="email-gate-sub">每週一封懂屋裝修知識信，<br>訂閱後立即解鎖完整診斷報告</div>
         </div>
         <form class="email-gate-form" onsubmit="submitEmailGate(event)">
           <input type="text" placeholder="你的名字（怎麼稱呼你）" id="nameGateInput" autocomplete="name">
           <input type="email" required placeholder="your@email.com" id="emailGateInput" autocomplete="email">
-          <button type="submit">訂閱 + 領 PDF <span>→</span></button>
+          <button type="submit">訂閱 + 解鎖完整版 <span>→</span></button>
         </form>
         <div class="email-gate-tiny">隨時可退訂，不會打擾你</div>
       </div>
@@ -5004,12 +5004,12 @@ function generateResults() {
       <div class="card-label">預算分配參考（基於 ${sqm} 坪 × 你的回答）</div>
 
       <!-- 計算過程 -->
-      <div style="margin-top:10px;margin-bottom:14px;font-size:12px;line-height:1.8;color:var(--muted);background:rgba(184,151,126,0.06);border-radius:10px;padding:12px 14px">
-        <div>${sqm} 坪 × 每坪約 ${(budgetBreakdown.total / sqm).toFixed(1)} 萬 = <strong style="color:var(--text)">${budgetBreakdown.total + budgetBreakdown.applianceCost} 萬</strong></div>
-        ${budgetBreakdown.applianceCost > 0 ? `<div>扣除家電預算 −${budgetBreakdown.applianceCost} 萬 → 硬體可用 <strong style="color:var(--text)">${budgetBreakdown.netBudget} 萬</strong></div>` : ''}
+      <div style="margin-top:10px;margin-bottom:14px;font-size:16px;line-height:1.8;color:var(--muted);background:rgba(184,151,126,0.06);border-radius:10px;padding:12px 14px">
+        <div>${sqm} 坪 × 每坪約 ${(budgetBreakdown.total / sqm).toFixed(1)} 萬 = <strong style="color:var(--text);font-size:20px;font-weight:900">${budgetBreakdown.total + budgetBreakdown.applianceCost} 萬</strong></div>
+        ${budgetBreakdown.applianceCost > 0 ? `<div>扣除家電預算 −${budgetBreakdown.applianceCost} 萬 → 硬體可用 <strong style="color:var(--text);font-size:20px;font-weight:900">${budgetBreakdown.netBudget} 萬</strong></div>` : ''}
         ${budgetBreakdown.layoutExtra > 0 ? `<div>格局變動加 +${budgetBreakdown.layoutExtra} 萬</div>` : ''}
         ${budgetBreakdown.kitchenExtra > 0 ? `<div>廚房加裝 +${budgetBreakdown.kitchenExtra} 萬</div>` : ''}
-        <div style="margin-top:6px;padding-top:6px;border-top:1px solid var(--border)">實際裝修總額約 <strong style="color:var(--accent);font-size:14px">${budgetBreakdown.total} 萬</strong></div>
+        <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">實際裝修總額約 <strong style="color:var(--accent);font-size:28px;font-weight:900;letter-spacing:-0.01em">${budgetBreakdown.total} 萬</strong></div>
       </div>
 
       <!-- 分配長條圖 -->
@@ -5022,10 +5022,10 @@ function generateResults() {
           <div class="budget-bar-bg">
             <div class="budget-bar" data-pct="${item.pct}" style="width:0%"></div>
           </div>
-          ${item.note ? `<div style="font-size:11px;color:var(--accent);margin-top:2px;margin-bottom:4px">${item.note}</div>` : ''}
+          ${item.note ? `<div style="font-size:13px;color:var(--accent);margin-top:2px;margin-bottom:4px">${item.note}</div>` : ''}
         </div>
       `).join('')}
-      <div style="margin-top:14px;padding:12px 14px;background:rgba(245,240,232,0.04);border-radius:10px;border-left:3px solid rgba(245,240,232,0.15);font-size:11px;color:var(--muted);line-height:1.6">
+      <div style="margin-top:14px;padding:12px 14px;background:rgba(245,240,232,0.04);border-radius:10px;border-left:3px solid rgba(245,240,232,0.15);font-size:14px;color:var(--muted);line-height:1.6">
         本預算為根據市場行情的概估參考，實際費用會因設計內容、材質選擇、施工條件等因素而有差異。正式報價請以設計公司現場丈量後提供的為準。
       </div>
     </div>
@@ -5186,16 +5186,16 @@ function generateResults() {
       <form class="email-reminder-form" onsubmit="submitEmailReminder(event)">
         <input type="text" placeholder="你的名字（怎麼稱呼你）" id="nameReminderInput" autocomplete="name">
         <input type="email" required placeholder="your@email.com" id="emailReminderInput" autocomplete="email">
-        <button type="submit">訂閱 + 領 PDF <span>→</span></button>
+        <button type="submit">訂閱 + 解鎖完整版 <span>→</span></button>
       </form>
       <div class="email-reminder-tiny">隨時可退訂，不會打擾你</div>
     </div>
 
     <!-- 列印 / 重寄 / Restart / Home -->
     <div style="text-align:center;margin-top:24px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-      <button class="result-action-btn secondary" onclick="printReport()" style="font-size:12px;display:inline-flex;align-items:center;gap:6px">🖨 列印 / 存 PDF</button>
-      <button class="result-action-btn secondary" onclick="restartQuiz()" style="font-size:12px;display:inline-flex;align-items:center;gap:6px"><svg class="icon"><use href="#i-refresh"/></svg>重新填寫診斷書</button>
-      <button class="result-action-btn secondary" onclick="goHome()" style="font-size:12px;display:inline-flex;align-items:center;gap:6px"><svg class="icon"><use href="#i-home"/></svg>回首頁</button>
+      <button class="result-action-btn secondary" onclick="printReport()" style="display:inline-flex;align-items:center;gap:6px">🖨 列印 / 存 PDF</button>
+      <button class="result-action-btn secondary" onclick="restartQuiz()" style="display:inline-flex;align-items:center;gap:6px"><svg class="icon"><use href="#i-refresh"/></svg>重新填寫診斷書</button>
+      <button class="result-action-btn secondary" onclick="goHome()" style="display:inline-flex;align-items:center;gap:6px"><svg class="icon"><use href="#i-home"/></svg>回首頁</button>
     </div>
 
     <!-- Footer -->
