@@ -3143,6 +3143,7 @@ body > * { position: relative; z-index: 1; }
       <a data-target="value-section" onclick="navTo('value-section')">填完得到</a>
       <a data-target=".creators-scene" onclick="navTo('.creators-scene')">我們是誰</a>
       <a data-target=".faq-scene" onclick="navTo('.faq-scene')">常見問題</a>
+      <a href="/">懂屋官網</a>
     </nav>
     <button class="header-cta" onclick="startQuiz()">免費診斷<svg class="icon"><use href="#i-arrow-right"/></svg></button>
   </div>
@@ -5195,13 +5196,16 @@ function generateResults() {
     <div style="text-align:center;margin-top:24px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
       <button class="result-action-btn secondary" onclick="printReport()" style="display:inline-flex;align-items:center;gap:6px">🖨 列印 / 存 PDF</button>
       <button class="result-action-btn secondary" onclick="restartQuiz()" style="display:inline-flex;align-items:center;gap:6px"><svg class="icon"><use href="#i-refresh"/></svg>重新填寫診斷書</button>
-      <button class="result-action-btn secondary" onclick="goHome()" style="display:inline-flex;align-items:center;gap:6px"><svg class="icon"><use href="#i-home"/></svg>回首頁</button>
+      <button class="result-action-btn secondary" onclick="goHome()" style="display:inline-flex;align-items:center;gap:6px"><svg class="icon"><use href="#i-home"/></svg>重看診斷工具首頁</button>
+      <a class="result-action-btn secondary" href="/" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none"><svg class="icon"><use href="#i-arrow-left"/></svg>回懂屋官網</a>
     </div>
 
     <!-- Footer -->
     <div style="text-align:center;margin-top:48px;padding-bottom:40px">
-      <img src="/ai-diagnosis/assets/logo_gold.png" alt="懂屋" style="width:36px;height:36px;object-fit:contain;opacity:.5;display:block;margin:0 auto 10px">
-      <div style="font-size:11px;color:rgba(245,240,232,0.3);letter-spacing:0.1em">懂屋 Know Your Home</div>
+      <a href="/" style="text-decoration:none">
+        <img src="/ai-diagnosis/assets/logo_gold.png" alt="回懂屋官網" style="width:36px;height:36px;object-fit:contain;opacity:.5;display:block;margin:0 auto 10px">
+        <div style="font-size:11px;color:rgba(245,240,232,0.3);letter-spacing:0.1em">懂屋 Know Your Home</div>
+      </a>
       <div style="font-size:11px;color:rgba(245,240,232,0.2);margin-top:6px">懂屋 KNOW YOUR HOME · 2026</div>
     </div>
   `;
