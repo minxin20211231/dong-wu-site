@@ -5,7 +5,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 <BaseLayout title="懂屋 Know Your Home">
   <header class="home-topbar">
     <div class="home-topbar-inner">
-      <a href="/" class="home-brand">懂屋<span class="brand-en-full"> · Know Your Home</span></a>
+      <a href="/" class="home-brand">
+        <img src="/images/logo-dongwu-white.png" alt="" class="home-brand-logo" width="32" height="32" />
+        <span class="brand-text">懂屋<span class="brand-en-full"> · Know Your Home</span></span>
+      </a>
       <nav class="home-nav home-nav-desktop" aria-label="主導覽">
         <a href="/about/" class="home-nav-link">關於懂屋</a>
         <a href="/posts/" class="home-nav-link">所有文章</a>
@@ -84,6 +87,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
 
   .home-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
     font-size: 0.9rem;
     letter-spacing: 0.18em;
     color: #F5F0E8 !important;
@@ -91,6 +97,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     text-decoration: none;
     flex-shrink: 0;
     white-space: nowrap;
+  }
+
+  .home-brand-logo {
+    height: 32px;
+    width: 32px;
+    display: block;
+    flex-shrink: 0;
   }
 
   .home-brand:hover {
@@ -162,13 +175,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       padding: 12px 16px;
       gap: 10px;
     }
-    /* 品牌縮成「懂屋」騰出空間 */
-    .brand-en-full {
+    /* 手機：只顯示 logo，隱藏文字，騰出空間給兩顆 CTA + 漢堡 */
+    .brand-text {
       display: none;
     }
-    .home-brand {
-      font-size: 1.25rem;
-      letter-spacing: 0.06em;
+    .home-brand-logo {
+      height: 36px;
+      width: 36px;
     }
     /* 桌機並排 nav 收起，改顯示 CTA + 漢堡 */
     .home-nav-desktop {
