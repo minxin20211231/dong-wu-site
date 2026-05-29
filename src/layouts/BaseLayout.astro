@@ -11,16 +11,50 @@ interface Props {
 const {
   title,
   description = '懂屋 Know Your Home — 你必須要知道的所有裝修知識都在這裡。從預算規劃、風格選擇到驗收避雷，新手屋主的裝修導航。',
-  image,
-  imageAlt,
+  image = '/images/og-default.png',
+  imageAlt = '懂屋 Know Your Home — 新成屋屋主的裝修決策系統',
 } = Astro.props;
 
 const fullTitle = title === '懂屋 Know Your Home'
   ? title
   : `${title}｜懂屋 Know Your Home`;
 
-const ogImageUrl = image ? new URL(image, Astro.site).toString() : null;
+const ogImageUrl = new URL(image, Astro.site).toString();
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString();
+const logoUrl = new URL('/images/logo-dongwu-white.png', Astro.site).toString();
+
+// 品牌實體結構化資料（全站輸出，Google 自動去重）
+// Organization → 建立「懂屋」品牌實體；WebSite → 站台識別與 sitelinks
+const siteSchema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': new URL('/#organization', Astro.site).toString(),
+      name: '懂屋 Know Your Home',
+      alternateName: '懂屋 KYH',
+      url: Astro.site!.toString(),
+      logo: { '@type': 'ImageObject', url: logoUrl },
+      description: '台灣新手屋主的裝修決策系統，從預算規劃、風格選擇到驗收避雷的一站式工具。',
+      founder: {
+        '@type': 'Person',
+        name: '鄭晏旻',
+        alternateName: 'Bibo',
+        jobTitle: '室內設計師',
+      },
+      sameAs: ['https://minxindesign.com.tw'],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': new URL('/#website', Astro.site).toString(),
+      url: Astro.site!.toString(),
+      name: '懂屋 Know Your Home',
+      description: '新成屋屋主的裝修決策系統',
+      inLanguage: 'zh-TW',
+      publisher: { '@id': new URL('/#organization', Astro.site).toString() },
+    },
+  ],
+};
 ---
 
 <!DOCTYPE html>
@@ -39,23 +73,19 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString();
   <meta property="og:locale" content="zh_TW" />
   <meta property="og:site_name" content="懂屋 Know Your Home" />
   <meta property="og:url" content={canonicalUrl} />
-  {ogImageUrl && (
-    <>
-      <meta property="og:image" content={ogImageUrl} />
-      <meta property="og:image:width" content="1200" />
-      <meta property="og:image:height" content="630" />
-      {imageAlt && <meta property="og:image:alt" content={imageAlt} />}
-    </>
-  )}
+  <meta property="og:image" content={ogImageUrl} />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content={imageAlt} />
 
-  <meta name="twitter:card" content={ogImageUrl ? 'summary_large_image' : 'summary'} />
+  <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content={fullTitle} />
   <meta name="twitter:description" content={description} />
-  {ogImageUrl && <meta name="twitter:image" content={ogImageUrl} />}
+  <meta name="twitter:image" content={ogImageUrl} />
 
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <script type="application/ld+json" set:html={JSON.stringify(siteSchema)} />
 </head>
 <body>
   <slot />
