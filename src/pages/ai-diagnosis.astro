@@ -2369,6 +2369,24 @@ body > * { position: relative; z-index: 1; }
   100% { opacity: 1; }
 }
 
+/* 未答題提示：goNextPhase 攔截時高亮閃動，帶使用者回到漏填的題 */
+.q-block.q-missing {
+  animation: qMissingPulse 2.2s ease;
+  border-radius: 14px;
+}
+.q-block.q-missing .q-block-title::after {
+  content: ' ← 這題還沒填喔';
+  color: #d4886a;
+  font-size: .72em;
+  font-weight: 600;
+  white-space: nowrap;
+}
+@keyframes qMissingPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(212,136,106,0); }
+  15% { box-shadow: 0 0 0 3px rgba(212,136,106,.65); }
+  50% { box-shadow: 0 0 0 3px rgba(212,136,106,.35); }
+}
+
 /* ─── Render Gallery ─── */
 .render-slot { position: relative; border-radius: 16px; overflow: hidden; }
 .render-img-wrap { position: relative; }
@@ -3890,7 +3908,7 @@ function buildQuiz() {
     if (phaseIdx > 0) {
       innerHtml += `<button class="phase-back" onclick="goBackPhase(${phaseIdx})"><svg class="icon" style="margin-right:4px"><use href="#i-arrow-left"/></svg>上一步</button>`;
     }
-    innerHtml += `<button class="next-btn" id="phase-next-${phaseIdx}" onclick="goNextPhase(${phaseIdx})" style="opacity:0.45;pointer-events:none;margin-top:0">${btnLabel}</button>`;
+    innerHtml += `<button class="next-btn" id="phase-next-${phaseIdx}" onclick="goNextPhase(${phaseIdx})" style="opacity:0.45;margin-top:0">${btnLabel}</button>`;
     innerHtml += `</div>`;
 
     div.innerHTML = innerHtml;
@@ -4073,17 +4091,22 @@ function checkPhaseComplete(phaseIdx) {
   const allAnswered = group.qIdxs.every(qIdx => answered.has(qIdx));
   const btn = document.getElementById('phase-next-' + phaseIdx);
   if (btn) {
-    if (allAnswered) {
-      btn.style.opacity = '1';
-      btn.style.pointerEvents = 'auto';
-    } else {
-      btn.style.opacity = '0.45';
-      btn.style.pointerEvents = 'none';
-    }
+    // 按鈕一律可點：完成→實心，未完成→半透明當視覺提示，
+    // 但仍可點，點下去由 goNextPhase 把使用者帶到未答題（避免「點了沒反應」的卡死體驗）
+    btn.style.opacity = allAnswered ? '1' : '0.55';
   }
 }
 
 function goNextPhase(phaseIdx) {
+  // 未完成攔截：找出這個 phase 第一個還沒答的題目，帶使用者過去並提示
+  const group = PHASE_GROUPS[phaseIdx];
+  const answered = phaseAnswered[phaseIdx] || new Set();
+  const firstMissing = group.qIdxs.find(qIdx => !answered.has(qIdx));
+  if (firstMissing !== undefined) {
+    flagMissingQuestion(phaseIdx, firstMissing);
+    return;
+  }
+
   saveToLocal();
   const next = phaseIdx + 1;
   if (next >= PHASE_GROUPS.length) {
@@ -4091,6 +4114,28 @@ function goNextPhase(phaseIdx) {
     return;
   }
   showPhase(next);
+}
+
+// 把使用者捲到未答題、高亮閃動、並對 number 題自動 focus 輸入框
+function flagMissingQuestion(phaseIdx, qIdx) {
+  const block = document.getElementById('qblock-' + phaseIdx + '-' + qIdx);
+  if (!block) return;
+  const q = QUESTIONS[qIdx];
+  const isNumber = q && q.type === 'number';
+
+  const y = block.getBoundingClientRect().top + window.scrollY - 100;
+  window.scrollTo({ top: y, behavior: 'smooth' });
+
+  block.classList.remove('q-missing');
+  // 強制 reflow 讓動畫可重複觸發
+  void block.offsetWidth;
+  block.classList.add('q-missing');
+  setTimeout(() => block.classList.remove('q-missing'), 2400);
+
+  if (isNumber) {
+    const input = document.getElementById('num-' + q.id);
+    if (input) setTimeout(() => input.focus(), 450);
+  }
 }
 
 function goBackPhase(phaseIdx) {
@@ -4130,6 +4175,8 @@ function clearLocal() {
     localStorage.removeItem('dongwu_answers');
     localStorage.removeItem('dongwu_checkedSets');
     localStorage.removeItem('dongwu_phase');
+    localStorage.removeItem('dongwu_completed');
+    // 注意：dongwu_email 不清 — 已訂閱身分跨次測驗保留，重測仍免再填 email
   } catch(e) {}
 }
 
@@ -4324,14 +4371,18 @@ function showLoading() {
 }
 
 // ══════════ RESULTS ══════════
-function showResults() {
+// skipTracking=true：用於「看上次診斷結果」重入，不重複送 quiz_complete / submitDiagnosis 漏斗事件
+function showResults(skipTracking) {
   document.getElementById('loading').style.display = 'none';
   document.getElementById('results').style.display = 'block';
   document.getElementById('progress-bar').style.width = '100%';
   window.scrollTo(0,0);
   saveToLocal();
-  trackEvent('quiz_complete', 'ai-diagnosis');
-  submitDiagnosis();
+  try { localStorage.setItem('dongwu_completed', '1'); } catch(e) {}
+  if (!skipTracking) {
+    trackEvent('quiz_complete', 'ai-diagnosis');
+    submitDiagnosis();
+  }
 
   const content = generateResults();
   document.getElementById('results-content').innerHTML = content;
@@ -4356,6 +4407,9 @@ function showResults() {
     const k = document.querySelector('.arch-card')?.dataset.archKey;
     if (k) precacheShareImage(k);
   }, 400);
+
+  // D：已訂閱者免再填 email — 結果內容渲染後自動解鎖
+  setTimeout(applyUnlockedState, 80);
 }
 
 // ══════════ TOC ══════════
@@ -4587,6 +4641,27 @@ async function subscribeEmail(email, source, name) {
 
 // （已移除 resendDiagnosis：診斷書改網頁解鎖、無 PDF 可重寄，2026-05-25）
 
+// ══════════ EMAIL 欄位錯誤提示（填錯時紅框 + 下方紅字，一打字就消）══════════
+function showEmailError(input, msg) {
+  if (!input) return;
+  input.style.borderColor = '#e35d4f';
+  input.style.boxShadow = '0 0 0 2px rgba(227,93,79,.22)';
+  let tip = input.parentNode ? input.parentNode.querySelector('.email-err-tip') : null;
+  if (!tip) {
+    tip = document.createElement('div');
+    tip.className = 'email-err-tip';
+    tip.style.cssText = 'color:#e35d4f;font-size:12.5px;line-height:1.4;margin-top:7px;text-align:left;font-weight:600;';
+    input.insertAdjacentElement('afterend', tip);
+  }
+  tip.textContent = msg;
+  input.focus();
+  input.addEventListener('input', () => {
+    input.style.borderColor = '';
+    input.style.boxShadow = '';
+    if (tip) tip.textContent = '';
+  }, { once: true });
+}
+
 function submitEmailReminder(e) {
   e.preventDefault();
   const input = document.getElementById('emailReminderInput');
@@ -4594,13 +4669,14 @@ function submitEmailReminder(e) {
   const nameEl = document.getElementById('nameReminderInput');
   const name = nameEl ? nameEl.value.trim() : '';
   if (!email || !/.+@.+\..+/.test(email)) {
-    input.focus();
+    showEmailError(input, email ? '這個 email 看起來不太對，再確認一下（例：you@gmail.com）' : '先留下 email 才能解鎖完整診斷書喔');
     return false;
   }
   try { localStorage.setItem('dongwu_email', email); } catch(err) {}
   try { if (name) localStorage.setItem('dongwu_name', name); } catch(err) {}
   trackEvent('email_unlock', 'reminder');
   subscribeEmail(email, 'reminder', name);
+  showCenterToast('🎉 完整診斷書已解鎖<br><span style="font-size:14px;font-weight:500;opacity:.85">往下看你的專屬內容</span>');
   const banner = document.getElementById('emailReminderBottom');
   if (banner) {
     banner.classList.add('sent');
@@ -4610,6 +4686,10 @@ function submitEmailReminder(e) {
       <p class="email-reminder-sub">我寄了一封歡迎信到 <strong style="color:var(--text)">${email}</strong><br>裡面有送你的《20 項預算隱形清單》＋ 每週裝修知識信。</p>
     `;
   }
+  // 從底部訂閱時，同步解鎖鎖定區 + 把上方 gate 也標為已解鎖
+  const zone = document.getElementById('lockedZone');
+  if (zone) { zone.classList.remove('locked'); zone.classList.add('unlock-anim'); }
+  _markGateUnlocked(email);
   return false;
 }
 
@@ -4621,13 +4701,14 @@ function submitEmailGate(e) {
   const nameEl = document.getElementById('nameGateInput');
   const name = nameEl ? nameEl.value.trim() : '';
   if (!email || !/.+@.+\..+/.test(email)) {
-    input.focus();
+    showEmailError(input, email ? '這個 email 看起來不太對，再確認一下（例：you@gmail.com）' : '先留下 email 才能解鎖完整診斷書喔');
     return false;
   }
   try { localStorage.setItem('dongwu_email', email); } catch(err) {}
   try { if (name) localStorage.setItem('dongwu_name', name); } catch(err) {}
   trackEvent('email_unlock', 'gate');
   subscribeEmail(email, 'gate', name);
+  showCenterToast('🎉 完整診斷書已解鎖<br><span style="font-size:14px;font-weight:500;opacity:.85">往下看你的專屬內容</span>');
 
   // 解鎖 locked-zone（動畫淡入）
   const zone = document.getElementById('lockedZone');
@@ -4658,6 +4739,9 @@ function submitEmailGate(e) {
       window.scrollTo({ top: y, behavior: 'smooth' });
     }
   }, 400);
+
+  // 同步底部 reminder 區塊也標為已解鎖，避免往下滑又看到一個填寫框
+  _markReminderUnlocked(email);
 
   return false;
 }
@@ -5709,6 +5793,67 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
+// ══════════ 中央解鎖通知 toast（B：解鎖後明顯通知）══════════
+function showCenterToast(msg) {
+  let t = document.getElementById('center-toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'center-toast';
+    t.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.82);background:rgba(28,24,21,.96);color:#F5F0E8;padding:26px 40px;border-radius:20px;font-size:20px;font-weight:700;letter-spacing:1px;z-index:10000;box-shadow:0 20px 60px rgba(0,0,0,.5);border:1.5px solid rgba(184,151,126,.55);text-align:center;line-height:1.5;opacity:0;transition:opacity .35s ease,transform .35s ease;pointer-events:none;max-width:88vw;';
+    document.body.appendChild(t);
+  }
+  t.innerHTML = msg;
+  requestAnimationFrame(() => {
+    t.style.opacity = '1';
+    t.style.transform = 'translate(-50%,-50%) scale(1)';
+  });
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => {
+    t.style.opacity = '0';
+    t.style.transform = 'translate(-50%,-50%) scale(.82)';
+  }, 1600);
+}
+
+// ══════════ 已解鎖狀態套用（D：有 email 免再填）══════════
+// 結果頁渲染後呼叫：若本地已存 dongwu_email，直接解鎖鎖定區並把 gate/reminder 換成已解鎖文案，跳過再填。
+// 把上方 gate 標記為已解鎖（已 sent 則跳過，不覆蓋當下剛送出的文案）
+function _markGateUnlocked(email) {
+  const b = document.getElementById('emailGateBanner');
+  if (!b || b.classList.contains('sent')) return;
+  b.classList.add('sent');
+  b.innerHTML = `
+    <div class="email-gate-inner">
+      <div class="email-gate-text">
+        <div class="email-gate-title">完整診斷書已解鎖 👇</div>
+        <div class="email-gate-sub">你已用 <strong style="color:var(--text)">${email}</strong> 訂閱，這塊不用再填一次。</div>
+      </div>
+    </div>
+  `;
+}
+
+// 把底部 reminder 標記為已解鎖（已 sent 則跳過）
+function _markReminderUnlocked(email) {
+  const r = document.getElementById('emailReminderBottom');
+  if (!r || r.classList.contains('sent')) return;
+  r.classList.add('sent');
+  r.innerHTML = `
+    <div class="email-reminder-eyebrow">已訂閱</div>
+    <h3 class="email-reminder-title">完整診斷書已解鎖 👇</h3>
+    <p class="email-reminder-sub">你已用 <strong style="color:var(--text)">${email}</strong> 訂閱，這塊不用再填一次。</p>
+  `;
+}
+
+function applyUnlockedState() {
+  let email = '';
+  try { email = localStorage.getItem('dongwu_email') || ''; } catch(e) {}
+  if (!email) return false;
+  const zone = document.getElementById('lockedZone');
+  if (zone) { zone.classList.remove('locked'); zone.classList.add('unlock-anim'); }
+  _markGateUnlocked(email);
+  _markReminderUnlocked(email);
+  return true;
+}
+
 // ══════════ LEAD CAPTURE ══════════
 function submitLead() {
   const email = document.getElementById('lead-email').value.trim();
@@ -5738,6 +5883,91 @@ function submitLead() {
   document.getElementById('lead-form').style.display = 'none';
   document.getElementById('lead-success').style.display = 'block';
   showToast('已寄出！去信箱看看吧 ');
+}
+
+// ══════════ A：重開續答偵測 + 詢問 modal ══════════
+function showResumeModal(opts) {
+  let m = document.getElementById('resume-modal');
+  if (m) m.remove();
+  m = document.createElement('div');
+  m.id = 'resume-modal';
+  m.style.cssText = 'position:fixed;inset:0;z-index:10001;display:flex;align-items:center;justify-content:center;background:rgba(20,16,13,.62);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);padding:24px;opacity:0;transition:opacity .3s ease;';
+  m.innerHTML = `
+    <div class="resume-card" style="background:#F5F0E8;color:#1C1815;max-width:420px;width:100%;border-radius:22px;padding:32px 28px;box-shadow:0 30px 80px rgba(0,0,0,.45);text-align:center;transform:translateY(12px);transition:transform .3s ease;">
+      <div style="font-size:21px;font-weight:800;letter-spacing:.5px;margin-bottom:10px;">${opts.title}</div>
+      <div style="font-size:14.5px;line-height:1.65;color:#5c5249;margin-bottom:24px;">${opts.desc}</div>
+      <button id="resume-primary" style="display:block;width:100%;background:#1C1815;color:#F5F0E8;border:none;border-radius:30px;padding:15px;font-size:15px;font-weight:700;letter-spacing:1px;cursor:pointer;margin-bottom:12px;">${opts.primaryLabel}</button>
+      <button id="resume-secondary" style="display:block;width:100%;background:transparent;color:#8a7d70;border:1.5px solid rgba(138,125,112,.4);border-radius:30px;padding:13px;font-size:14px;font-weight:600;letter-spacing:1px;cursor:pointer;">${opts.secondaryLabel}</button>
+    </div>
+  `;
+  document.body.appendChild(m);
+  requestAnimationFrame(() => {
+    m.style.opacity = '1';
+    const card = m.querySelector('.resume-card');
+    if (card) card.style.transform = 'translateY(0)';
+  });
+  const close = () => { m.style.opacity = '0'; setTimeout(() => m.remove(), 300); };
+  m.querySelector('#resume-primary').addEventListener('click', () => { close(); opts.onPrimary && opts.onPrimary(); });
+  m.querySelector('#resume-secondary').addEventListener('click', () => { close(); opts.onSecondary && opts.onSecondary(); });
+}
+
+// 頁面載入時偵測本地是否有進度，有才彈 modal 詢問（未完成→續答 / 已完成→看上次結果）
+function maybeOfferResume() {
+  let saved = '';
+  try { saved = localStorage.getItem('dongwu_answers') || ''; } catch(e) {}
+  if (!saved) return;
+  let completed = false;
+  try { completed = localStorage.getItem('dongwu_completed') === '1'; } catch(e) {}
+  if (completed) {
+    showResumeModal({
+      title: '歡迎回來 👋',
+      desc: '你上次已經完成診斷。要直接看上次的診斷結果，還是重新測一次？',
+      primaryLabel: '看上次的診斷結果',
+      onPrimary: viewLastResult,
+      secondaryLabel: '重新測一次',
+      onSecondary: () => clearLocal(),
+    });
+  } else {
+    let savedPhase = 0;
+    try { savedPhase = parseInt(localStorage.getItem('dongwu_phase') || '0', 10) || 0; } catch(e) {}
+    const pg = PHASE_GROUPS[savedPhase];
+    const phaseTxt = pg ? `第 ${pg.phaseNum} 部分「${pg.label}」` : '上次的進度';
+    showResumeModal({
+      title: '要繼續上次的填答嗎？',
+      desc: `你上次填到 ${phaseTxt}，進度幫你留著了。`,
+      primaryLabel: '繼續填答',
+      onPrimary: resumeQuiz,
+      secondaryLabel: '重新開始',
+      onSecondary: () => clearLocal(),
+    });
+  }
+}
+
+// 續答：還原 answers + 選取 UI + 跳回上次 phase（不經過 startQuiz 的 clearLocal）
+function resumeQuiz() {
+  loadFromLocal();
+  let savedPhase = 0;
+  try { savedPhase = parseInt(localStorage.getItem('dongwu_phase') || '0', 10) || 0; } catch(e) {}
+  document.getElementById('landing').style.display = 'none';
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('quiz-container').style.display = 'block';
+  _toggleSiteHeader(false);
+  buildQuiz();
+  restoreUIState();
+  currentPhase = savedPhase;
+  showPhase(savedPhase);
+  window.scrollTo(0, 0);
+}
+
+// 看上次結果：還原答案後直接渲染結果頁（skipTracking 避免重送漏斗事件）
+function viewLastResult() {
+  loadFromLocal();
+  document.getElementById('landing').style.display = 'none';
+  document.getElementById('quiz-container').style.display = 'none';
+  const loadingEl = document.getElementById('loading');
+  if (loadingEl) loadingEl.style.display = 'none';
+  _toggleSiteHeader(false);
+  showResults(true);
 }
 
 // ══════════ RESTART ══════════
@@ -5774,6 +6004,9 @@ function goHome() {
 
 // Init landing animations
 window.addEventListener('load', () => {
+  // A：偵測本地進度，有才詢問續答 / 看上次結果
+  setTimeout(maybeOfferResume, 350);
+
   const landingEls = document.querySelectorAll('#landing .value-card');
   const obs = new IntersectionObserver((entries) => {
     entries.forEach(e => { if (e.isIntersecting) e.target.style.opacity = '1'; });

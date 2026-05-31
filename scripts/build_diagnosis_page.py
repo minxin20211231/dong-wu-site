@@ -19,6 +19,15 @@ build_diagnosis_page.py — 把文欣交付的診斷書 HTML 轉成 Astro page�
    c. email gate / reminder banner 文案：「我寄了一封歡迎信到…（含 20 項清單）」（非「PDF 已寄到信箱」）
    d. 移除結果頁「✉ 重寄到信箱」按鈕 + resendDiagnosis 函數
    詳見 100_Todo/懂屋電子報訂閱_接通清單.md
+
+⚠️⚠️ 重跑也會覆蓋以下「P0 持久化/解鎖改造」（2026-05-31 加，不在來源 HTML）：
+   e. dongwu_completed 旗標：showResults() 內 setItem + clearLocal() 內 removeItem
+   f. showResults(skipTracking) 參數：skipTracking=true 時不重送 quiz_complete/submitDiagnosis
+   g. showCenterToast() 函數 + submitEmailGate/submitEmailReminder 內的解鎖 toast 呼叫（B）
+   h. applyUnlockedState() + _markGateUnlocked()/_markReminderUnlocked() 三函數 + showResults() 末尾 setTimeout 呼叫
+      （D：有 email 免再填）；submitEmailGate/submitEmailReminder 末尾互相同步另一塊的解鎖呼叫（避免往下滑又出現填寫框）
+   i. maybeOfferResume/showResumeModal/resumeQuiz/viewLastResult 函數 + load handler 內 maybeOfferResume 呼叫（A：續答詢問）
+   j. clearLocal() 內「不清 dongwu_email」註解（訂閱身分跨次測驗保留）
 """
 
 from pathlib import Path
