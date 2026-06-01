@@ -1137,6 +1137,58 @@ const breadcrumbSchema = {
     .post-content table {
       font-size: 0.875em;
     }
+
+    /* 表格手機版：每列拆成一張卡片，第一欄當標題、其餘欄名當小標 */
+    .post-content table.rwd-table thead {
+      display: none;
+    }
+    .post-content table.rwd-table,
+    .post-content table.rwd-table tbody,
+    .post-content table.rwd-table tr,
+    .post-content table.rwd-table td {
+      display: block;
+      width: 100%;
+    }
+    .post-content table.rwd-table {
+      margin: 20px 0;
+    }
+    .post-content table.rwd-table tr {
+      margin: 0 0 16px;
+      border: 1px solid #E5E5E5;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #FFFFFF;
+    }
+    .post-content table.rwd-table tr:nth-child(even) td {
+      background: transparent;
+    }
+    .post-content table.rwd-table td {
+      border: none;
+      border-bottom: 1px solid #EEEAE3;
+      padding: 10px 14px;
+    }
+    .post-content table.rwd-table td:last-child {
+      border-bottom: none;
+    }
+    .post-content table.rwd-table td::before {
+      content: attr(data-label);
+      display: block;
+      font-weight: 700;
+      font-size: 0.82em;
+      color: #B8977E;
+      margin-bottom: 3px;
+    }
+    .post-content table.rwd-table td:first-child {
+      background: #F8F5F1;
+      font-weight: 700;
+      font-size: 1.02em;
+    }
+    .post-content table.rwd-table td:first-child::before {
+      display: none;
+    }
+    .post-content table.rwd-table td:empty {
+      display: none;
+    }
   }
 </style>
 
@@ -1215,13 +1267,30 @@ const breadcrumbSchema = {
     update();
   }
 
+  // 表格手機版 RWD — 每個 td 標上欄名（給 CSS ::before 用），加 rwd-table class
+  function initResponsiveTables() {
+    const tables = document.querySelectorAll('.post-content table');
+    tables.forEach((table) => {
+      const headers = Array.from(table.querySelectorAll('thead th')).map((th) => th.textContent.trim());
+      if (headers.length === 0) return;
+      table.querySelectorAll('tbody tr').forEach((tr) => {
+        tr.querySelectorAll('td').forEach((td, i) => {
+          if (headers[i]) td.setAttribute('data-label', headers[i]);
+        });
+      });
+      table.classList.add('rwd-table');
+    });
+  }
+
   // Astro 5 view transitions 友善
   document.addEventListener('DOMContentLoaded', () => {
     initToc();
     initProgressBar();
+    initResponsiveTables();
   });
   document.addEventListener('astro:page-load', () => {
     initToc();
     initProgressBar();
+    initResponsiveTables();
   });
 </script>
