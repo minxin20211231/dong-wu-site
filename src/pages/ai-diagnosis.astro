@@ -4585,6 +4585,41 @@ function getOrCreateSessionId() {
   }
 }
 
+// 流量渠道（first-touch）：第一次帶 ?ch= 進來就鎖定，之後重整/換頁都沿用同一個。
+// 主力靠分享連結的 ?ch= 參數；沒帶才用 referrer 粗略反推當後備。
+function guessChannelFromReferrer() {
+  try {
+    const r = document.referrer || '';
+    if (!r) return 'direct';
+    const h = new URL(r).hostname;
+    if (/threads\./.test(h)) return 'threads';
+    if (/instagram\./.test(h)) return 'ig';
+    if (/(facebook\.|fb\.com|fb\.me)/.test(h)) return 'fb';
+    if (/(youtube\.|youtu\.be)/.test(h)) return 'yt';
+    if (/line\./.test(h)) return 'line';
+    if (/(google\.|bing\.|yahoo\.|duckduckgo\.)/.test(h)) return 'organic';
+    if (/dong-wu\.com$/.test(h)) return '';   // 站內跳轉，不覆蓋既有歸因
+    return 'referral';
+  } catch (e) { return ''; }
+}
+
+function getOrCreateChannel() {
+  try {
+    let ch = localStorage.getItem('dongwu_diag_channel');
+    if (ch) return ch;
+    const qs = new URLSearchParams(location.search);
+    ch = (qs.get('ch') || qs.get('utm_source') || '').toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 40);
+    if (!ch) ch = guessChannelFromReferrer();
+    if (ch) localStorage.setItem('dongwu_diag_channel', ch);
+    return ch || '';
+  } catch (err) {
+    return '';
+  }
+}
+
+// 進頁面立即鎖定渠道（趁網址還帶著 ?ch= 參數，先存進 localStorage）
+try { getOrCreateChannel(); } catch (e) {}
+
 function trackEvent(event_type, source) {
   if (!MAILERLITE_CONFIG.endpoint) return;
   const session_id = getOrCreateSessionId();
@@ -4593,7 +4628,7 @@ function trackEvent(event_type, source) {
     fetch(MAILERLITE_CONFIG.endpoint + '/track', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ session_id, event_type, source: source || '' }),
+      body: JSON.stringify({ session_id, event_type, source: source || '', channel: getOrCreateChannel() }),
       keepalive: true,
     }).catch(() => {});
   } catch (err) {}
@@ -4610,7 +4645,7 @@ function submitDiagnosis() {
     fetch(MAILERLITE_CONFIG.endpoint + '/submit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ session_id, answers, archetype, source: 'ai-diagnosis' }),
+      body: JSON.stringify({ session_id, answers, archetype, source: 'ai-diagnosis', channel: getOrCreateChannel() }),
       keepalive: true,
     }).catch(() => {});
   } catch (err) {}
@@ -4630,6 +4665,7 @@ async function subscribeEmail(email, source, name) {
         name: name || '',
         source: source || 'ai-diagnosis',
         session_id: getOrCreateSessionId(),
+        channel: getOrCreateChannel(),
       }),
     });
     return { ok: res.ok };
