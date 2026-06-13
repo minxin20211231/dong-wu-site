@@ -4375,6 +4375,7 @@ function showLoading() {
 function showResults(skipTracking) {
   document.getElementById('loading').style.display = 'none';
   document.getElementById('results').style.display = 'block';
+  applyGateVariant();
   document.getElementById('progress-bar').style.width = '100%';
   window.scrollTo(0,0);
   saveToLocal();
@@ -4617,20 +4618,70 @@ function getOrCreateChannel() {
   }
 }
 
+// A/B 實驗：解鎖閘門文案 first-touch 分版（穩定 50/50），帶進埋點 source 後綴 @va / @vb。
+// 'a' = 現況控制組　'b' = 新版（主詞反轉 + 贈品前置）。用 session_id 字元和的奇偶決定，
+// 同一 session 永遠看到同一版；存 localStorage 雙保險。
+function getOrCreateVariant() {
+  try {
+    let v = localStorage.getItem('dongwu_ab_gate');
+    if (v === 'a' || v === 'b') return v;
+    const sid = getOrCreateSessionId();
+    let bit;
+    if (sid) {
+      let sum = 0;
+      for (let i = 0; i < sid.length; i++) sum += sid.charCodeAt(i);
+      bit = sum % 2;
+    } else {
+      bit = Math.random() < 0.5 ? 0 : 1;
+    }
+    v = bit === 0 ? 'a' : 'b';
+    localStorage.setItem('dongwu_ab_gate', v);
+    return v;
+  } catch (err) {
+    return 'a';
+  }
+}
+
 // 進頁面立即鎖定渠道（趁網址還帶著 ?ch= 參數，先存進 localStorage）
 try { getOrCreateChannel(); } catch (e) {}
+try { getOrCreateVariant(); } catch (e) {}
 
 function trackEvent(event_type, source) {
   if (!MAILERLITE_CONFIG.endpoint) return;
   const session_id = getOrCreateSessionId();
   if (!session_id) return;
   try {
+    const variant = getOrCreateVariant();
+    const taggedSource = (source || '') + (variant ? '@v' + variant : '');
     fetch(MAILERLITE_CONFIG.endpoint + '/track', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ session_id, event_type, source: source || '', channel: getOrCreateChannel() }),
+      body: JSON.stringify({ session_id, event_type, source: taggedSource, channel: getOrCreateChannel() }),
       keepalive: true,
     }).catch(() => {});
+  } catch (err) {}
+}
+
+// A/B 實驗 B 版：解鎖閘門文案（主詞反轉 + 贈品前置）。
+// A 版維持頁面原始 HTML 不動，作為對照組。只動文案、不動任何功能。
+function applyGateVariant() {
+  try {
+    if (getOrCreateVariant() !== 'b') return;
+    const banner = document.getElementById('emailGateBanner');
+    if (!banner || banner.classList.contains('sent')) return;
+    const title = banner.querySelector('.email-gate-title');
+    const sub = banner.querySelector('.email-gate-sub');
+    const btn = banner.querySelector('.email-gate-form button');
+    if (title) title.textContent = '你的完整診斷書好了，剩最後一步';
+    if (sub) sub.innerHTML = '填 Email 立即看完整版（含預算分配表、省錢清單），<br>順便收每週裝修知識信';
+    if (sub && !banner.querySelector('.email-gate-gift')) {
+      const gift = document.createElement('div');
+      gift.className = 'email-gate-gift';
+      gift.style.cssText = 'margin-top:10px;font-size:13px;color:var(--accent);font-weight:700;letter-spacing:.5px';
+      gift.innerHTML = '📋 留 Email 再送你《20 項預算隱形清單》';
+      sub.insertAdjacentElement('afterend', gift);
+    }
+    if (btn) btn.innerHTML = '解鎖完整版 <span>→</span>';
   } catch (err) {}
 }
 
