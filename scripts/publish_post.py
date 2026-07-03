@@ -16,6 +16,7 @@
 """
 import argparse
 import io
+import json
 import re
 import subprocess
 import sys
@@ -244,6 +245,13 @@ def seo_lint(info: dict) -> None:
     else:
         ok("B0-01", f"title {len(title)} 字")
 
+    # B0-13 tags 數量（content schema 上限 3，超過 Astro build 直接 fail — 2026-07-03 D014 踩坑）
+    tags = fm.get("tags") or []
+    if len(tags) > 3:
+        fail("B0-13", f"tags {len(tags)} 個 > 3（config.ts schema 上限，CI build 會炸）")
+    else:
+        ok("B0-13", f"tags {len(tags)} 個")
+
     # B0-02 description 長度
     desc = fm.get("description", "")
     if not desc:
@@ -280,6 +288,13 @@ def seo_lint(info: dict) -> None:
             fail("B0-07", f"{len(missing_alt)} 張圖無 alt：{missing_alt[:3]}")
         else:
             ok("B0-07", f"內文 {len(imgs)} 張圖全有 alt")
+
+    # B0-12 內文圖數量（對齊 D001-D007 慣例 4-6 張）
+    # 防呆：2026-05-31 D008 曾因 write-post skill 漏排圖位而全篇 0 圖，此處為上架前最後一道攔截
+    if len(imgs) < 3:
+        warn("B0-12", f"內文圖只有 {len(imgs)} 張（慣例 4-6 張，確認是否寫稿漏排圖位）")
+    else:
+        ok("B0-12", f"內文圖 {len(imgs)} 張（達慣例）")
 
     # B0-08 內文圖檔大小
     public_dir = REPO_ROOT / "public"
@@ -354,33 +369,52 @@ def push_and_wait():
     """push + 等 GH Actions 跑完。"""
     run(["git", "push", "origin", "main"])
 
-    print("[WAIT] 等 5 秒讓 GH Actions 註冊 run...")
-    time.sleep(5)
-
-    runs = run(
-        ["gh", "run", "list", "--workflow=deploy.yml", "--limit=1", "--json", "databaseId,status,headSha"],
-        check=False,
-    )
-    m = re.search(r'"databaseId":\s*(\d+)', runs.stdout or "")
-    if not m:
-        print("[WARN]  抓不到 run id，手動 gh run list 確認")
+    # 抓「剛 push 的 commit」的 run，不能只抓最新一筆——GH Actions 註冊 run 有延遲，
+    # 太早抓會撈到上一個 commit 的舊 run（已完成），導致 watch 秒回、verify 太早跑出假 404。
+    head_sha = run(["git", "rev-parse", "HEAD"], check=False).stdout.strip()
+    run_id = None
+    for attempt in range(12):  # 最多輪詢 ~60 秒
+        time.sleep(5)
+        runs = run(
+            ["gh", "run", "list", "--workflow=deploy.yml", "--limit=10",
+             "--json", "databaseId,status,headSha"],
+            check=False,
+        )
+        try:
+            data = json.loads(runs.stdout or "[]")
+        except Exception:
+            data = []
+        match = next((r for r in data if r.get("headSha") == head_sha), None)
+        if match:
+            run_id = str(match["databaseId"])
+            break
+        print(f"[WAIT] 等 commit {head_sha[:7]} 的 GH Actions run 註冊…（{attempt + 1}/12）")
+    if not run_id:
+        print(f"[WARN]  60 秒內沒等到 commit {head_sha[:7]} 的 run，手動 gh run list 確認")
         return
-    run_id = m.group(1)
-    print(f"[GH] follow GH Actions run {run_id}")
+    print(f"[GH] follow GH Actions run {run_id}（commit {head_sha[:7]}）")
     run(["gh", "run", "watch", run_id, "--exit-status"])
 
 
 def verify_live(info: dict):
     """curl 驗證線上 200 + sitemap 含新 URL。"""
     print(f"[CHK] 驗證 {info['url']}")
-    try:
-        req = urllib.request.Request(info["url"], method="HEAD", headers={"User-Agent": "publish-post.py"})
-        with urllib.request.urlopen(req, timeout=15) as r:
-            if r.status != 200:
-                sys.exit(f"[ERR] 線上回應 {r.status}")
-            print(f"[OK] {info['url']} → 200")
-    except Exception as e:
-        sys.exit(f"[ERR] HEAD 失敗：{e}")
+    # CF edge cache / 部署傳播有 1-2 分鐘延遲，404/非 200 先重試再判失敗（避免假陰性）。
+    last_err = None
+    for attempt in range(6):  # 最多 ~75 秒
+        try:
+            req = urllib.request.Request(info["url"], method="HEAD", headers={"User-Agent": "publish-post.py"})
+            with urllib.request.urlopen(req, timeout=15) as r:
+                if r.status == 200:
+                    print(f"[OK] {info['url']} → 200")
+                    break
+                last_err = f"HTTP {r.status}"
+        except Exception as e:
+            last_err = str(e)
+        print(f"[WAIT] 線上尚未就緒（{last_err}），15 秒後重試（{attempt + 1}/6）")
+        time.sleep(15)
+    else:
+        sys.exit(f"[ERR] 線上驗證失敗（最後：{last_err}）")
 
     try:
         with urllib.request.urlopen(f"{SITEMAP_URL}?_={int(time.time())}", timeout=15) as r:
