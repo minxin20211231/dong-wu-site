@@ -484,6 +484,13 @@ def main():
     print("\n--- GSC 索引提交 ---")
     submit_gsc(info)
 
+    # 歸檔健檢（warn-only 不擋流程；規範見 SOP/folder_naming.md v2）
+    # 上稿後跑：抓「終稿草稿沒重新 sync」「站上圖沒歸檔回本地」這類 D010/D014 踩過的洞
+    print("\n--- 歸檔健檢（audit_posts.py）---")
+    res = run([sys.executable, str(Path(__file__).resolve().parent / "audit_posts.py"), args.post_id], check=False)
+    if res.returncode != 0:
+        print("[WARN] 歸檔不完整（上方 ❌ 項），文章已上線不受影響；請依提示補齊歸檔")
+
     print_manual_checklist(info)
 
 
