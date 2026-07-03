@@ -246,11 +246,16 @@ def seo_lint(info: dict) -> None:
         ok("B0-01", f"title {len(title)} 字")
 
     # B0-13 tags 數量（content schema 上限 3，超過 Astro build 直接 fail — 2026-07-03 D014 踩坑）
-    tags = fm.get("tags") or []
-    if len(tags) > 3:
-        fail("B0-13", f"tags {len(tags)} 個 > 3（config.ts schema 上限，CI build 會炸）")
+    # parse_frontmatter 回傳原始字串（如 ["a", "b"]），要拆項目數、不能 len() 字串（D015 首跑誤報 24）
+    tags_raw = fm.get("tags") or ""
+    if isinstance(tags_raw, str):
+        n_tags = len([t for t in tags_raw.strip().strip("[]").split(",") if t.strip()])
     else:
-        ok("B0-13", f"tags {len(tags)} 個")
+        n_tags = len(tags_raw)
+    if n_tags > 3:
+        fail("B0-13", f"tags {n_tags} 個 > 3（config.ts schema 上限，CI build 會炸）")
+    else:
+        ok("B0-13", f"tags {n_tags} 個")
 
     # B0-02 description 長度
     desc = fm.get("description", "")
