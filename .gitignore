@@ -7,6 +7,10 @@ dist_old*/
 dist_bak*/
 dist_tmp*/
 dist_silentskip*/
+dist_skip*/
+dist_stale*/
+dist_verify*/
+.astro_stale*/
 
 # 本地部署/維護工具（含 account id 與本機路徑，不進 public repo）
 deploy_pages.py

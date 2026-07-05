@@ -4375,7 +4375,6 @@ function showLoading() {
 function showResults(skipTracking) {
   document.getElementById('loading').style.display = 'none';
   document.getElementById('results').style.display = 'block';
-  applyGateVariant();
   document.getElementById('progress-bar').style.width = '100%';
   window.scrollTo(0,0);
   saveToLocal();
@@ -4618,28 +4617,12 @@ function getOrCreateChannel() {
   }
 }
 
-// A/B 實驗：解鎖閘門文案 first-touch 分版（穩定 50/50），帶進埋點 source 後綴 @va / @vb。
-// 'a' = 現況控制組　'b' = 新版（主詞反轉 + 贈品前置）。用 session_id 字元和的奇偶決定，
-// 同一 session 永遠看到同一版；存 localStorage 雙保險。
+// 閘門文案版本代號（編進埋點 source 後綴 @v?，供 funnel_report 前後對照）。
+// 版本演進：legacy（6/13 前原版）→ a/b（A/B 實驗期，B 勝出 20.0% vs 8.3%）
+// → 'c'（2026-07-05 B 版轉正，寫死進 HTML，實驗分流移除）。
+// 下一個閘門改版時把代號遞增為 'd'，不需要恢復分流機制。
 function getOrCreateVariant() {
-  try {
-    let v = localStorage.getItem('dongwu_ab_gate');
-    if (v === 'a' || v === 'b') return v;
-    const sid = getOrCreateSessionId();
-    let bit;
-    if (sid) {
-      let sum = 0;
-      for (let i = 0; i < sid.length; i++) sum += sid.charCodeAt(i);
-      bit = sum % 2;
-    } else {
-      bit = Math.random() < 0.5 ? 0 : 1;
-    }
-    v = bit === 0 ? 'a' : 'b';
-    localStorage.setItem('dongwu_ab_gate', v);
-    return v;
-  } catch (err) {
-    return 'a';
-  }
+  return 'c';
 }
 
 // 進頁面立即鎖定渠道（趁網址還帶著 ?ch= 參數，先存進 localStorage）
@@ -4659,29 +4642,6 @@ function trackEvent(event_type, source) {
       body: JSON.stringify({ session_id, event_type, source: taggedSource, channel: getOrCreateChannel() }),
       keepalive: true,
     }).catch(() => {});
-  } catch (err) {}
-}
-
-// A/B 實驗 B 版：解鎖閘門文案（主詞反轉 + 贈品前置）。
-// A 版維持頁面原始 HTML 不動，作為對照組。只動文案、不動任何功能。
-function applyGateVariant() {
-  try {
-    if (getOrCreateVariant() !== 'b') return;
-    const banner = document.getElementById('emailGateBanner');
-    if (!banner || banner.classList.contains('sent')) return;
-    const title = banner.querySelector('.email-gate-title');
-    const sub = banner.querySelector('.email-gate-sub');
-    const btn = banner.querySelector('.email-gate-form button');
-    if (title) title.textContent = '你的完整診斷書好了，剩最後一步';
-    if (sub) sub.innerHTML = '填 Email 立即看完整版（含預算分配表、省錢清單），<br>順便收每週裝修知識信';
-    if (sub && !banner.querySelector('.email-gate-gift')) {
-      const gift = document.createElement('div');
-      gift.className = 'email-gate-gift';
-      gift.style.cssText = 'margin-top:10px;font-size:13px;color:var(--accent);font-weight:700;letter-spacing:.5px';
-      gift.innerHTML = '📋 留 Email 再送你《20 項預算隱形清單》';
-      sub.insertAdjacentElement('afterend', gift);
-    }
-    if (btn) btn.innerHTML = '解鎖完整版 <span>→</span>';
   } catch (err) {}
 }
 
@@ -4714,7 +4674,8 @@ async function subscribeEmail(email, source, name) {
       body: JSON.stringify({
         email: email,
         name: name || '',
-        source: source || 'ai-diagnosis',
+        // 帶版本後綴（同 trackEvent），worker 寫 email_subscribe 事件時才能按版本拆留信率
+        source: (source || 'ai-diagnosis') + '@v' + getOrCreateVariant(),
         session_id: getOrCreateSessionId(),
         channel: getOrCreateChannel(),
       }),
@@ -4901,6 +4862,90 @@ const ARCHETYPE_TYPES = {
     ]
   }
 };
+
+// ══════════ 解鎖後「下一步」區塊（服務階梯 L2 入口）══════════
+// 開關：/booking 預約頁上線（含金流過渡方案就緒）後改 true 一起部署，避免線上出現 404 連結。
+const SHOW_NEXT_STEP = false;
+const NEXT_STEP_COPY = {
+  researcher: {
+    lead: '你已經查了很多資料——診斷書幫你把重點收攏了，剩下那些查不到答案的問題，帶著它們來。',
+    painTitle: '資料控屋主接下來最常卡住的三件事',
+    pains: ['資料收了一堆，不確定哪些適用自己家', '比價比到失去判斷基準，越比越亂', '問題越來越專業，網路上查不到答案']
+  },
+  intuitive: {
+    lead: '你看空間靠感覺，但預算和工期不會跟著感覺走。把診斷書翻成聽得懂的行動清單，這件事有人陪。',
+    painTitle: '直覺派屋主接下來最常卡住的三件事',
+    pains: ['收藏的美圖拼不成一個完整的家', '說不出「為什麼要這樣做」，容易被牽著走', '感覺想要的，跟預算算出來的對不上']
+  },
+  defender: {
+    lead: '你最在意的是不要踩雷。診斷書標出來的每個風險點，值得有人陪你一個一個確認過。',
+    painTitle: '守備型屋主接下來最常卡住的三件事',
+    pains: ['合約和報價單看不出哪裡有陷阱', '怕漏看建商圖面裡的問題', '每個決定都怕做錯，進度反而卡住']
+  },
+  planner: {
+    lead: '你要的是一套能掌控的計畫。診斷書是起點，把它變成能執行的排程和預算表，是下一步。',
+    painTitle: '規劃型屋主接下來最常卡住的三件事',
+    pains: ['排程排好了，不確定順序對不對', '預算表的項目和金額抓不準', '圖面細節沒有第二雙眼睛幫忙覆核']
+  },
+  solo: {
+    lead: '自己發包不是問題，怕的是沒人幫你把關。帶著診斷書來，把關鍵決策順一遍再動手。',
+    painTitle: '自包派屋主接下來最常卡住的三件事',
+    pains: ['工序怎麼銜接沒人統籌', '不確定哪些自己發包、哪些該找專業', '出問題的時候，沒人負責整合']
+  }
+};
+
+function getNextStepHTML(typeKey) {
+  const c = NEXT_STEP_COPY[typeKey] || NEXT_STEP_COPY.researcher;
+  const pains = c.pains.map((p, i) =>
+    `<div style="background:rgba(245,240,232,.05);border:1px solid rgba(245,240,232,.12);border-radius:10px;padding:10px 14px;font-size:14px;display:flex;gap:10px;align-items:baseline"><span style="font-weight:900;color:var(--accent2);font-size:12px;flex-shrink:0">0${i + 1}</span><span>${p}</span></div>`
+  ).join('');
+  return `
+    <div class="glass-card anim-in" data-chapter="下一步">
+      <div class="card-label">下一步</div>
+      <div class="card-body">
+        <div style="font-size:13px;font-weight:800;letter-spacing:1.5px;color:var(--accent);margin-bottom:12px">${c.painTitle}</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px">${pains}</div>
+
+        <div style="font-family:'Noto Serif TC',Georgia,serif;font-size:24px;font-weight:900;line-height:1.5;margin-bottom:10px;color:var(--text)">先讓懂屋陪你，<br>把診斷書的問題看一遍。</div>
+        <div style="font-size:15px;color:rgba(245,240,232,.65);margin-bottom:16px">${c.lead}</div>
+
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">
+          <span style="font-size:12.5px;background:rgba(245,240,232,.06);border:1px solid rgba(245,240,232,.14);border-radius:14px;padding:4px 12px">1 小時・1 對 1 視訊</span>
+          <span style="font-size:12.5px;background:rgba(245,240,232,.06);border:1px solid rgba(245,240,232,.14);border-radius:14px;padding:4px 12px">預售屋・新成屋屋主適用</span>
+          <span style="font-size:12.5px;background:rgba(245,240,232,.06);border:1px solid rgba(245,240,232,.14);border-radius:14px;padding:4px 12px">需備建商平面圖或家具配置圖</span>
+        </div>
+
+        <div style="background:rgba(184,151,126,.08);border:1.5px solid rgba(184,151,126,.35);border-radius:14px;padding:16px 18px;margin-bottom:16px">
+          <span style="display:inline-block;font-size:12.5px;font-weight:800;color:var(--accent2);background:rgba(212,136,106,.15);border-radius:10px;padding:3px 12px;margin-bottom:6px">7 月上線特價・限 5 個名額</span>
+          <div style="display:flex;align-items:baseline;gap:10px">
+            <span style="font-size:30px;font-weight:900;color:var(--accent)">NT$ 1,500</span>
+            <span style="font-size:14px;color:rgba(245,240,232,.5);text-decoration:line-through">定價 NT$ 1,800</span>
+          </div>
+          <div style="font-size:13px;color:rgba(245,240,232,.65);margin-top:6px">之後若進一步委託全案設計，<strong style="color:var(--accent)">這筆諮詢費全額折抵</strong></div>
+        </div>
+
+        <a href="/booking" onclick="try{trackEvent('cta_click','report-next-step')}catch(e){}"
+           style="display:block;text-align:center;padding:16px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#1C1815;font-size:17px;font-weight:800;letter-spacing:1px;text-decoration:none">預約諮詢，帶著診斷書來 →</a>
+        <div style="text-align:center;font-size:12.5px;color:rgba(245,240,232,.5);margin-top:10px">服務地區：台北・新北・宜蘭｜外縣市朋友先從 <a href="/subscribe" style="color:var(--accent)">每週電子報</a> 開始</div>
+        <div style="text-align:center;font-size:12.5px;color:rgba(245,240,232,.5);margin-top:4px">中古屋・老屋需要現場丈量，這個諮詢不適用——可直接<a href="/booking" style="color:var(--accent)">預約全案設計（含現勘）</a></div>
+
+        <div style="margin-top:22px;font-size:13px;font-weight:800;letter-spacing:1.5px;color:rgba(245,240,232,.55)">預約之後會發生什麼</div>
+        <div style="margin-top:8px;font-size:14.5px;line-height:2">
+          <div><strong style="color:var(--accent)">1</strong>　送出預約——1–2 個工作天內回信，跟你約視訊時間</div>
+          <div><strong style="color:var(--accent)">2</strong>　回傳圖面——把建商平面圖或家具配置圖回信給我們</div>
+          <div><strong style="color:var(--accent)">3</strong>　1 小時視訊——帶著你的診斷書，一題一題看過</div>
+        </div>
+        <div style="background:rgba(212,136,106,.10);border:1px solid rgba(212,136,106,.3);border-radius:12px;padding:12px 16px;font-size:14px;margin-top:10px">🎁 結束時你帶走一份<strong style="color:var(--accent)">專屬行動清單</strong>：該加的點位、該跟建商確認的事、下一步的順序。</div>
+
+        <div style="border-left:3px solid var(--accent);padding:2px 0 2px 14px;font-size:13.5px;color:rgba(245,240,232,.6);margin-top:16px">我們正陪宜蘭礁溪的預售屋屋主走客變期——從插座點位、網路線到廚房配置，一項一項跟建商確認。</div>
+
+        <details style="border-bottom:1px solid rgba(245,240,232,.12);margin-top:18px"><summary style="cursor:pointer;font-weight:700;font-size:15px;padding:10px 0">諮詢的一小時，會不會都在推銷簽約？</summary><div style="font-size:14px;color:rgba(245,240,232,.65);padding:0 0 12px">不會。這一小時就是把你的診斷書和圖面看完，給你一份行動清單——聽完自己執行，完全 OK。如果你在台北、新北、宜蘭，之後想進一步委託設計，這筆諮詢費全額折抵；但要不要走到那一步，決定權在你，諮詢後我們也不會追著你跑。</div></details>
+        <details style="border-bottom:1px solid rgba(245,240,232,.12)"><summary style="cursor:pointer;font-weight:700;font-size:15px;padding:10px 0">我是中古屋／老屋，可以約嗎？</summary><div style="font-size:14px;color:rgba(245,240,232,.65);padding:0 0 12px">中古屋・老屋通常需要現場丈量，1v1 視訊諮詢先不開放。台北、新北、宜蘭的朋友可以直接在預約頁選「全案設計」（含現勘）；其他縣市建議先從電子報和 Notion 模板開始。</div></details>
+        <details><summary style="cursor:pointer;font-weight:700;font-size:15px;padding:10px 0">我還很早期，需要先約嗎？</summary><div style="font-size:14px;color:rgba(245,240,232,.65);padding:0 0 12px">不用急。診斷書和電子報就是為「還在準備」的階段設計的；1v1 諮詢比較適合已經拿到建商圖面的預售屋屋主——時機到了再來就好。</div></details>
+      </div>
+    </div>
+  `;
+}
 
 function calculateArchetype(ans) {
   const s = { researcher:0, intuitive:0, defender:0, planner:0, solo:0 };
@@ -5152,13 +5197,14 @@ function generateResults() {
     <div class="email-gate-banner anim-in" id="emailGateBanner">
       <div class="email-gate-inner">
         <div class="email-gate-text">
-          <div class="email-gate-title">訂閱裝修電子報免費領完整診斷書</div>
-          <div class="email-gate-sub">每週一封懂屋裝修知識信，<br>訂閱後立即解鎖完整診斷報告</div>
+          <div class="email-gate-title">你的完整診斷書好了，剩最後一步</div>
+          <div class="email-gate-sub">填 Email 立即看完整版（含預算分配表、省錢清單），<br>順便收每週裝修知識信</div>
+          <div class="email-gate-gift" style="margin-top:10px;font-size:13px;color:var(--accent);font-weight:700;letter-spacing:.5px">📋 留 Email 再送你《20 項預算隱形清單》</div>
         </div>
         <form class="email-gate-form" onsubmit="submitEmailGate(event)">
           <input type="text" placeholder="你的名字（怎麼稱呼你）" id="nameGateInput" autocomplete="name">
           <input type="email" required placeholder="your@email.com" id="emailGateInput" autocomplete="email">
-          <button type="submit">訂閱 + 解鎖完整版 <span>→</span></button>
+          <button type="submit">解鎖完整版 <span>→</span></button>
         </form>
         <div class="email-gate-tiny">隨時可退訂，不會打擾你</div>
       </div>
@@ -5366,6 +5412,8 @@ function generateResults() {
         </div>
       </div>
     </div>
+
+    ${SHOW_NEXT_STEP ? getNextStepHTML((archetype && archetype.primary) || '') : ''}
 
     </div><!-- /locked-zone -->
 
