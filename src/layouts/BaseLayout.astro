@@ -1,11 +1,13 @@
 ---
 import '../styles/global.css';
+import BottomNav from '../components/BottomNav.astro';
 
 interface Props {
   title: string;
   description?: string;
   image?: string;
   imageAlt?: string;
+  bottomNav?: boolean;
 }
 
 const {
@@ -13,6 +15,7 @@ const {
   description = '懂屋 Know Your Home — 你必須要知道的所有裝修知識都在這裡。從預算規劃、風格選擇到驗收避雷，新手屋主的裝修導航。',
   image = '/images/og-default.png',
   imageAlt = '懂屋 Know Your Home — 新成屋屋主的裝修決策系統',
+  bottomNav = true,
 } = Astro.props;
 
 const fullTitle = title === '懂屋 Know Your Home'
@@ -89,5 +92,6 @@ const siteSchema = {
 </head>
 <body>
   <slot />
+  {bottomNav && <BottomNav />}
 </body>
 </html>

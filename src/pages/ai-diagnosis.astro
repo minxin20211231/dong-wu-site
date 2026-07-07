@@ -2205,6 +2205,40 @@ body > * { position: relative; z-index: 1; }
   font-size: 11px; color: rgba(245,240,232,.45); letter-spacing: 1px;
   text-align: center;
 }
+/* 五型個人化引言（JS 依 archetype 填入） */
+.email-gate-lead {
+  display: none;
+  font-size: 13.5px; color: var(--accent2); letter-spacing: .5px;
+  line-height: 1.7; margin-bottom: 10px;
+}
+/* 指名鎖定章節（JS 掃 locked-zone 實際章節生成，永遠與內容一致） */
+.email-gate-locked-list {
+  font-size: 12.5px; color: rgba(245,240,232,.6); line-height: 2.2;
+  margin: 10px 0 2px; letter-spacing: .5px;
+}
+.email-gate-locked-list strong { color: var(--accent); }
+.gate-lock-chip {
+  display: inline-block; margin: 0 3px;
+  padding: 2px 10px; border-radius: 12px;
+  background: rgba(28,24,21,.5); border: 1px solid rgba(184,151,126,.28);
+  font-size: 12px; white-space: nowrap;
+}
+/* 拆心防 FAQ（反對意見型，放閘門正下方） */
+.email-gate-faq {
+  grid-column: 1 / -1; width: 100%; margin-top: 6px;
+  font-size: 12.5px; color: rgba(245,240,232,.55);
+}
+.email-gate-faq summary {
+  cursor: pointer; text-align: center; letter-spacing: .5px;
+  list-style: none;
+}
+.email-gate-faq summary::-webkit-details-marker { display: none; }
+.email-gate-faq summary::after { content: " ▾"; opacity: .6; }
+.email-gate-faq[open] summary::after { content: " ▴"; opacity: .6; }
+.email-gate-faq p {
+  margin: 8px auto 0; max-width: 420px; text-align: center;
+  line-height: 1.8; color: rgba(245,240,232,.65);
+}
 /* 底部訂閱再提醒 */
 .email-reminder-bottom {
   margin: 48px auto 16px;
@@ -4202,6 +4236,9 @@ window.addEventListener('scroll', () => {
 
 function _toggleSiteHeader(show) {
   if (_siteHdr) _siteHdr.style.display = show ? '' : 'none';
+  // 置底導航跟頁首同進退：測驗進行中一起收起，避免打斷填答
+  const _bn = document.getElementById('siteBottomNav');
+  if (_bn) _bn.style.display = show ? '' : 'none';
 }
 
 // Nav 點擊 smooth scroll
@@ -4386,6 +4423,7 @@ function showResults(skipTracking) {
 
   const content = generateResults();
   document.getElementById('results-content').innerHTML = content;
+  populateGateExtras();
 
   // Build TOC
   setTimeout(buildResultsTOC, 60);
@@ -4619,17 +4657,22 @@ function getOrCreateChannel() {
 
 // 閘門文案版本代號（編進埋點 source 後綴 @v?，供 funnel_report 前後對照）。
 // 版本演進：legacy（6/13 前原版）→ a/b（A/B 實驗期，B 勝出 20.0% vs 8.3%）
-// → 'c'（2026-07-05 B 版轉正，寫死進 HTML，實驗分流移除）。
-// 下一個閘門改版時把代號遞增為 'd'，不需要恢復分流機制。
+// → 'c'（2026-07-05 B 版轉正，寫死進 HTML，實驗分流移除）
+// → 'd'（2026-07 五型引言＋指名鎖定章節＋拆心防 FAQ）。
+// 下一個閘門改版時把代號遞增為 'e'，不需要恢復分流機制。
 function getOrCreateVariant() {
-  return 'c';
+  return 'd';
 }
+
+// 本地預覽防護：localhost 不打正式埋點/訂閱，避免污染 D1 漏斗數據
+const IS_LOCAL_PREVIEW = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
 
 // 進頁面立即鎖定渠道（趁網址還帶著 ?ch= 參數，先存進 localStorage）
 try { getOrCreateChannel(); } catch (e) {}
 try { getOrCreateVariant(); } catch (e) {}
 
 function trackEvent(event_type, source) {
+  if (IS_LOCAL_PREVIEW) return;
   if (!MAILERLITE_CONFIG.endpoint) return;
   const session_id = getOrCreateSessionId();
   if (!session_id) return;
@@ -4647,6 +4690,7 @@ function trackEvent(event_type, source) {
 
 // 送出匿名填答內容（18 題答案 + 屋主類型）到 D1，供後續分析。不含 email。
 function submitDiagnosis() {
+  if (IS_LOCAL_PREVIEW) return;
   if (!MAILERLITE_CONFIG.endpoint) return;
   const session_id = getOrCreateSessionId();
   if (!session_id) return;
@@ -4663,6 +4707,10 @@ function submitDiagnosis() {
 }
 
 async function subscribeEmail(email, source, name) {
+  if (IS_LOCAL_PREVIEW) {
+    console.info('[本地預覽] 略過訂閱送出，不寫正式名單');
+    return { ok: true };
+  }
   if (!MAILERLITE_CONFIG.endpoint) {
     console.info('[MailerLite] endpoint 尚未設定，略過實際送出（email 已暫存本地）');
     return { ok: false, pending: true };
@@ -4724,7 +4772,7 @@ function submitEmailReminder(e) {
   try { if (name) localStorage.setItem('dongwu_name', name); } catch(err) {}
   trackEvent('email_unlock', 'reminder');
   subscribeEmail(email, 'reminder', name);
-  showCenterToast('🎉 完整診斷書已解鎖<br><span style="font-size:14px;font-weight:500;opacity:.85">往下看你的專屬內容</span>');
+  showCenterToast('<div style="font-size:44px;line-height:1;margin-bottom:12px">🎉</div>完整診斷書已解鎖<br><span style="font-size:15px;font-weight:500;opacity:.85">往下看你的專屬內容</span>');
   const banner = document.getElementById('emailReminderBottom');
   if (banner) {
     banner.classList.add('sent');
@@ -4756,7 +4804,7 @@ function submitEmailGate(e) {
   try { if (name) localStorage.setItem('dongwu_name', name); } catch(err) {}
   trackEvent('email_unlock', 'gate');
   subscribeEmail(email, 'gate', name);
-  showCenterToast('🎉 完整診斷書已解鎖<br><span style="font-size:14px;font-weight:500;opacity:.85">往下看你的專屬內容</span>');
+  showCenterToast('<div style="font-size:44px;line-height:1;margin-bottom:12px">🎉</div>完整診斷書已解鎖<br><span style="font-size:15px;font-weight:500;opacity:.85">往下看你的專屬內容</span>');
 
   // 解鎖 locked-zone（動畫淡入）
   const zone = document.getElementById('lockedZone');
@@ -4863,9 +4911,43 @@ const ARCHETYPE_TYPES = {
   }
 };
 
+// ══════════ 解鎖閘門：五型引言＋指名鎖定章節（2026-07 版本 d）══════════
+// 引言依屋主型切換（HubSpot 33 萬 CTA 研究：個人化版本成效高 202%）；
+// 鎖定章節清單從 locked-zone 實際 DOM 掃出來，永遠與內容一致、不會唬人。
+const GATE_LEAD_COPY = {
+  researcher: '你已經把功課做在前面了——下面鎖住的，是網路上查不到的部分：你家自己的數字。',
+  intuitive: '你的感覺已經幫你選好方向——下面鎖住的，是把感覺翻成預算和順序的部分。',
+  defender: '你最在意的是不要踩雷——下面鎖住的章節，就是把雷一顆一顆標出來的部分。',
+  planner: '你要的是一套能執行的計畫——下面鎖住的預算分配和工期規劃，就是計畫本體。',
+  solo: '自己發包沒問題——下面鎖住的清單，會告訴你哪裡能省、哪裡千萬別省。'
+};
+
+function populateGateExtras() {
+  try {
+    const zone = document.getElementById('lockedZone');
+    const banner = document.getElementById('emailGateBanner');
+    if (!zone || !banner || banner.classList.contains('sent')) return;
+    let key = '';
+    try { key = (calculateArchetype(answers) || {}).primary || ''; } catch (e) {}
+    const lead = GATE_LEAD_COPY[key];
+    const leadEl = document.getElementById('gateLeadLine');
+    if (leadEl && lead) { leadEl.textContent = lead; leadEl.style.display = 'block'; }
+    const chapters = Array.from(zone.querySelectorAll('[data-chapter]'))
+      .map(el => el.getAttribute('data-chapter'))
+      .filter((v, i, arr) => v && arr.indexOf(v) === i);
+    const listEl = document.getElementById('gateLockedList');
+    if (listEl && chapters.length) {
+      listEl.innerHTML = '18 題分析完成，還有 <strong>' + chapters.length + ' 個章節</strong>上鎖：<br>' +
+        chapters.map(c => '<span class="gate-lock-chip">🔒 ' + c + '</span>').join('');
+    }
+  } catch (err) {}
+}
+
 // ══════════ 解鎖後「下一步」區塊（服務階梯 L2 入口）══════════
 // 開關：/booking 預約頁上線（含金流過渡方案就緒）後改 true 一起部署，避免線上出現 404 連結。
-const SHOW_NEXT_STEP = false;
+const SHOW_NEXT_STEP = true;
+// 懂屋官方 LINE 加好友連結（帳號 @731chcqb，2026-07-08 Bibo 提供；booking.astro 也有同名常數）
+const LINE_OA_URL = 'https://line.me/R/ti/p/@731chcqb';
 const NEXT_STEP_COPY = {
   researcher: {
     lead: '你已經查了很多資料——診斷書幫你把重點收攏了，剩下那些查不到答案的問題，帶著它們來。',
@@ -4903,8 +4985,35 @@ function getNextStepHTML(typeKey) {
     <div class="glass-card anim-in" data-chapter="下一步">
       <div class="card-label">下一步</div>
       <div class="card-body">
+        <div style="font-size:14.5px;color:rgba(245,240,232,.7);line-height:1.9;margin-bottom:18px">做完 18 題，你已經比多數屋主多想了一步。只是診斷書的工作是把問題找出來——接下來一個一個做決定，才是真正的開始。</div>
+
         <div style="font-size:13px;font-weight:800;letter-spacing:1.5px;color:var(--accent);margin-bottom:12px">${c.painTitle}</div>
         <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px">${pains}</div>
+
+        <div style="font-size:13px;font-weight:800;letter-spacing:1.5px;color:rgba(245,240,232,.55);margin-bottom:10px">接下來，兩種走法</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px">
+          <div style="background:rgba(245,240,232,.04);border:1px solid rgba(245,240,232,.12);border-radius:12px;padding:12px 16px">
+            <div style="font-size:14px;font-weight:800;margin-bottom:4px">一題一題自己查</div>
+            <div style="font-size:13.5px;color:rgba(245,240,232,.6);line-height:1.8">每個問題各自 Google，答案東一塊西一塊，拼完還是不確定套到自己家對不對。</div>
+          </div>
+          <div style="background:rgba(184,151,126,.08);border:1.5px solid rgba(184,151,126,.4);border-radius:12px;padding:12px 16px">
+            <div style="font-size:14px;font-weight:800;margin-bottom:4px;color:var(--accent)">帶著診斷書，一次看完</div>
+            <div style="font-size:13.5px;color:rgba(245,240,232,.7);line-height:1.8">一小時視訊把問題整批看過，走的時候，答案和順序都在你手上。</div>
+          </div>
+        </div>
+
+        <div style="background:rgba(212,136,106,.10);border:1px solid rgba(212,136,106,.3);border-radius:12px;padding:14px 16px;margin-bottom:20px">
+          <div style="font-size:13px;font-weight:800;letter-spacing:1px;color:var(--accent);margin-bottom:6px">這一小時，你會弄清楚</div>
+          <div style="font-size:14px;line-height:2">
+            <div>✓ 診斷書裡那些查不到的問題——當場問、當場解</div>
+            <div>✓ 哪些錢該花、哪些能省——對著你家的圖面講，不是通則</div>
+          </div>
+          <div style="font-size:13px;font-weight:800;letter-spacing:1px;color:var(--accent);margin:12px 0 6px">🎁 結束時實際帶走</div>
+          <div style="font-size:14px;line-height:2">
+            <div>✓ 一份<strong style="color:var(--accent)">專屬行動清單</strong>——該加的點位、該調的配置，照順序列好</div>
+            <div>✓ 一張確認清單——哪些事要跟建商或廠商白紙黑字寫下來</div>
+          </div>
+        </div>
 
         <div style="font-family:'Noto Serif TC',Georgia,serif;font-size:24px;font-weight:900;line-height:1.5;margin-bottom:10px;color:var(--text)">先讓懂屋陪你，<br>把診斷書的問題看一遍。</div>
         <div style="font-size:15px;color:rgba(245,240,232,.65);margin-bottom:16px">${c.lead}</div>
@@ -4912,7 +5021,7 @@ function getNextStepHTML(typeKey) {
         <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">
           <span style="font-size:12.5px;background:rgba(245,240,232,.06);border:1px solid rgba(245,240,232,.14);border-radius:14px;padding:4px 12px">1 小時・1 對 1 視訊</span>
           <span style="font-size:12.5px;background:rgba(245,240,232,.06);border:1px solid rgba(245,240,232,.14);border-radius:14px;padding:4px 12px">預售屋・新成屋屋主適用</span>
-          <span style="font-size:12.5px;background:rgba(245,240,232,.06);border:1px solid rgba(245,240,232,.14);border-radius:14px;padding:4px 12px">需備建商平面圖或家具配置圖</span>
+          <span style="font-size:12.5px;background:rgba(245,240,232,.06);border:1px solid rgba(245,240,232,.14);border-radius:14px;padding:4px 12px">需備建商圖面或裝修報價單</span>
         </div>
 
         <div style="background:rgba(184,151,126,.08);border:1.5px solid rgba(184,151,126,.35);border-radius:14px;padding:16px 18px;margin-bottom:16px">
@@ -4921,23 +5030,10 @@ function getNextStepHTML(typeKey) {
             <span style="font-size:30px;font-weight:900;color:var(--accent)">NT$ 1,500</span>
             <span style="font-size:14px;color:rgba(245,240,232,.5);text-decoration:line-through">定價 NT$ 1,800</span>
           </div>
-          <div style="font-size:13px;color:rgba(245,240,232,.65);margin-top:6px">之後若進一步委託全案設計，<strong style="color:var(--accent)">這筆諮詢費全額折抵</strong></div>
         </div>
 
         <a href="/booking" onclick="try{trackEvent('cta_click','report-next-step')}catch(e){}"
            style="display:block;text-align:center;padding:16px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#1C1815;font-size:17px;font-weight:800;letter-spacing:1px;text-decoration:none">預約諮詢，帶著診斷書來 →</a>
-        <div style="text-align:center;font-size:12.5px;color:rgba(245,240,232,.5);margin-top:10px">服務地區：台北・新北・宜蘭｜外縣市朋友先從 <a href="/subscribe" style="color:var(--accent)">每週電子報</a> 開始</div>
-        <div style="text-align:center;font-size:12.5px;color:rgba(245,240,232,.5);margin-top:4px">中古屋・老屋需要現場丈量，這個諮詢不適用——可直接<a href="/booking" style="color:var(--accent)">預約全案設計（含現勘）</a></div>
-
-        <div style="margin-top:22px;font-size:13px;font-weight:800;letter-spacing:1.5px;color:rgba(245,240,232,.55)">預約之後會發生什麼</div>
-        <div style="margin-top:8px;font-size:14.5px;line-height:2">
-          <div><strong style="color:var(--accent)">1</strong>　送出預約——1–2 個工作天內回信，跟你約視訊時間</div>
-          <div><strong style="color:var(--accent)">2</strong>　回傳圖面——把建商平面圖或家具配置圖回信給我們</div>
-          <div><strong style="color:var(--accent)">3</strong>　1 小時視訊——帶著你的診斷書，一題一題看過</div>
-        </div>
-        <div style="background:rgba(212,136,106,.10);border:1px solid rgba(212,136,106,.3);border-radius:12px;padding:12px 16px;font-size:14px;margin-top:10px">🎁 結束時你帶走一份<strong style="color:var(--accent)">專屬行動清單</strong>：該加的點位、該跟建商確認的事、下一步的順序。</div>
-
-        <div style="border-left:3px solid var(--accent);padding:2px 0 2px 14px;font-size:13.5px;color:rgba(245,240,232,.6);margin-top:16px">我們正陪宜蘭礁溪的預售屋屋主走客變期——從插座點位、網路線到廚房配置，一項一項跟建商確認。</div>
 
         <details style="border-bottom:1px solid rgba(245,240,232,.12);margin-top:18px"><summary style="cursor:pointer;font-weight:700;font-size:15px;padding:10px 0">諮詢的一小時，會不會都在推銷簽約？</summary><div style="font-size:14px;color:rgba(245,240,232,.65);padding:0 0 12px">不會。這一小時就是把你的診斷書和圖面看完，給你一份行動清單——聽完自己執行，完全 OK。如果你在台北、新北、宜蘭，之後想進一步委託設計，這筆諮詢費全額折抵；但要不要走到那一步，決定權在你，諮詢後我們也不會追著你跑。</div></details>
         <details style="border-bottom:1px solid rgba(245,240,232,.12)"><summary style="cursor:pointer;font-weight:700;font-size:15px;padding:10px 0">我是中古屋／老屋，可以約嗎？</summary><div style="font-size:14px;color:rgba(245,240,232,.65);padding:0 0 12px">中古屋・老屋通常需要現場丈量，1v1 視訊諮詢先不開放。台北、新北、宜蘭的朋友可以直接在預約頁選「全案設計」（含現勘）；其他縣市建議先從電子報和 Notion 模板開始。</div></details>
@@ -5197,8 +5293,10 @@ function generateResults() {
     <div class="email-gate-banner anim-in" id="emailGateBanner">
       <div class="email-gate-inner">
         <div class="email-gate-text">
+          <div class="email-gate-lead" id="gateLeadLine"></div>
           <div class="email-gate-title">你的完整診斷書好了，剩最後一步</div>
-          <div class="email-gate-sub">填 Email 立即看完整版（含預算分配表、省錢清單），<br>順便收每週裝修知識信</div>
+          <div class="email-gate-locked-list" id="gateLockedList"></div>
+          <div class="email-gate-sub">填 Email 立即看完整版，<br>順便收每週裝修知識信</div>
           <div class="email-gate-gift" style="margin-top:10px;font-size:13px;color:var(--accent);font-weight:700;letter-spacing:.5px">📋 留 Email 再送你《20 項預算隱形清單》</div>
         </div>
         <form class="email-gate-form" onsubmit="submitEmailGate(event)">
@@ -5206,7 +5304,11 @@ function generateResults() {
           <input type="email" required placeholder="your@email.com" id="emailGateInput" autocomplete="email">
           <button type="submit">解鎖完整版 <span>→</span></button>
         </form>
-        <div class="email-gate-tiny">隨時可退訂，不會打擾你</div>
+        <div class="email-gate-tiny">每週固定一封、隨時一鍵退訂</div>
+        <details class="email-gate-faq">
+          <summary>留 Email 之後，會被廣告轟炸嗎？</summary>
+          <p>不會。每週固定一封裝修知識信，其他時間不打擾；信裡都有退訂鍵，按一下就停。你的 Email 只用來寄信，不會給任何第三方。</p>
+        </details>
       </div>
     </div>
 
@@ -5934,7 +6036,7 @@ function showCenterToast(msg) {
   if (!t) {
     t = document.createElement('div');
     t.id = 'center-toast';
-    t.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.82);background:rgba(28,24,21,.96);color:#F5F0E8;padding:26px 40px;border-radius:20px;font-size:20px;font-weight:700;letter-spacing:1px;z-index:10000;box-shadow:0 20px 60px rgba(0,0,0,.5);border:1.5px solid rgba(184,151,126,.55);text-align:center;line-height:1.5;opacity:0;transition:opacity .35s ease,transform .35s ease;pointer-events:none;max-width:88vw;';
+    t.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.82);background:rgba(28,24,21,.96);color:#F5F0E8;padding:36px 56px;border-radius:24px;font-size:22px;font-weight:700;letter-spacing:1px;z-index:10000;box-shadow:0 20px 60px rgba(0,0,0,.5);border:1.5px solid rgba(184,151,126,.55);text-align:center;line-height:1.5;opacity:0;transition:opacity .35s ease,transform .35s ease;pointer-events:none;max-width:88vw;';
     document.body.appendChild(t);
   }
   t.innerHTML = msg;

@@ -1,0 +1,436 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const description = '預約懂屋 1v1 諮詢——帶著你的 AI 裝修診斷書，一小時視訊把預售屋、新成屋的問題一次看完，結束帶走專屬行動清單。';
+---
+
+<BaseLayout title="預約 1v1 諮詢" description={description} bottomNav={false}>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="/" class="brand">
+        <img src="/images/logo-dongwu-white.png" alt="" class="brand-logo" width="32" height="32" />
+        <span class="brand-text">懂屋 · Know Your Home</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="glow-bg">
+    <section class="hero container">
+      <p class="eyebrow">BOOKING</p>
+      <h1 class="hero-title">預約 1v1 諮詢</h1>
+      <p class="hero-lead">帶著你的診斷書來，一小時把問題看一遍。</p>
+      <p class="bk-fit">適合已經拿到建商圖面、想在客變截止前把決定做完的人。</p>
+      <div class="bk-offer">
+        <span class="bk-offer-badge">7 月上線特價・限 5 個名額</span>
+        <div class="bk-offer-price"><strong>NT$ 1,500</strong><s>定價 NT$ 1,800</s></div>
+        <p class="bk-offer-note">1 小時 1v1 視訊，結束帶走專屬行動清單。限定優惠：可服務地區簽約全案設計，這筆諮詢費<strong>全額折抵</strong>。</p>
+      </div>
+    </section>
+
+    <section class="bk container">
+      <div class="bk-hour">
+        <div class="bk-hour-title">一小時怎麼用</div>
+        <div class="bk-hour-row"><span class="bk-hour-time">前 10 分鐘</span><span>對診斷書——確認你的屋主類型和最卡的問題</span></div>
+        <div class="bk-hour-row"><span class="bk-hour-time">中間 40 分鐘</span><span>看圖面——插座、網路、櫃體、動線，一題一題過</span></div>
+        <div class="bk-hour-row"><span class="bk-hour-time">最後 10 分鐘</span><span>行動清單——把所有決定排成順序，帶著走</span></div>
+      </div>
+
+      <form id="bkForm" class="bk-card" novalidate>
+        <p class="bk-autofill" id="bkAutofill">✓ 已從你的診斷書帶入以下資料，確認或修改即可</p>
+
+        <div class="bk-grid2">
+          <div class="bk-field">
+            <label for="bkName">稱呼</label>
+            <input type="text" id="bkName" autocomplete="name" />
+          </div>
+          <div class="bk-field">
+            <label for="bkEmail">Email <span class="req">*</span></label>
+            <input type="email" id="bkEmail" autocomplete="email" required />
+          </div>
+        </div>
+        <div class="bk-grid2">
+          <div class="bk-field">
+            <label for="bkPing">室內坪數</label>
+            <input type="text" id="bkPing" />
+          </div>
+          <div class="bk-field">
+            <label for="bkTimeline">期望時程</label>
+            <input type="text" id="bkTimeline" />
+          </div>
+        </div>
+        <div class="bk-field">
+          <label for="bkBudget">預算帶 <span class="bk-est" id="bkEst"></span></label>
+          <input type="text" id="bkBudget" />
+        </div>
+
+        <hr class="bk-sep" />
+
+        <div class="bk-field">
+          <label for="bkRegion">房屋所在地區 <span class="req">*</span>（診斷書沒問過，補這題就好）</label>
+          <select id="bkRegion">
+            <option value="">請選擇</option>
+            <option value="台北市">台北市</option>
+            <option value="新北市">新北市</option>
+            <option value="宜蘭縣">宜蘭縣</option>
+            <option value="基隆市">基隆市</option>
+            <option value="桃園市">桃園市</option>
+            <option value="新竹市">新竹市</option>
+            <option value="新竹縣">新竹縣</option>
+            <option value="苗栗縣">苗栗縣</option>
+            <option value="台中市">台中市</option>
+            <option value="彰化縣">彰化縣</option>
+            <option value="南投縣">南投縣</option>
+            <option value="雲林縣">雲林縣</option>
+            <option value="嘉義市">嘉義市</option>
+            <option value="嘉義縣">嘉義縣</option>
+            <option value="台南市">台南市</option>
+            <option value="高雄市">高雄市</option>
+            <option value="屏東縣">屏東縣</option>
+            <option value="花蓮縣">花蓮縣</option>
+            <option value="台東縣">台東縣</option>
+            <option value="澎湖縣">澎湖縣</option>
+            <option value="金門縣">金門縣</option>
+            <option value="連江縣">連江縣</option>
+          </select>
+          <p class="bk-hint" id="bkRegionHint" hidden>目前「全案設計」服務台北・新北・宜蘭；其他縣市的朋友，線上服務（電子報、Notion 模板、直播）不受地區限制 👍</p>
+        </div>
+
+        <div class="bk-field">
+          <label>房屋狀態（預設幫你選好，不對再改）</label>
+          <div class="bk-chips" id="bkStatus">
+            <button type="button" data-v="presale">預售屋（客變期）</button>
+            <button type="button" data-v="new" class="on">新成屋</button>
+            <button type="button" data-v="old">中古屋・老屋</button>
+          </div>
+          <p class="bk-hint" id="bkStatusHint" hidden>中古屋・老屋通常需要現場丈量，1v1 視訊諮詢先不開放——台北・新北・宜蘭的朋友可以直接在下方選「全案設計」預約（含現勘）；其他縣市建議先<a href="/subscribe" style="color:var(--accent2);font-weight:700">訂閱每週電子報</a>，之後的 Notion 模板與直播都會從這裡通知。</p>
+        </div>
+
+        <div class="bk-field">
+          <label>想預約的服務</label>
+          <div class="bk-chips" id="bkService">
+            <button type="button" data-v="presale-consult" class="on">1v1 諮詢（陪看診斷書）</button>
+            <button type="button" data-v="full-design">全案設計</button>
+            <button type="button" data-v="unsure">還不確定</button>
+          </div>
+          <div class="bk-floorplan" id="bkFpBox">
+            <label class="bk-check">
+              <input type="checkbox" id="bkFp" checked />
+              我可以提供<strong>建商平面圖、家具配置圖</strong>或<strong>裝修報價單</strong>（檔案不用現在傳，預約確認信再回傳即可）
+            </label>
+          </div>
+        </div>
+
+        <div class="bk-field">
+          <label for="bkMsg">目前最卡的一件事（選填）</label>
+          <textarea id="bkMsg" rows="3" placeholder="例：建商下週就要交客變單，我不知道插座和網路孔要不要加…"></textarea>
+        </div>
+
+        <p class="bk-error" id="bkError" hidden></p>
+        <button type="submit" class="bk-btn" id="bkSubmit">送出預約</button>
+        <p class="bk-note">送出後會自動帶你到官方 LINE，後續流程和付款資訊自動傳給你</p>
+      </form>
+
+      <div class="bk-card bk-done" id="bkDone" hidden>
+        <div class="bk-done-icon">🐋</div>
+        <h2 class="bk-done-title">預約收到了！</h2>
+        <p class="bk-done-sub">正在帶你到官方 LINE——<strong>後續流程、要準備的資料和付款資訊會自動傳給你</strong>，完成付款即鎖定名額。</p>
+        <a class="bk-line-btn" id="bkLineBtn" href="#" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 5.66 2 10.16c0 4.03 3.58 7.41 8.41 8.05.33.07.77.22.89.5.1.26.07.66.03.92l-.14.86c-.04.26-.2 1.01.89.55 1.09-.46 5.87-3.46 8.01-5.92C21.56 13.44 22 11.87 22 10.16 22 5.66 17.52 2 12 2z"/></svg>
+          沒有自動跳轉？點這裡加官方 LINE
+        </a>
+        <p class="bk-done-sub" style="margin-top:14px">不方便用 LINE 也沒關係，我們會在 1–2 個工作天內回信跟你約時間。<br />等訊息的空檔，可以先回顧你的<a href="/ai-diagnosis">診斷書</a>，把想問的問題記下來。</p>
+      </div>
+
+      <!-- 誰陪你看（digilev 缺口：創辦人敘事信任區；credential 文案與診斷書 creator-card 一致） -->
+      <div class="bk-trust">
+        <img src="/ai-diagnosis/assets/portrait_bibo.jpg" alt="畢波 Bibo" class="bk-trust-photo" width="72" height="72" loading="lazy" />
+        <div class="bk-trust-text">
+          <div class="bk-trust-name">陪你看的人：畢波 Bibo</div>
+          <div class="bk-trust-cred">10 年室內設計現場經驗・旻欣室內設計創辦人・見過 200+ 屋主踩的坑</div>
+          <div class="bk-trust-case">我們正陪宜蘭礁溪的預售屋屋主走客變期——從插座點位、網路線到廚房配置，一項一項跟建商確認。</div>
+        </div>
+      </div>
+
+      <!-- 反對意見型 FAQ：只放最關鍵一題，其餘在診斷書「下一步」區塊 -->
+      <details class="bk-faq">
+        <summary>諮詢的一小時，會不會都在推銷簽約？</summary>
+        <p>不會。這一小時就是把你的診斷書和圖面看完，給你一份行動清單——聽完自己執行，完全 OK。如果你在台北、新北、宜蘭，之後想進一步委託設計，這筆諮詢費全額折抵；但要不要走到那一步，決定權在你，諮詢後我們也不會追著你跑。</p>
+      </details>
+    </section>
+  </main>
+
+  <style>
+    .topbar { border-bottom: 1px solid var(--border); background: var(--bg-deeper); }
+    .topbar-inner { max-width: 1080px; margin: 0 auto; padding: 14px 24px; display: flex; align-items: center; }
+    .brand { display: flex; align-items: center; gap: 10px; color: var(--text); font-weight: 700; font-size: 15px; letter-spacing: .5px; text-decoration: none; }
+    .brand-logo { width: 32px; height: 32px; object-fit: contain; }
+
+    .hero { text-align: center; padding: 56px 24px 8px; max-width: 640px; }
+    .eyebrow { font-size: 12px; letter-spacing: 4px; color: var(--accent); font-weight: 600; margin-bottom: 18px; }
+    .hero-title {
+      font-size: clamp(26px, 5vw, 38px); font-weight: 900; line-height: 1.2; margin-bottom: 14px;
+      background: linear-gradient(135deg, var(--text) 30%, var(--accent) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .hero-lead { font-size: 15.5px; color: var(--muted); line-height: 1.8; }
+    .bk-fit { font-size: 13.5px; color: var(--accent); margin-top: 10px; letter-spacing: .5px; }
+
+    /* 一小時怎麼用 — 時間拆解 */
+    .bk-hour {
+      background: rgba(255,252,248,.04); border: 1px solid var(--border);
+      border-radius: 14px; padding: 16px 20px; margin-bottom: 18px;
+    }
+    .bk-hour-title { font-size: 13px; font-weight: 800; letter-spacing: 1.5px; color: var(--accent); margin-bottom: 10px; }
+    .bk-hour-row { display: flex; gap: 12px; font-size: 14px; color: var(--muted); line-height: 1.9; }
+    .bk-hour-time { flex-shrink: 0; width: 92px; font-weight: 700; color: var(--text); }
+
+    .bk { max-width: 640px; padding: 22px 24px 90px; }
+    .bk-card {
+      background: rgba(255,252,248,.04); border: 1px solid var(--border);
+      border-radius: 18px; padding: 26px 24px;
+    }
+    .bk-autofill { font-size: 14px; font-weight: 700; color: var(--accent); margin-bottom: 18px; }
+    .bk-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .bk-field { margin-bottom: 16px; }
+    .bk-field label { display: block; font-size: 13px; font-weight: 700; color: var(--muted); margin-bottom: 6px; }
+    .req { color: var(--accent2); }
+    .bk-est { font-weight: 400; color: var(--accent); }
+    .bk-field input[type="text"], .bk-field input[type="email"], .bk-field textarea, .bk-field select {
+      width: 100%; padding: 12px 14px; font-size: 15px; font-family: inherit; box-sizing: border-box;
+      background: rgba(255,252,248,.05); border: 1.5px solid var(--border);
+      border-radius: 10px; color: var(--text);
+    }
+    .bk-field input.prefilled { background: rgba(184,151,126,.10); border-color: rgba(184,151,126,.4); }
+    .bk-field input:focus, .bk-field textarea:focus, .bk-field select:focus { outline: none; border-color: var(--accent); }
+    .bk-field select option { color: #1C1815; }
+    .bk-sep { border: none; border-top: 1px dashed var(--border); margin: 20px 0; }
+    .bk-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .bk-chips button {
+      padding: 9px 16px; border-radius: 20px; border: 1.5px solid var(--border);
+      background: transparent; cursor: pointer; font-size: 14px; color: var(--muted); font-family: inherit;
+    }
+    .bk-chips button.on { border-color: var(--accent2); background: rgba(212,136,106,.12); color: var(--accent2); font-weight: 700; }
+    .bk-hint {
+      font-size: 13px; border-radius: 10px; padding: 10px 14px; margin-top: 8px; line-height: 1.7;
+      background: rgba(212,136,106,.10); border: 1px solid rgba(212,136,106,.35); color: var(--text);
+    }
+    .bk-floorplan {
+      margin-top: 10px; background: rgba(184,151,126,.07); border: 1px dashed var(--accent);
+      border-radius: 10px; padding: 12px 14px; font-size: 14px;
+    }
+    .bk-check { display: flex; gap: 8px; align-items: flex-start; cursor: pointer; font-size: 14px !important; font-weight: 400 !important; color: var(--text) !important; line-height: 1.7; }
+    .bk-check input { margin-top: 4px; }
+    .bk-error { font-size: 13.5px; color: var(--accent2); margin-bottom: 10px; }
+    .bk-btn {
+      width: 100%; padding: 15px 24px; font-size: 16px; font-weight: 800; cursor: pointer;
+      background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #1C1815;
+      border: none; border-radius: 12px; transition: transform .2s, box-shadow .2s;
+    }
+    .bk-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px var(--glow); }
+    .bk-btn:disabled { opacity: .6; cursor: default; transform: none; box-shadow: none; }
+    .bk-note { text-align: center; font-size: 12.5px; color: var(--muted); margin-top: 10px; }
+
+    .bk-done { text-align: center; }
+    .bk-done-icon { font-size: 40px; }
+    .bk-done-title { font-size: 22px; font-weight: 900; margin: 10px 0 8px; }
+    .bk-done-sub { font-size: 14.5px; color: var(--muted); line-height: 1.9; }
+    .bk-done-sub a { color: var(--accent); }
+    .bk-done-sub strong { color: var(--text); }
+    .bk-line-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      margin: 16px auto 0; max-width: 320px; padding: 14px 20px;
+      background: #06C755; color: #fff; border-radius: 14px;
+      font-size: 15px; font-weight: 800; letter-spacing: 1px; text-decoration: none;
+    }
+
+    /* offer 摘要條（hero 下）：直接進頁的人也看得到價格與名額 */
+    .bk-offer {
+      margin: 22px auto 0; max-width: 440px;
+      background: rgba(184,151,126,.08); border: 1.5px solid rgba(184,151,126,.35);
+      border-radius: 14px; padding: 16px 18px; text-align: center;
+    }
+    .bk-offer-badge {
+      display: inline-block; font-size: 12.5px; font-weight: 800; color: var(--accent2);
+      background: rgba(212,136,106,.15); border-radius: 10px; padding: 3px 12px; margin-bottom: 6px;
+    }
+    .bk-offer-price { display: flex; align-items: baseline; justify-content: center; gap: 10px; }
+    .bk-offer-price strong { font-size: 28px; font-weight: 900; color: var(--accent); }
+    .bk-offer-price s { font-size: 13.5px; color: var(--muted); }
+    .bk-offer-note { font-size: 13px; color: var(--muted); line-height: 1.7; margin-top: 6px; }
+    .bk-offer-note strong { color: var(--accent); }
+
+    /* 誰陪你看 */
+    .bk-trust {
+      display: flex; gap: 14px; align-items: flex-start;
+      margin-top: 18px; padding: 18px 20px;
+      background: rgba(255,252,248,.04); border: 1px solid var(--border); border-radius: 14px;
+    }
+    .bk-trust-photo { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+    .bk-trust-name { font-size: 15px; font-weight: 800; margin-bottom: 3px; }
+    .bk-trust-cred { font-size: 13px; color: var(--muted); line-height: 1.7; }
+    .bk-trust-case {
+      margin-top: 8px; padding-left: 12px; border-left: 3px solid var(--accent);
+      font-size: 13px; color: var(--muted); line-height: 1.7;
+    }
+
+    /* 反對意見 FAQ */
+    .bk-faq { margin-top: 14px; padding: 4px 20px 12px; border: 1px solid var(--border); border-radius: 14px; }
+    .bk-faq summary { cursor: pointer; font-weight: 700; font-size: 14.5px; padding: 10px 0; }
+    .bk-faq p { font-size: 13.5px; color: var(--muted); line-height: 1.85; margin: 4px 0 6px; }
+
+    @media (max-width: 560px) {
+      .bk-grid2 { grid-template-columns: 1fr; gap: 0; }
+    }
+  </style>
+
+  <script>
+    const WORKER_ENDPOINT = 'https://dongwu-subscribe.minxin20211231.workers.dev';
+    const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const TIMELINE_LABELS: Record<string, string> = { A: '一個月內入住', B: '三個月左右', C: '半年以上' };
+    const BUDGET_LABELS: Record<string, string> = { A: '標準型｜每坪 5–7 萬', B: '精緻型｜每坪 7–8 萬', C: '客製型｜每坪 8–9 萬' };
+    const BUDGET_RATES: Record<string, [number, number]> = { A: [5, 7], B: [7, 8], C: [8, 9] };
+
+    const $ = (id: string) => document.getElementById(id) as HTMLElement;
+    const val = (id: string) => ($(id) as HTMLInputElement).value.trim();
+
+    // 懂屋官方 LINE 加好友連結（帳號 @731chcqb，2026-07-08 Bibo 提供；ai-diagnosis.astro 也有同名常數）
+    const LINE_OA_URL = 'https://line.me/R/ti/p/@731chcqb';
+    if (LINE_OA_URL) ($('bkLineBtn') as HTMLAnchorElement).href = LINE_OA_URL;
+
+    // 送出成功 → 顯示完成畫面，1.5 秒後自動跳轉官方 LINE（後續流程由 LINE 自動訊息接手）
+    function showDone(redirect: boolean) {
+      ($('bkForm') as HTMLElement).hidden = true;
+      ($('bkDone') as HTMLElement).hidden = false;
+      window.scrollTo({ top: 0 });
+      if (redirect && LINE_OA_URL) {
+        setTimeout(() => { window.location.href = LINE_OA_URL; }, 1500);
+      }
+    }
+
+    function ls(key: string): string {
+      try { return localStorage.getItem(key) || ''; } catch (e) { return ''; }
+    }
+
+    // ── 自動帶入診斷書資料 ──
+    let answers: Record<string, any> = {};
+    try { answers = JSON.parse(ls('dongwu_answers') || '{}'); } catch (e) {}
+    const hasDiag = answers && Object.keys(answers).length > 0;
+
+    function prefill(id: string, v: string) {
+      const el = $(id) as HTMLInputElement;
+      if (v) { el.value = v; el.classList.add('prefilled'); }
+    }
+    prefill('bkName', ls('dongwu_name'));
+    prefill('bkEmail', ls('dongwu_email'));
+    if (hasDiag) {
+      const sqm = Number(answers.sqm) || 0;
+      if (sqm > 0) prefill('bkPing', sqm + ' 坪');
+      prefill('bkTimeline', TIMELINE_LABELS[answers.timeline] || '');
+      prefill('bkBudget', BUDGET_LABELS[answers.budget] || '');
+      const rate = BUDGET_RATES[answers.budget];
+      if (sqm > 0 && rate) $('bkEst').textContent = `（診斷書概估：約 ${sqm * rate[0]}–${sqm * rate[1]} 萬）`;
+    }
+    if (!hasDiag && !ls('dongwu_email')) {
+      $('bkAutofill').innerHTML = '還沒做過診斷？<a href="/ai-diagnosis" style="color:var(--accent)">先花 5 分鐘做免費診斷</a>，回來這裡資料會自動帶入；直接填寫也可以。';
+    }
+
+    // ── 選擇群組 ──
+    function pickHandler(groupId: string, after?: () => void) {
+      $(groupId).querySelectorAll('button').forEach((b) =>
+        b.addEventListener('click', () => {
+          $(groupId).querySelectorAll('button').forEach((x) => x.classList.remove('on'));
+          b.classList.add('on');
+          if (after) after();
+        })
+      );
+    }
+    const picked = (groupId: string) => ($(groupId).querySelector('button.on') as HTMLElement)?.dataset.v || '';
+
+    // 全案設計可服務縣市（旻欣三縣市紅線）；其餘縣市走線上服務
+    const SERVICE_REGIONS = ['台北市', '新北市', '宜蘭縣'];
+
+    function refreshGating() {
+      const region = (($('bkRegion') as HTMLSelectElement).value) || '';
+      const status = picked('bkStatus');
+      const isOther = region !== '' && !SERVICE_REGIONS.includes(region);
+      const noConsult = status === 'old' || status === 'none';
+
+      ($('bkRegionHint') as HTMLElement).hidden = !isOther;
+      ($('bkStatusHint') as HTMLElement).hidden = !noConsult;
+
+      const fd = $('bkService').querySelector('[data-v="full-design"]') as HTMLElement;
+      const pc = $('bkService').querySelector('[data-v="presale-consult"]') as HTMLElement;
+      fd.style.display = isOther ? 'none' : '';
+      pc.style.display = noConsult ? 'none' : '';
+
+      const cur = picked('bkService');
+      if ((isOther && cur === 'full-design') || (noConsult && cur === 'presale-consult')) {
+        $('bkService').querySelectorAll('button').forEach((x) => x.classList.remove('on'));
+        const fallback = noConsult && !isOther ? 'full-design' : noConsult ? 'unsure' : 'presale-consult';
+        ($('bkService').querySelector(`[data-v="${fallback}"]`) as HTMLElement)?.classList.add('on');
+      }
+      ($('bkFpBox') as HTMLElement).style.display = picked('bkService') === 'presale-consult' ? '' : 'none';
+    }
+    pickHandler('bkStatus', refreshGating);
+    pickHandler('bkService', refreshGating);
+    $('bkRegion').addEventListener('change', refreshGating);
+    refreshGating();
+
+    // ── 送出 ──
+    ($('bkForm') as HTMLFormElement).addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const err = $('bkError');
+      const email = val('bkEmail').toLowerCase();
+      const region = ($('bkRegion') as HTMLSelectElement).value;
+
+      if (!EMAIL_RE.test(email)) { err.textContent = '請輸入正確的 Email 格式'; err.hidden = false; $('bkEmail').focus(); return; }
+      if (!val('bkName')) { err.textContent = '請填寫稱呼'; err.hidden = false; $('bkName').focus(); return; }
+      if (!region) { err.textContent = '請選擇房屋所在地區（這是唯一必選的新欄位）'; err.hidden = false; $('bkRegion').focus(); return; }
+      err.hidden = true;
+
+      const btn = $('bkSubmit') as HTMLButtonElement;
+      btn.disabled = true; btn.textContent = '送出中…';
+
+      // 本地預覽防護：localhost 直接顯示完成畫面，不寫正式資料庫、不跳轉 LINE
+      if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) {
+        showDone(false);
+        return;
+      }
+
+      const payload = {
+        name: val('bkName'),
+        email,
+        region,
+        house_status: picked('bkStatus'),
+        service: picked('bkService') || 'unsure',
+        ping: val('bkPing'),
+        budget_band: answers.budget || val('bkBudget'),
+        est_range: ($('bkEst').textContent || '').replace(/[（）]/g, ''),
+        timeline: answers.timeline || val('bkTimeline'),
+        has_floorplan: picked('bkService') === 'presale-consult' && ($('bkFp') as HTMLInputElement).checked,
+        message: val('bkMsg'),
+        source: 'booking-page',
+        channel: ls('dongwu_diag_channel'),
+        session_id: ls('dongwu_diag_session'),
+      };
+
+      try {
+        const res = await fetch(`${WORKER_ENDPOINT}/booking`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json().catch(() => ({ ok: false }));
+        if (res.ok && data.ok) {
+          showDone(true);
+        } else {
+          throw new Error('server');
+        }
+      } catch (e2) {
+        btn.disabled = false; btn.textContent = '送出預約';
+        err.textContent = '送出失敗，請稍後再試一次';
+        err.hidden = false;
+      }
+    });
+  </script>
+</BaseLayout>

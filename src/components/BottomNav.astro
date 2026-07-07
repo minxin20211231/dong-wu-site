@@ -1,0 +1,51 @@
+---
+// 全站置底預約橫幅（2026-07-08 Bibo 定案：只留「預約 1v1」單一入口，全頁寬、要明顯）
+// ai-diagnosis 測驗進行中由 _toggleSiteHeader(false) 連動隱藏，避免打斷填答。
+// booking 頁自身不顯示（BaseLayout 傳 bottomNav={false}）。
+---
+
+<nav id="siteBottomNav" class="bottom-nav" aria-label="預約捷徑">
+  <a href="/booking/" class="bottom-nav-cta">預約 1v1 諮詢，帶著診斷書來 ↓</a>
+</nav>
+
+<style>
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 900;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+    background: rgba(22, 17, 13, 0.88);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    border-top: 1px solid rgba(184, 151, 126, 0.3);
+  }
+  .bottom-nav-cta {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+    padding: 16px 20px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #b8977e, #d4886a);
+    color: #1c1815;
+    font-size: 16.5px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-decoration: none;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .bottom-nav-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(184, 151, 126, 0.35);
+  }
+  .bottom-nav-cta:focus-visible {
+    outline: 2px solid rgba(245, 240, 232, 0.9);
+    outline-offset: 3px;
+  }
+  @media (max-width: 420px) {
+    .bottom-nav-cta { font-size: 15.5px; letter-spacing: 1px; }
+  }
+</style>
