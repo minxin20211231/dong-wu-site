@@ -2211,6 +2211,18 @@ body > * { position: relative; z-index: 1; }
   font-size: 13.5px; color: var(--accent2); letter-spacing: .5px;
   line-height: 1.7; margin-bottom: 10px;
 }
+/* 社會證明徽章（e 版）：數字放大、金框 pill，置中在閘門標題下 */
+.email-gate-proof {
+  display: inline-flex; align-items: baseline; gap: 7px;
+  margin: 6px auto 2px; padding: 7px 20px;
+  background: rgba(184,151,126,.10); border: 1px solid rgba(184,151,126,.38);
+  border-radius: 999px;
+  font-size: 13.5px; color: var(--text); letter-spacing: 1px;
+}
+.email-gate-proof .proof-num {
+  font-family: "Noto Serif TC", serif;
+  font-size: 22px; font-weight: 900; color: var(--accent); line-height: 1;
+}
 /* 指名鎖定章節（JS 掃 locked-zone 實際章節生成，永遠與內容一致） */
 .email-gate-locked-list {
   font-size: 12.5px; color: rgba(245,240,232,.6); line-height: 2.2;
@@ -4658,10 +4670,11 @@ function getOrCreateChannel() {
 // 閘門文案版本代號（編進埋點 source 後綴 @v?，供 funnel_report 前後對照）。
 // 版本演進：legacy（6/13 前原版）→ a/b（A/B 實驗期，B 勝出 20.0% vs 8.3%）
 // → 'c'（2026-07-05 B 版轉正，寫死進 HTML，實驗分流移除）
-// → 'd'（2026-07 五型引言＋指名鎖定章節＋拆心防 FAQ）。
-// 下一個閘門改版時把代號遞增為 'e'，不需要恢復分流機制。
+// → 'd'（2026-07 五型引言＋指名鎖定章節＋拆心防 FAQ）
+// → 'e'（2026-07-09 閘門加真實社會證明數字「500+ 位屋主已完成」）。
+// 下一個閘門改版時把代號遞增為 'f'，不需要恢復分流機制。
 function getOrCreateVariant() {
-  return 'd';
+  return 'e';
 }
 
 // 本地預覽防護：localhost 不打正式埋點/訂閱，避免污染 D1 漏斗數據
@@ -5038,6 +5051,11 @@ function getNextStepHTML(typeKey) {
         <details style="border-bottom:1px solid rgba(245,240,232,.12);margin-top:18px"><summary style="cursor:pointer;font-weight:700;font-size:15px;padding:10px 0">諮詢的一小時，會不會都在推銷簽約？</summary><div style="font-size:14px;color:rgba(245,240,232,.65);padding:0 0 12px">不會。這一小時就是把你的診斷書和圖面看完，給你一份行動清單——聽完自己執行，完全 OK。如果你在台北、新北、宜蘭，之後想進一步委託設計，這筆諮詢費全額折抵；但要不要走到那一步，決定權在你，諮詢後我們也不會追著你跑。</div></details>
         <details style="border-bottom:1px solid rgba(245,240,232,.12)"><summary style="cursor:pointer;font-weight:700;font-size:15px;padding:10px 0">我是中古屋／老屋，可以約嗎？</summary><div style="font-size:14px;color:rgba(245,240,232,.65);padding:0 0 12px">中古屋・老屋通常需要現場丈量，1v1 視訊諮詢先不開放。台北、新北、宜蘭的朋友可以直接在預約頁選「全案設計」（含現勘）；其他縣市建議先從電子報和 Notion 模板開始。</div></details>
         <details><summary style="cursor:pointer;font-weight:700;font-size:15px;padding:10px 0">我還很早期，需要先約嗎？</summary><div style="font-size:14px;color:rgba(245,240,232,.65);padding:0 0 12px">不用急。診斷書和電子報就是為「還在準備」的階段設計的；1v1 諮詢比較適合已經拿到建商圖面的預售屋屋主——時機到了再來就好。</div></details>
+
+        <div style="margin-top:28px;padding-top:20px;border-top:1px solid rgba(245,240,232,.12);text-align:center">
+          <div style="font-family:'Noto Serif TC',Georgia,serif;font-size:16.5px;line-height:2;color:rgba(245,240,232,.78)">希望每一位屋主，都能在裝修前先看懂自己的家，<br>而不是入住後才發現，有些問題當初就能避開。</div>
+          <div style="margin-top:10px;font-size:11.5px;letter-spacing:3px;color:var(--accent)">懂屋 KNOW YOUR HOME</div>
+        </div>
       </div>
     </div>
   `;
@@ -5092,6 +5110,16 @@ function calculateArchetype(ans) {
     secondaryPct: Math.round(sorted[1][1] / total * 100)
   };
 }
+
+// 同型佔比（D1 實查 2026-07-09，n=515）：資料控 36.5%｜直覺派 26.0%｜規劃型 18.6%｜自包派 11.8%｜守備型 7.0%
+// 每次跑漏斗儀表板順手對照「屋主輪廓分布」，漂移超過 ±3 個百分點再更新這裡的數字。
+const ARCH_PCT_LINE = {
+  researcher: '在 500+ 位做過診斷的屋主裡，36% 和你一樣是資料控——最大的一群',
+  intuitive: '在 500+ 位做過診斷的屋主裡，26% 和你一樣是直覺派',
+  planner: '在 500+ 位做過診斷的屋主裡，19% 和你一樣是規劃型',
+  solo: '在 500+ 位做過診斷的屋主裡，12% 和你一樣是自包派',
+  defender: '在 500+ 位做過診斷的屋主裡，只有 7% 是守備型——你是少數會先想到風險的人'
+};
 
 function renderArchetypeCard(arch) {
   const t = ARCHETYPE_TYPES[arch.primary];
@@ -5148,6 +5176,7 @@ function renderArchetypeCard(arch) {
         </div>
         <div class="arch-pair-list">${pairsHtml}</div>
       </div>
+      <div style="text-align:center;font-size:12.5px;color:rgba(28,24,21,.62);padding:6px 24px 2px;line-height:1.7">${ARCH_PCT_LINE[arch.primary] || ''}</div>
       <button class="arch-share-btn" onclick="shareArchetype('${arch.primary}','${t.name}','${t.img}')">
         <span class="arch-share-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
@@ -5295,6 +5324,8 @@ function generateResults() {
         <div class="email-gate-text">
           <div class="email-gate-lead" id="gateLeadLine"></div>
           <div class="email-gate-title">你的完整診斷書好了，剩最後一步</div>
+          <!-- 社會證明徽章：500+ 為 D1 實查真實數（2026-07-09 累計 526 完成），只寫下限不灌水；破 600 再改 600+ -->
+          <div class="email-gate-proof"><span class="proof-num">500+</span> 位屋主已完成這份診斷</div>
           <div class="email-gate-locked-list" id="gateLockedList"></div>
           <div class="email-gate-sub">填 Email 立即看完整版，<br>順便收每週裝修知識信</div>
           <div class="email-gate-gift" style="margin-top:10px;font-size:13px;color:var(--accent);font-weight:700;letter-spacing:.5px">📋 留 Email 再送你《20 項預算隱形清單》</div>
