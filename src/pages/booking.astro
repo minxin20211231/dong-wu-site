@@ -141,20 +141,33 @@ const description = '預約懂屋 1v1 諮詢——帶著你的 AI 裝修診斷�
         <p class="bk-done-sub" style="margin-top:14px">不方便用 LINE 也沒關係，我們會在 1–2 個工作天內回信跟你約時間。<br />等訊息的空檔，可以先回顧你的<a href="/ai-diagnosis">診斷書</a>，把想問的問題記下來。</p>
       </div>
 
-      <!-- 誰陪你看（digilev 缺口：創辦人敘事信任區；credential 文案與診斷書 creator-card 一致） -->
+      <!-- 誰陪你看（2026-07-09 Bibo 二次定稿：本名鄭晏旻＋證照＋隱性知識定位句；不報年資、不用口語「你手上那份」、不放礁溪實案引言。診斷書 creator-card 維持原文案，兩處刻意不同步） -->
       <div class="bk-trust">
-        <img src="/ai-diagnosis/assets/portrait_bibo.jpg" alt="畢波 Bibo" class="bk-trust-photo" width="72" height="72" loading="lazy" />
+        <img src="/ai-diagnosis/assets/portrait_bibo.jpg" alt="鄭晏旻 Bibo" class="bk-trust-photo" width="72" height="72" loading="lazy" />
         <div class="bk-trust-text">
-          <div class="bk-trust-name">陪你看的人：畢波 Bibo</div>
-          <div class="bk-trust-cred">10 年室內設計現場經驗・旻欣室內設計創辦人・見過 200+ 屋主踩的坑</div>
-          <div class="bk-trust-case">我們正陪宜蘭礁溪的預售屋屋主走客變期——從插座點位、網路線到廚房配置，一項一項跟建商確認。</div>
+          <div class="bk-trust-name">陪新手屋主裝潢的設計師：鄭晏旻 Bibo</div>
+          <div class="bk-trust-cred">旻欣室內設計創辦人・建築物室內設計＋裝修工程管理 雙乙級證照</div>
+          <div class="bk-trust-cred">擅長將現場隱性知識寫進工具，讓每一個屋主都能使用。</div>
+          <div class="bk-trust-cred">懂屋的 AI 裝修診斷書、裝修文章、每週電子報，讓你裝修導航不迷路。</div>
         </div>
       </div>
 
-      <!-- 反對意見型 FAQ：只放最關鍵一題，其餘在診斷書「下一步」區塊 -->
+      <!-- 反對意見型 FAQ（2026-07-09 擴充至 4 題） -->
       <details class="bk-faq">
         <summary>諮詢的一小時，會不會都在推銷簽約？</summary>
         <p>不會。這一小時就是把你的診斷書和圖面看完，給你一份行動清單——聽完自己執行，完全 OK。如果你在台北、新北、宜蘭，之後想進一步委託設計，這筆諮詢費全額折抵；但要不要走到那一步，決定權在你，諮詢後我們也不會追著你跑。</p>
+      </details>
+      <details class="bk-faq">
+        <summary>我還沒拿到建商圖面，可以先約嗎？</summary>
+        <p>建議等圖面到手再約，一小時對著圖談才划算。還在更早階段的話，先做免費的 AI 診斷書、訂閱每週電子報把功課做起來，拿到圖面再來，剛剛好。</p>
+      </details>
+      <details class="bk-faq">
+        <summary>我的問題很雜，一小時真的看得完嗎？</summary>
+        <p>看得完，因為不是從零開始聊——你的診斷書已經先把屋主類型和最卡的問題整理好了，前 10 分鐘對焦，中間 40 分鐘一題一題過圖面。真的聊不完的部分，會直接寫進行動清單、標好優先順序，你會知道接下來先處理哪一件。</p>
+      </details>
+      <details class="bk-faq">
+        <summary>送出預約之後，流程怎麼走？</summary>
+        <p>送出後會帶你加官方 LINE，要準備的資料（建商平面圖、家具配置圖或報價單）和付款方式都會自動傳給你，完成付款就鎖定名額，接著跟你約視訊時間。不方便用 LINE 也沒關係，我們會在 1–2 個工作天內回信跟你約。</p>
       </details>
     </section>
   </main>
@@ -197,10 +210,11 @@ const description = '預約懂屋 1v1 諮詢——帶著你的 AI 裝修診斷�
     .bk-est { font-weight: 400; color: var(--accent); }
     .bk-field input[type="text"], .bk-field input[type="email"], .bk-field textarea, .bk-field select {
       width: 100%; padding: 12px 14px; font-size: 15px; font-family: inherit; box-sizing: border-box;
-      background: rgba(255,252,248,.05); border: 1.5px solid var(--border);
-      border-radius: 10px; color: var(--text);
+      background: #FFFCF8; border: 1.5px solid rgba(184,151,126,.35);
+      border-radius: 10px; color: #1C1815;
     }
-    .bk-field input.prefilled { background: rgba(184,151,126,.10); border-color: rgba(184,151,126,.4); }
+    .bk-field input::placeholder, .bk-field textarea::placeholder { color: rgba(28,24,21,.4); }
+    .bk-field input.prefilled { background: #F5EBE1; border-color: rgba(184,151,126,.55); }
     .bk-field input:focus, .bk-field textarea:focus, .bk-field select:focus { outline: none; border-color: var(--accent); }
     .bk-field select option { color: #1C1815; }
     .bk-sep { border: none; border-top: 1px dashed var(--border); margin: 20px 0; }
@@ -268,6 +282,7 @@ const description = '預約懂屋 1v1 諮詢——帶著你的 AI 裝修診斷�
     .bk-trust-photo { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
     .bk-trust-name { font-size: 15px; font-weight: 800; margin-bottom: 3px; }
     .bk-trust-cred { font-size: 13px; color: var(--muted); line-height: 1.7; }
+    .bk-trust-cred + .bk-trust-cred { margin-top: 4px; }
     .bk-trust-case {
       margin-top: 8px; padding-left: 12px; border-left: 3px solid var(--accent);
       font-size: 13px; color: var(--muted); line-height: 1.7;
