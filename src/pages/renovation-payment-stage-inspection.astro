@@ -1,0 +1,33 @@
+---
+/*
+ * D016 — 裝潢分期付款，每期付錢前要驗收什麼？4 ...
+ * URL slug = renovation-payment-stage-inspection
+ * 自動產生於 publish_post.py（每篇獨立 .astro 繞 Astro 5 + Windows 中括號 bug）
+ */
+import { getCollection } from 'astro:content';
+import PostLayout from '../layouts/PostLayout.astro';
+
+export const prerender = true;
+
+const posts = await getCollection('posts');
+const post = posts.find((p) => p.data.id === 'D016');
+if (!post) throw new Error('Post D016 not found in collection');
+
+const { Content, headings } = await post.render();
+const tocHeadings = headings.filter((h) => h.depth === 2);
+---
+
+<PostLayout
+  title={post.data.title}
+  description={post.data.description}
+  publishDate={post.data.publishDate}
+  updateDate={post.data.updateDate}
+  dim={post.data.dim}
+  tags={post.data.tags}
+  heroImage={post.data.heroImage}
+  heroAlt={post.data.heroAlt}
+  headings={tocHeadings}
+  body={post.body}
+>
+  <Content />
+</PostLayout>
