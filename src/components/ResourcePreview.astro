@@ -372,10 +372,15 @@ const character = characterByKind[kind];
     .course-preview,
     .inventory-board { transform: translateX(9%) scale(0.75); }
   }
-  /* 工具卡（compact）手機版：明確雙欄拼貼——人物完整在左、紙卡完整顯示在右下（不貼負值、不裁切） */
+  /* 工具卡（compact）手機版：明確雙欄拼貼——人物完整在左、紙卡完整顯示在右下（不貼負值、不裁切）
+     注意：桌機 compact 的人物是 left:50%＋translateX(-50%) 置中、height 72%，
+     這裡必須同時清掉 transform 與 height，否則人物被平移出卡外（7/19 踩過） */
   @media (max-width: 680px) {
     .resource-preview-compact { min-height: 380px; height: 380px; }
-    .resource-preview-compact .preview-character { inset: 12px auto 12px 12px; width: 56%; }
+    .resource-preview-compact .preview-character {
+      inset: 12px auto 12px 12px; width: 56%; height: auto; transform: none;
+    }
+    .resource-preview-compact:hover .preview-character { transform: none; }
     .resource-preview-compact .diagnosis-paper,
     .resource-preview-compact .course-preview,
     .resource-preview-compact .inventory-board {
