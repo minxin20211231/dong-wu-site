@@ -246,7 +246,7 @@ const routeStops = [
           <p class="eyebrow">開島籌備中・登島預約</p>
           <h2>裝修新手島</h2>
           <p class="island-slogan">把裝修給導航，讓新手也能走成一條路</p>
-          <p class="map-lead">Threads 上 60 多站的裝修導航系列，正在變成一座可以走的島——照裝修順序一站一站走，每站幾分鐘，走到哪、住到哪。</p>
+          <p class="map-lead">Threads 上 70 多站的裝修導航系列，正在變成一座可以走的島——照裝修順序一站一站走，每站幾分鐘，走到哪、住到哪。</p>
           <ul class="island-highlights">
             <li><strong>開島第一天通知你</strong><span>Email 寄出登島消息，不用每天回來看進度。</span></li>
             <li><strong>帶著屋主職業卡上島</strong><span>做過診斷的島民，之後能解鎖自己這型屋主的專屬內容。</span></li>
@@ -709,9 +709,12 @@ const routeStops = [
   .map-form input:focus,
   .map-form textarea:focus { box-shadow: 0 0 0 3px rgba(212,136,106,.2); }
   .map-form button {
-    margin-top: 6px; padding: 14px 18px; border: 0; border-radius: 12px;
-    background: #D4886A; color: #1C1815; font: inherit; font-weight: 950; cursor: pointer;
+    margin-top: 6px; padding: 16px 18px; border: 0; border-radius: 12px;
+    background: #BC5F3E; color: #FFFDF8; font: inherit; font-size: 1.02rem; font-weight: 950; cursor: pointer;
+    box-shadow: 0 10px 24px rgba(188, 95, 62, .28);
+    transition: transform .2s var(--dw-motion-spring), background .2s ease;
   }
+  .map-form button:hover { transform: translateY(-2px); background: #D4886A; }
   .map-form > p { margin: 2px 0 0; color: #6E5F54; font-size: .8rem; }
   .island-visuals { min-width: 0; display: grid; gap: 18px; }
   .route-card {
