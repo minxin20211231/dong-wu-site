@@ -659,13 +659,13 @@ const routeStops = [
   .tool-card:nth-child(3) { background: #F2E2DA; }
   .tool-card-topline { display: flex; justify-content: space-between; align-items: center; padding: 3px 5px 13px; }
   .tool-card-topline span {
-    padding: 6px 9px; border-radius: 999px; background: rgba(255,255,255,.65);
-    color: #8A5B46; font-size: .65rem; font-weight: 900; letter-spacing: .08em;
+    padding: 7px 12px; border-radius: 999px; background: rgba(255,255,255,.65);
+    color: #8A5B46; font-size: .82rem; font-weight: 900; letter-spacing: .08em;
   }
-  .tool-card-topline small { color: #A09184; font-size: .67rem; font-weight: 900; letter-spacing: .14em; }
+  .tool-card-topline small { color: #A09184; font-size: .84rem; font-weight: 900; letter-spacing: .14em; }
   .tool-card :global(.resource-preview) { width: 100%; height: 310px; }
   .tool-card-copy { display: grid; grid-template-rows: auto minmax(4.05em,auto) 1fr auto; padding: 25px 10px 10px; }
-  .tool-name { margin: 0 0 9px; color: #A3654A; font-size: .72rem; font-weight: 900; letter-spacing: .08em; }
+  .tool-name { margin: 0 0 9px; color: #A3654A; font-size: .9rem; font-weight: 900; letter-spacing: .08em; }
   .tool-card h3 { margin: 0; font-size: 1.38rem; font-weight: 950; letter-spacing: -.02em; line-height: 1.42; }
   .tool-card h3 span { display: block; }
   .tool-card ul { margin: 22px 0 26px; padding: 0; display: grid; gap: 10px; list-style: none; }
@@ -674,11 +674,13 @@ const routeStops = [
     content: '✓'; position: absolute; left: 0; top: 0; color: #B46F52; font-weight: 950;
   }
   .tool-cta {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 14px 16px; border-radius: 12px; background: #D4886A; color: #1C1815 !important;
-    font-size: .86rem; font-weight: 950;
+    display: flex; justify-content: center; align-items: center; gap: 10px;
+    padding: 16px 18px; border-radius: 12px; background: #BC5F3E; color: #FFFDF8 !important;
+    font-size: 1.02rem; font-weight: 950;
+    box-shadow: 0 10px 24px rgba(188, 95, 62, .28);
+    transition: transform .2s var(--dw-motion-spring), background .2s ease;
   }
-  .tool-cta:hover { background: #DE957A; }
+  .tool-cta:hover { transform: translateY(-2px); background: #D4886A; }
   .map-section { padding: 112px 0; background: #F5F0E8; }
   .map-grid { display: grid; grid-template-columns: minmax(0,1fr) minmax(430px,.92fr); align-items: start; gap: 76px; }
   .island-slogan {
