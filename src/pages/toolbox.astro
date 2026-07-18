@@ -822,7 +822,8 @@ const routeStops = [
     .hero-copy h1 { font-size: clamp(3.15rem, 18vw, 4.6rem); }
     .hero-lead { margin: 20px 0 22px; font-size: .98rem; line-height: 1.72; }
     .hero-cta { padding: 12px 17px; }
-    .hero-world { display: none; }
+    /* 2026-07-19 Bibo 指示手機也要看到開箱工具箱（Codex 原藏 display:none，縮放規則本就備好） */
+    .hero-world { min-height: 420px; border-radius: 26px; }
     .hero-character { top: 36px; width: 39%; height: 230px; }
     .hero-tool-orbit { transform: scale(.78); }
     .toolbox-stage { bottom: 14px; transform: translateX(-50%) scale(.88) rotateX(var(--scene-rx)) rotateY(var(--scene-ry)); }
