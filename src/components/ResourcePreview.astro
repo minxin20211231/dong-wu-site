@@ -372,6 +372,14 @@ const character = characterByKind[kind];
     .course-preview,
     .inventory-board { transform: translateX(9%) scale(0.75); }
   }
+  /* 工具卡（compact）手機版：卡片全寬時紙卡撐高蓋住人物，加高容器＋紙卡縮小貼底讓人物露臉 */
+  @media (max-width: 680px) {
+    .resource-preview-compact { min-height: 400px; height: 400px; }
+    .resource-preview-compact .preview-character { inset: 14px auto 14px 12px; width: 64%; }
+    .resource-preview-compact .diagnosis-paper { transform: translateX(-50%) scale(.5) rotate(1.2deg); }
+    .resource-preview-compact .course-preview { transform: translateX(-50%) scale(.55) rotate(-.5deg); }
+    .resource-preview-compact .inventory-board { transform: translateX(-50%) scale(.55) rotate(.5deg); }
+  }
   @media (prefers-reduced-motion: reduce) {
     .resource-preview,
     .preview-character { transition: none; }

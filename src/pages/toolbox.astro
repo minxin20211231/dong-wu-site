@@ -22,7 +22,7 @@ const tools = [
   {
     title: '裝修該花多少錢？',
     tag: 'Email 信件課・每天一封',
-    hook: ['12 天搞懂', '24 個工程項目'],
+    hook: ['12 天搞懂 24 個工程項目'],
     items: [
       '每天一封，拆一個花錢重點',
       '預算組裝器表格隨課附上',
@@ -665,11 +665,11 @@ const routeStops = [
   .tool-card-topline small { color: #A09184; font-size: .84rem; font-weight: 900; letter-spacing: .14em; }
   .tool-card :global(.resource-preview) { width: 100%; height: 310px; }
   .tool-card-copy { display: grid; grid-template-rows: auto minmax(4.05em,auto) 1fr auto; padding: 25px 10px 10px; }
-  .tool-name { margin: 0 0 9px; color: #A3654A; font-size: .9rem; font-weight: 900; letter-spacing: .08em; }
+  .tool-name { margin: 0 0 9px; color: #A3654A; font-size: 1.05rem; font-weight: 900; letter-spacing: .08em; }
   .tool-card h3 { margin: 0; font-size: 1.38rem; font-weight: 950; letter-spacing: -.02em; line-height: 1.42; }
   .tool-card h3 span { display: block; }
   .tool-card ul { margin: 22px 0 26px; padding: 0; display: grid; gap: 10px; list-style: none; }
-  .tool-card li { position: relative; padding-left: 22px; color: #5E5147; font-size: .86rem; line-height: 1.6; }
+  .tool-card li { position: relative; padding-left: 24px; color: #5E5147; font-size: .95rem; line-height: 1.6; }
   .tool-card li::before {
     content: '✓'; position: absolute; left: 0; top: 0; color: #B46F52; font-weight: 950;
   }
@@ -842,6 +842,10 @@ const routeStops = [
     .section-heading > p:last-child { display: none; }
     .tools-grid { grid-template-columns: 1fr; }
     .tool-card:last-child { grid-column: auto; }
+    /* 卡片全寬時紙卡會蓋住人物，加高預覽區讓人物露臉（縮紙卡在 ResourcePreview 680 media）
+       注意 grid 第二列與 preview 高度須同步，否則 preview 溢出蓋住下方文字 */
+    .tool-card { grid-template-rows: auto 400px minmax(0,1fr); }
+    .tool-card :global(.resource-preview) { height: 400px; }
     .map-section { padding: 82px 0; }
     .route-card { padding: 26px 18px 38px; }
     .route-swipe-hint { display: block; margin: 16px 0 8px; color: #7E6C60; font-size: .66rem; font-weight: 800; }
