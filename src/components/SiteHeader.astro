@@ -1,0 +1,500 @@
+---
+// 全站共用頂欄（2026-07-10 從 index / PostLayout / about / posts / 404 五處抽出）
+// variant: 'home' = 固定＋毛玻璃（首頁 hero 用）；'page' = sticky＋實色（內頁用）
+// 「服務項目」桌機為 hover 下拉（標題＋一行副標），手機收進漢堡選單
+interface Props {
+  variant?: 'home' | 'page';
+  current?: 'about' | 'posts' | 'toolbox';
+}
+
+const { variant = 'page', current } = Astro.props;
+
+const services = [
+  {
+    title: '預售屋客變、新成屋設計 1v1',
+    desc: '帶著診斷書來，一小時把決定做完',
+    href: '/booking/',
+    external: false,
+  },
+  {
+    title: '中古屋、老屋翻新 設計裝修陪跑',
+    desc: '先設計、後工程，兩段簽約更安心',
+    href: 'https://minxindesign.com.tw/service-price/',
+    external: true,
+  },
+];
+---
+
+<header class:list={['site-topbar', variant === 'home' ? 'site-topbar-glass' : 'site-topbar-solid']}>
+  <div class="site-topbar-inner">
+    <a href="/" class="site-brand">
+      <img src="/images/logo-dongwu-white.png" alt="" class="site-brand-logo" width="32" height="32" />
+      <span class="brand-full">懂屋 · Know Your Home</span>
+      <span class="brand-short">懂屋</span>
+    </a>
+    <nav class="site-nav site-nav-desktop" aria-label="主導覽">
+      <a href="/about/" class="site-nav-link" aria-current={current === 'about' ? 'page' : undefined}>關於懂屋</a>
+      <a href="/posts/" class="site-nav-link" aria-current={current === 'posts' ? 'page' : undefined}>所有文章</a>
+      <div class="site-drop">
+        <button type="button" class="site-nav-link site-drop-trigger" aria-haspopup="true">
+          服務項目<span class="site-drop-caret" aria-hidden="true">▾</span>
+        </button>
+        <div class="site-drop-panel">
+          <div class="site-drop-card">
+            {services.map((s) => (
+              <a
+                href={s.href}
+                class="site-drop-item"
+                target={s.external ? '_blank' : undefined}
+                rel={s.external ? 'noopener' : undefined}
+              >
+                <span class="site-drop-title">{s.title}</span>
+                <span class="site-drop-desc">{s.desc}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+      {/* 軟上線：工具箱頁已部署但暫不開放入口；正式開放時把這個 span 換回
+          <a href="/toolbox/" class="site-nav-link" aria-current={current === 'toolbox' ? 'page' : undefined}>裝修工具箱</a> */}
+      <span class="site-nav-link site-nav-soon" aria-disabled="true">
+        裝修工具箱<i class="site-soon-badge" aria-hidden="true">建置中</i>
+      </span>
+      <a href="/ai-diagnosis/" class="site-nav-cta site-nav-cta-primary">免費裝修診斷</a>
+      <a href="/subscribe/" class="site-nav-cta">訂閱電子報</a>
+    </nav>
+    <div class="site-nav-mobile">
+      <a href="/ai-diagnosis/" class="site-nav-cta site-nav-cta-mobile site-nav-cta-primary">免費裝修診斷</a>
+      <a href="/subscribe/" class="site-nav-cta site-nav-cta-mobile">訂閱電子報</a>
+      <details class="site-menu">
+        <summary class="site-menu-toggle" aria-label="開啟選單">
+          <span class="site-menu-bars" aria-hidden="true"></span>
+        </summary>
+        <nav class="site-menu-panel" aria-label="次要導覽">
+          <a href="/about/" class="site-menu-link" aria-current={current === 'about' ? 'page' : undefined}>關於懂屋</a>
+          <a href="/posts/" class="site-menu-link" aria-current={current === 'posts' ? 'page' : undefined}>所有文章</a>
+          <p class="site-menu-group">服務項目</p>
+          {services.map((s) => (
+            <a
+              href={s.href}
+              class="site-menu-link site-menu-sublink"
+              target={s.external ? '_blank' : undefined}
+              rel={s.external ? 'noopener' : undefined}
+            >
+              {s.title}
+              <span class="site-menu-subdesc">{s.desc}</span>
+            </a>
+          ))}
+          {/* 軟上線：手機無 hover，改常駐「建置中」徽章；正式開放時換回
+              <a href="/toolbox/" class="site-menu-link" aria-current={current === 'toolbox' ? 'page' : undefined}>裝修工具箱</a> */}
+          <span class="site-menu-link site-menu-soon">裝修工具箱<i class="site-soon-badge-inline">建置中</i></span>
+        </nav>
+      </details>
+    </div>
+  </div>
+</header>
+
+<style>
+  /* 頂欄底色 — 深海黑鯨金品牌色 */
+  .site-topbar {
+    border-bottom: 1px solid rgba(184, 151, 126, 0.2);
+    z-index: 50;
+  }
+
+  .site-topbar-glass {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(28, 24, 21, 0.72);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+
+  .site-topbar-solid {
+    position: sticky;
+    top: 0;
+    background: #1C1815;
+  }
+
+  .site-topbar-inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    position: relative;
+  }
+
+  .site-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    letter-spacing: 0.18em;
+    color: #F5F0E8 !important;
+    font-weight: 700;
+    text-decoration: none;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .site-brand:hover {
+    color: #B8977E !important;
+  }
+
+  .site-brand-logo {
+    height: 32px;
+    width: 32px;
+    display: block;
+    flex-shrink: 0;
+  }
+
+  .site-brand .brand-short {
+    display: none;
+  }
+
+  .site-nav-mobile {
+    display: none;
+  }
+
+  .site-nav {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+  }
+
+  .site-nav-link {
+    font-size: 0.9rem;
+    color: #F5F0E8 !important;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.18s ease;
+    white-space: nowrap;
+  }
+
+  .site-nav-link:hover {
+    color: #B8977E !important;
+  }
+
+  .site-nav-link[aria-current="page"] {
+    color: #B8977E !important;
+    font-weight: 700;
+  }
+
+  /* 軟上線「建置中」項：不可點，hover 浮出徽章 */
+  .site-nav-soon {
+    position: relative;
+    cursor: default;
+    user-select: none;
+  }
+
+  .site-nav-soon:hover {
+    color: rgba(245, 240, 232, 0.55) !important;
+  }
+
+  .site-soon-badge {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: #B8977E;
+    color: #1C1815;
+    font-size: 0.68rem;
+    font-style: normal;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s ease;
+    pointer-events: none;
+  }
+
+  .site-nav-soon:hover .site-soon-badge {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .site-soon-badge-inline {
+    margin-left: 8px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(184, 151, 126, 0.22);
+    color: #B8977E;
+    font-size: 0.7rem;
+    font-style: normal;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+  }
+
+  /* 服務項目下拉 */
+  .site-drop {
+    position: relative;
+  }
+
+  .site-drop-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .site-drop-caret {
+    font-size: 0.65em;
+    transition: transform 0.18s ease;
+  }
+
+  .site-drop:hover .site-drop-caret,
+  .site-drop:focus-within .site-drop-caret {
+    transform: rotate(180deg);
+  }
+
+  /* 外層透明墊高 12px 當 hover 橋，滑鼠移進面板不斷線 */
+  .site-drop-panel {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(6px);
+    padding-top: 12px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    z-index: 60;
+  }
+
+  .site-drop:hover .site-drop-panel,
+  .site-drop:focus-within .site-drop-panel {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .site-drop-card {
+    min-width: 320px;
+    padding: 8px;
+    background: #221D19;
+    border: 1px solid rgba(184, 151, 126, 0.28);
+    border-radius: 14px;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+  }
+
+  .site-drop-item {
+    display: block;
+    padding: 12px 16px;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: background 0.15s ease;
+  }
+
+  .site-drop-item:hover {
+    background: rgba(184, 151, 126, 0.1);
+  }
+
+  .site-drop-title {
+    display: block;
+    color: #F5F0E8;
+    font-size: 0.92rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
+  .site-drop-item:hover .site-drop-title {
+    color: #B8977E;
+  }
+
+  .site-drop-desc {
+    display: block;
+    margin-top: 4px;
+    color: rgba(245, 240, 232, 0.55);
+    font-size: 0.8rem;
+    letter-spacing: 0.03em;
+  }
+
+  .site-nav-cta {
+    display: inline-flex;
+    align-items: center;
+    padding: 9px 22px;
+    border: 1px solid rgba(184, 151, 126, 0.55);
+    border-radius: 999px;
+    font-size: 0.85rem;
+    color: #F5F0E8 !important;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+    background: transparent;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+  }
+
+  .site-nav-cta:hover {
+    background: #B8977E;
+    border-color: #B8977E;
+    color: #1C1815 !important;
+  }
+
+  /* 主按鈕：實心金，比訂閱（外框）更突出 */
+  .site-nav-cta-primary {
+    background: #B8977E;
+    border-color: #B8977E;
+    color: #1C1815 !important;
+  }
+
+  .site-nav-cta-primary:hover {
+    background: #C9A98E;
+    border-color: #C9A98E;
+    color: #1C1815 !important;
+  }
+
+  @media (max-width: 720px) {
+    .site-topbar-inner {
+      padding: 12px 16px;
+      gap: 10px;
+    }
+    .site-brand {
+      font-size: 1.25rem;
+      letter-spacing: 0.06em;
+    }
+    .site-brand-logo {
+      height: 36px;
+      width: 36px;
+    }
+    .site-brand .brand-full {
+      display: none;
+    }
+    .site-brand .brand-short {
+      display: inline;
+    }
+    .site-nav-desktop {
+      display: none;
+    }
+    .site-nav-mobile {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    /* 兩顆 pill 並列：免費裝修診斷（實心）+ 訂閱電子報（外框），縮小以容納漢堡 */
+    .site-nav-cta-mobile {
+      padding: 6px 10px;
+      font-size: 0.72rem;
+      letter-spacing: 0;
+    }
+    .site-menu {
+      position: relative;
+    }
+    .site-menu-toggle {
+      list-style: none;
+      cursor: pointer;
+      width: 36px;
+      height: 36px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      border: 1px solid rgba(184, 151, 126, 0.32);
+    }
+    .site-menu-toggle::-webkit-details-marker {
+      display: none;
+    }
+    .site-menu-bars,
+    .site-menu-bars::before,
+    .site-menu-bars::after {
+      display: block;
+      width: 18px;
+      height: 2px;
+      background: #F5F0E8;
+      border-radius: 2px;
+      transition: transform 0.2s ease, top 0.2s ease, background 0.2s ease;
+    }
+    .site-menu-bars {
+      position: relative;
+    }
+    .site-menu-bars::before,
+    .site-menu-bars::after {
+      content: "";
+      position: absolute;
+      left: 0;
+    }
+    .site-menu-bars::before {
+      top: -6px;
+    }
+    .site-menu-bars::after {
+      top: 6px;
+    }
+    /* 開啟時漢堡變 X（雷蒙風） */
+    .site-menu[open] .site-menu-bars {
+      background: transparent;
+    }
+    .site-menu[open] .site-menu-bars::before {
+      top: 0;
+      transform: rotate(45deg);
+    }
+    .site-menu[open] .site-menu-bars::after {
+      top: 0;
+      transform: rotate(-45deg);
+    }
+    /* 全寬下拉面板 — 大列好點，手機友善 */
+    .site-menu[open] .site-menu-panel {
+      position: fixed;
+      top: 57px;
+      left: 0;
+      right: 0;
+      background: #1C1815;
+      border-top: 1px solid rgba(184, 151, 126, 0.28);
+      padding: 4px 0 8px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.5);
+      z-index: 60;
+    }
+    .site-menu-link {
+      display: block;
+      padding: 16px 24px;
+      color: #F5F0E8 !important;
+      font-size: 1rem;
+      letter-spacing: 0.04em;
+      font-weight: 600;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(184, 151, 126, 0.12);
+    }
+    .site-menu-link:active,
+    .site-menu-link:hover {
+      color: #B8977E !important;
+      background: rgba(184, 151, 126, 0.08);
+    }
+    .site-menu-link[aria-current="page"] {
+      color: #B8977E !important;
+    }
+    .site-menu-group {
+      margin: 0;
+      padding: 14px 24px 6px;
+      color: rgba(245, 240, 232, 0.5);
+      font-size: 0.78rem;
+      letter-spacing: 0.14em;
+      font-weight: 700;
+    }
+    .site-menu-sublink {
+      padding-left: 36px;
+    }
+    .site-menu-subdesc {
+      display: block;
+      margin-top: 3px;
+      color: rgba(245, 240, 232, 0.5);
+      font-size: 0.8rem;
+      font-weight: 400;
+      letter-spacing: 0.03em;
+    }
+  }
+</style>

@@ -1,0 +1,879 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import ResourceFooter from '../components/ResourceFooter.astro';
+import ResourcePreview from '../components/ResourcePreview.astro';
+import RevealOnScroll from '../components/RevealOnScroll.astro';
+
+const tools = [
+  {
+    title: 'AI 裝修診斷書',
+    tag: '登島入口・已上線',
+    hook: ['3 分鐘、18 題，', '拿到你的屋主職業卡'],
+    items: [
+      '你的屋主類型職業卡',
+      '預算怎麼分的方向建議',
+      '照你家人口與物量給的提醒清單',
+    ],
+    cta: '免費開始測驗',
+    href: '/ai-diagnosis/',
+    kind: 'diagnosis' as const,
+  },
+  {
+    title: '裝修該花多少錢？',
+    tag: 'Email 信件課・每天一封',
+    hook: ['12 天搞懂', '24 個工程項目'],
+    items: [
+      '每天一封，拆一個花錢重點',
+      '預算組裝器表格隨課附上',
+      '最後一封說清楚圖說與報價的下一步',
+    ],
+    cta: '免費開課',
+    href: '/budget-kit/',
+    kind: 'budget' as const,
+  },
+  {
+    title: '裝修前收納',
+    tag: '免費工具＋知識庫',
+    hook: ['櫃子做之前，', '先數東西'],
+    items: [
+      '物品盤點工作表：七區逐格盤點＋櫃體換算',
+      '單篇收納技巧陸續整理上線',
+      '「白做的櫃子」避雷提醒',
+    ],
+    cta: '了解這張表',
+    href: '/inventory-worksheet/',
+    kind: 'inventory' as const,
+  },
+];
+
+const heroCharacters = [
+  { file: 'character_planner', className: 'hero-character-planner' },
+  { file: 'character_resource', className: 'hero-character-resource' },
+  { file: 'character_intuitive', className: 'hero-character-intuitive' },
+];
+
+const routeStages = [
+  { index: '01', label: '簽約前', className: 'stage-demolition' },
+  { index: '02', label: '施工中', className: 'stage-structure' },
+  { index: '03', label: '驗收', className: 'stage-fitout' },
+  { index: '04', label: '入住', className: 'stage-complete' },
+];
+
+const routeStops = [
+  ['7%', '76%'], ['13%', '69%'], ['20%', '66%'], ['27%', '72%'],
+  ['34%', '78%'], ['41%', '73%'], ['48%', '65%'], ['55%', '60%'],
+  ['62%', '63%'], ['69%', '70%'], ['76%', '74%'], ['82%', '68%'],
+  ['87%', '58%'], ['91%', '48%'], ['94%', '37%'],
+].map(([left, top], index) => ({ left, top, index: index + 1 }));
+---
+
+<BaseLayout
+  title="裝修工具箱｜裝修前用得上的免費工具都在這 — 懂屋"
+  description="免費裝修診斷、費用信件課、物品盤點工作表——裝修前該想清楚的，這一頁先讓你免費想一遍。留下 Email 就能拿。"
+  exactTitle
+  bottomNav={false}
+  noindex
+>
+  {/* noindex＝軟上線（header 入口「建置中」期間不收錄）；正式開放時移除 */}
+  <SiteHeader current="toolbox" />
+
+  <main class="toolbox-page">
+    <section class="toolbox-hero">
+      <div class="toolbox-wrap hero-grid">
+        <div class="hero-copy" data-reveal>
+          <p class="eyebrow">KNOW YOUR HOME · TOOLBOX</p>
+          <h1>裝修工具箱</h1>
+          <p class="hero-lead">
+            裝修前用得上的工具，懂屋都放在這一頁。<strong>留下 Email 就能拿</strong>——從測出家的方向、搞懂費用，到盤點真正需要的收納量。
+          </p>
+          <a class="hero-cta" href="#tools">看看有哪些工具 <span aria-hidden="true">↓</span></a>
+        </div>
+        <div class="hero-world" data-reveal data-toolbox-scene tabindex="0" style="--reveal-delay: 100ms" aria-label="滑過或點擊打開懂屋裝修工具箱">
+          <div class="hero-world-glow" aria-hidden="true"></div>
+          <div class="hero-characters" aria-hidden="true">
+            {heroCharacters.map((character, index) => (
+              <picture class:list={['hero-character', character.className]}>
+                <source srcset={`/ai-diagnosis/assets/${character.file}.webp`} type="image/webp" />
+                <img
+                  src={`/ai-diagnosis/assets/${character.file}.png`}
+                  alt=""
+                  width="1024"
+                  height="1024"
+                  loading="eager"
+                  fetchpriority={index === 1 ? 'high' : 'auto'}
+                  decoding="async"
+                />
+              </picture>
+            ))}
+          </div>
+
+          <div class="toolbox-effects" aria-hidden="true">
+            <span class="burst-rays"></span>
+            <span class="burst-ring burst-ring-one"></span>
+            <span class="burst-ring burst-ring-two"></span>
+            <span class="burst-spark spark-one">✦</span>
+            <span class="burst-spark spark-two">✦</span>
+            <span class="burst-spark spark-three">✦</span>
+            <span class="burst-spark spark-four">✦</span>
+            <span class="burst-spark spark-five">✦</span>
+            <span class="burst-spark spark-six">✦</span>
+          </div>
+
+          <div class="hero-tool-orbit" aria-hidden="true">
+            <span class="orbit-tool" data-tool-name="鐵鎚" style="--tool-x: 0px; --tool-y: -238px; --tool-r: -8deg; --tool-delay: 40ms">
+              <svg class="tool-art" viewBox="0 0 80 80">
+                <defs><linearGradient id="hammer-head" x1="0" x2="1"><stop stop-color="#59656A"/><stop offset=".52" stop-color="#A9B4B5"/><stop offset="1" stop-color="#40494D"/></linearGradient><linearGradient id="hammer-grip" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#F0B85D"/><stop offset="1" stop-color="#B86A3E"/></linearGradient></defs>
+                <g transform="rotate(-38 40 40)"><rect x="35" y="26" width="12" height="45" rx="6" fill="url(#hammer-grip)"/><rect x="16" y="13" width="49" height="22" rx="8" fill="url(#hammer-head)"/><rect x="21" y="17" width="30" height="5" rx="2.5" fill="#DDE5E3" opacity=".68"/><path d="M61 16h7v16h-7z" fill="#30383B"/></g>
+              </svg>
+            </span>
+            <span class="orbit-tool" data-tool-name="活動板手" style="--tool-x: -148px; --tool-y: -188px; --tool-r: -12deg; --tool-delay: 100ms">
+              <svg class="tool-art" viewBox="0 0 80 80">
+                <defs><linearGradient id="wrench-body" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#D9EEE8"/><stop offset=".48" stop-color="#75A6A4"/><stop offset="1" stop-color="#365E63"/></linearGradient><linearGradient id="wrench-edge" x1="0" x2="1"><stop stop-color="#F2B56E"/><stop offset="1" stop-color="#D26B4E"/></linearGradient></defs>
+                <g transform="rotate(-38 40 40)"><path d="M55 5c-10-3-21 0-28 8-6 8-6 19-1 27L8 58a10 10 0 0 0 14 14l18-18c9 5 20 4 28-3 8-7 11-18 8-28L61 38 44 21 55 5Z" fill="url(#wrench-body)"/><path d="m55 5-11 16 17 17 15-15" fill="none" stroke="url(#wrench-edge)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><rect x="28" y="38" width="18" height="10" rx="5" fill="#344A4C"/><path d="M31 41h12" stroke="#F7D49D" stroke-width="3" stroke-linecap="round"/><circle cx="15" cy="65" r="4.5" fill="#F3D9B7" stroke="#365E63" stroke-width="3"/><path d="M13 55 35 33" stroke="#E9F4F0" stroke-width="3" stroke-linecap="round" opacity=".55"/></g>
+              </svg>
+            </span>
+            <span class="orbit-tool" data-tool-name="電鑽" style="--tool-x: 148px; --tool-y: -188px; --tool-r: 9deg; --tool-delay: 160ms">
+              <svg class="tool-art" viewBox="0 0 80 80">
+                <defs><linearGradient id="drill-body" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#F2A667"/><stop offset=".6" stop-color="#D2694B"/><stop offset="1" stop-color="#9A493D"/></linearGradient><linearGradient id="drill-dark" x1="0" x2="1"><stop stop-color="#51443E"/><stop offset="1" stop-color="#261F1C"/></linearGradient></defs>
+                <path d="M13 20h39c7 0 13 6 13 13v8H45l-5 7H17c-5 0-9-4-9-9V25c0-3 2-5 5-5Z" fill="url(#drill-body)"/><path d="M49 44h12v8H49z" fill="#D8C3AA"/><path d="M61 46h15v4H61z" fill="#51443E"/><path d="M27 45h19l-5 27H24l-3-14z" fill="url(#drill-dark)"/><rect x="26" y="52" width="15" height="7" rx="3" fill="#B8977E"/><rect x="16" y="25" width="27" height="6" rx="3" fill="#FFC896" opacity=".62"/><circle cx="54" cy="34" r="6" fill="#F4D49A"/>
+              </svg>
+            </span>
+            <span class="orbit-tool" data-tool-name="滾輪" style="--tool-x: 205px; --tool-y: -70px; --tool-r: 13deg; --tool-delay: 220ms">
+              <svg class="tool-art" viewBox="0 0 80 80">
+                <defs><linearGradient id="roller-fill" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#F5E5C8"/><stop offset="1" stop-color="#C8A77B"/></linearGradient><linearGradient id="roller-grip" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#E78967"/><stop offset="1" stop-color="#A54E3D"/></linearGradient></defs>
+                <rect x="8" y="12" width="48" height="22" rx="8" fill="url(#roller-fill)"/><rect x="11" y="15" width="40" height="5" rx="2.5" fill="#FFF9EC" opacity=".75"/><path d="M56 23h9v18H42v9" fill="none" stroke="#6E655E" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><rect x="34" y="44" width="17" height="30" rx="8" fill="url(#roller-grip)"/><rect x="38" y="49" width="6" height="17" rx="3" fill="#F4B08D" opacity=".62"/>
+              </svg>
+            </span>
+            <span class="orbit-tool" data-tool-name="色票" style="--tool-x: 200px; --tool-y: 44px; --tool-r: -8deg; --tool-delay: 280ms">
+              <svg class="tool-art" viewBox="0 0 80 80">
+                <g transform="rotate(-10 24 56)"><rect x="13" y="12" width="27" height="57" rx="8" fill="#FFF7E9" stroke="#BCA68F" stroke-width="3"/><circle cx="26" cy="58" r="4" fill="#59453A"/><circle cx="26" cy="23" r="7" fill="#D4886A"/><circle cx="26" cy="39" r="7" fill="#E7B75D"/></g><g transform="rotate(15 36 58)"><rect x="28" y="11" width="27" height="58" rx="8" fill="#F6E9D7" stroke="#BCA68F" stroke-width="3"/><circle cx="41" cy="58" r="4" fill="#59453A"/><circle cx="41" cy="23" r="7" fill="#7F9B83"/><circle cx="41" cy="39" r="7" fill="#7796A8"/></g><g transform="rotate(34 48 56)"><rect x="42" y="12" width="27" height="57" rx="8" fill="#FFF9F1" stroke="#BCA68F" stroke-width="3"/><circle cx="55" cy="58" r="4" fill="#59453A"/><circle cx="55" cy="23" r="7" fill="#9A6D58"/><circle cx="55" cy="39" r="7" fill="#D9C4AB"/></g>
+              </svg>
+            </span>
+            <span class="orbit-tool" data-tool-name="計算器" style="--tool-x: 158px; --tool-y: 62px; --tool-r: 9deg; --tool-delay: 340ms">
+              <svg class="tool-art" viewBox="0 0 80 80">
+                <defs><linearGradient id="calc-body" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#5E514A"/><stop offset="1" stop-color="#211B18"/></linearGradient></defs>
+                <rect x="16" y="5" width="48" height="70" rx="12" fill="url(#calc-body)"/><rect x="23" y="13" width="34" height="14" rx="5" fill="#D6E2D4"/><rect x="27" y="17" width="20" height="5" rx="2.5" fill="#718270"/><g fill="#EBD8C4"><circle cx="28" cy="38" r="6"/><circle cx="42" cy="38" r="6"/><circle cx="28" cy="53" r="6"/><circle cx="42" cy="53" r="6"/><circle cx="28" cy="67" r="6"/><rect x="36" y="61" width="20" height="12" rx="6" fill="#D4886A"/></g><circle cx="55" cy="38" r="6" fill="#E7B75D"/><circle cx="55" cy="53" r="6" fill="#A9C0B0"/>
+              </svg>
+            </span>
+            <span class="orbit-tool" data-tool-name="捲尺" style="--tool-x: -158px; --tool-y: 62px; --tool-r: -10deg; --tool-delay: 400ms">
+              <svg class="tool-art" viewBox="0 0 80 80">
+                <defs><linearGradient id="tape-body" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#F3C95F"/><stop offset=".65" stop-color="#D78A3F"/><stop offset="1" stop-color="#A95738"/></linearGradient></defs>
+                <path d="M12 36c0-16 12-28 28-28s28 12 28 28v19c0 10-8 18-18 18H30c-10 0-18-8-18-18Z" fill="url(#tape-body)"/><circle cx="40" cy="39" r="17" fill="#3E3530"/><circle cx="40" cy="39" r="9" fill="#F4E2C6"/><path d="M54 58h22v9H54z" fill="#F3DE95"/><path d="M60 58v9m8-9v9" stroke="#7A5D3D" stroke-width="2"/><rect x="20" y="17" width="30" height="7" rx="3.5" fill="#FFE89A" opacity=".58"/>
+              </svg>
+            </span>
+            <span class="orbit-tool" data-tool-name="尺與筆" style="--tool-x: -200px; --tool-y: 44px; --tool-r: 8deg; --tool-delay: 460ms">
+              <svg class="tool-art" viewBox="0 0 80 80">
+                <defs><linearGradient id="ruler-fill" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#D9B686"/><stop offset="1" stop-color="#A97850"/></linearGradient><linearGradient id="pencil-fill" x1="0" x2="1"><stop stop-color="#EE8465"/><stop offset="1" stop-color="#C14F45"/></linearGradient></defs>
+                <g transform="rotate(-34 40 40)"><rect x="31" y="3" width="18" height="74" rx="6" fill="url(#ruler-fill)"/><g stroke="#715039" stroke-width="2"><path d="M32 14h8M32 24h12M32 34h8M32 44h12M32 54h8M32 64h12"/></g></g><g transform="rotate(34 40 40)"><path d="M34 7h12v57H34z" fill="url(#pencil-fill)"/><path d="m34 64 6 13 6-13z" fill="#F1D3A1"/><path d="m38 73 2 4 2-4z" fill="#40352F"/><path d="M34 7h12v9H34z" fill="#E8B7A9"/><path d="M37 18h4v39h-4z" fill="#FFB59B" opacity=".55"/></g>
+              </svg>
+            </span>
+            <span class="orbit-tool" data-tool-name="安全帽" style="--tool-x: -205px; --tool-y: -70px; --tool-r: -9deg; --tool-delay: 520ms">
+              <svg class="tool-art" viewBox="0 0 80 80">
+                <defs><linearGradient id="helmet-fill" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFD875"/><stop offset=".58" stop-color="#EAA84B"/><stop offset="1" stop-color="#C56B39"/></linearGradient></defs>
+                <path d="M10 49c0-21 13-37 30-37s30 16 30 37H10Z" fill="url(#helmet-fill)"/><path d="M39 12v27" stroke="#B96638" stroke-width="6" stroke-linecap="round"/><path d="M8 48h64c4 0 7 3 7 7s-3 7-7 7H8c-4 0-7-3-7-7s3-7 7-7Z" fill="#F3B657"/><path d="M17 45c2-13 10-23 21-26" fill="none" stroke="#FFE6A2" stroke-width="6" stroke-linecap="round" opacity=".65"/><path d="M19 62c3 7 11 11 21 11s18-4 21-11" fill="none" stroke="#695044" stroke-width="4" stroke-linecap="round"/>
+              </svg>
+            </span>
+          </div>
+
+          <div class="toolbox-stage" aria-hidden="true">
+            <div class="hero-toolbox">
+              <div class="toolbox-lid">
+                <span class="toolbox-handle"></span>
+                <strong>懂屋</strong>
+                <small>TOOLBOX</small>
+              </div>
+              <div class="toolbox-inner"><span></span><span></span><span></span><span></span></div>
+              <div class="toolbox-body">
+                <strong>懂屋</strong>
+                <small>裝修工具箱</small>
+              </div>
+            </div>
+          </div>
+
+          <p class="hero-world-note"><span class="hint-pointer" aria-hidden="true">↘</span><span class="note-idle">把游標移到工具箱，打開看看</span></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="trust-strip">
+      <div class="toolbox-wrap trust-card" data-reveal>
+        <div class="trust-badge" aria-hidden="true">
+          <img src="/images/logo-dongwu-white.png" alt="" width="48" height="48" />
+        </div>
+        <div class="trust-copy">
+          <p class="trust-title">先把問題整理清楚，再做決定。</p>
+          <p>裝修前不用一次搞懂所有事。從預算、物品到生活需求，選一個現在用得上的工具，慢慢把家的方向理清楚。</p>
+          <span>懂屋｜Know Your Home</span>
+        </div>
+        <a class="trust-cta" href="#tools">選一個工具開始 <span aria-hidden="true">→</span></a>
+      </div>
+    </section>
+
+    <section id="tools" class="tools-section">
+      <div class="toolbox-wrap">
+        <div class="section-heading" data-reveal>
+          <p class="eyebrow">FREE TOOLS</p>
+          <h2>從你現在最卡的地方開始</h2>
+          <p>不用一次把裝修全部弄懂。先拿一個工具，把眼前這題處理掉。</p>
+        </div>
+
+        <div class="tools-grid">
+          {tools.map((tool, index) => (
+            <article class="tool-card" data-reveal style={`--reveal-delay: ${index * 70}ms`}>
+              <div class="tool-card-topline">
+                <span>{tool.tag}</span>
+                <small>0{index + 1}</small>
+              </div>
+              <ResourcePreview kind={tool.kind} label={`${tool.title}預覽`} compact />
+              <div class="tool-card-copy">
+                <p class="tool-name">{tool.title}</p>
+                <h3>{tool.hook.map((line) => <span>{line}</span>)}</h3>
+                <ul>
+                  {tool.items.map((item) => <li>{item}</li>)}
+                </ul>
+                <a href={tool.href} class="tool-cta">{tool.cta}<span aria-hidden="true">→</span></a>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="map-section">
+      <div class="toolbox-wrap map-grid">
+        <div class="map-copy" data-reveal>
+          <p class="eyebrow">開島籌備中・登島預約</p>
+          <h2>裝修新手島</h2>
+          <p class="island-slogan">把裝修給導航，讓新手也能走成一條路</p>
+          <p class="map-lead">Threads 上 60 多站的裝修導航系列，正在變成一座可以走的島——照裝修順序一站一站走，每站幾分鐘，走到哪、住到哪。</p>
+          <ul class="island-highlights">
+            <li><strong>開島第一天通知你</strong><span>Email 寄出登島消息，不用每天回來看進度。</span></li>
+            <li><strong>帶著屋主職業卡上島</strong><span>做過診斷的島民，之後能解鎖自己這型屋主的專屬內容。</span></li>
+            <li><strong>軟裝圖鑑籌備中</strong><span>全部符合台灣格局的風格圖庫，選風格不用再滑國外圖猜尺寸。</span></li>
+          </ul>
+
+          <form class="map-form" data-integration="pending" data-event="island_waitlist_join">
+            <label for="island-name">如何稱呼你？</label>
+            <input id="island-name" name="name" type="text" autocomplete="name" placeholder="你的稱呼" required />
+            <label for="island-email">Email</label>
+            <input id="island-email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="你的 Email" required />
+            <label for="island-question">你最想先解決什麼裝修問題？<small>選填</small></label>
+            <textarea id="island-question" name="question" rows="3" placeholder="預算怎麼抓才不會爆？"></textarea>
+            <button type="submit">預約登島</button>
+            <p>不寄廣告、不給任何人你的 Email，隨時可退訂。</p>
+          </form>
+        </div>
+
+        <div class="island-visuals" data-reveal style="--reveal-delay: 100ms">
+          <div class="route-card" aria-label="裝修新手島 15 站路線示意">
+            <div class="route-card-head">
+              <div>
+                <small>4 STAGES · 15 STOPS</small>
+                <p>你的裝修路線</p>
+              </div>
+              <div class="route-whale" aria-hidden="true">
+                <img src="/ai-diagnosis/assets/logo_gold.webp" alt="" width="76" height="76" loading="lazy" decoding="async" />
+              </div>
+            </div>
+            <p class="route-swipe-hint">左右滑動看完整地圖</p>
+            <div class="route-visual-scroll">
+              <div class="route-visual">
+                <img
+                  src="/toolbox/assets/toolbox-route-map-v2.webp"
+                  alt="從簽約前、施工、驗收到入住的裝修階段立體示意圖"
+                  width="1536"
+                  height="1024"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div class="route-stops" aria-hidden="true">
+                  {routeStops.map((stop) => (
+                    <span style={`--stop-left:${stop.left};--stop-top:${stop.top}`}>{stop.index}</span>
+                  ))}
+                </div>
+                {routeStages.map((stage) => (
+                  <div class:list={['map-stage-tag', stage.className]}>
+                    <span>{stage.index}</span>
+                    <strong>{stage.label}</strong>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div class="route-phases" aria-hidden="true">
+              <span>簽約前</span><span>施工中</span><span>驗收</span><span>入住</span>
+            </div>
+            <div class="route-stamp">COMING SOON</div>
+          </div>
+
+          <div class="atlas-card" data-asset-slot="soft-furnishing-atlas.webp" role="img" aria-label="軟裝圖鑑預告：四種台灣居家風格示意">
+            <div class="atlas-copy">
+              <small>ISLAND PREVIEW</small>
+              <strong>軟裝圖鑑・籌備中</strong>
+              <span>北歐・奶油・日式・現代</span>
+            </div>
+            <div class="atlas-book" aria-hidden="true">
+              <div class="atlas-page atlas-page-left"><i></i><i></i></div>
+              <div class="atlas-page atlas-page-right"><i></i><i></i></div>
+              <img src="/ai-diagnosis/assets/logo_gold.webp" alt="" width="58" height="58" loading="lazy" decoding="async" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <ResourceFooter />
+  <RevealOnScroll />
+</BaseLayout>
+
+<script>
+  import '../scripts/resource-forms.ts';
+</script>
+
+<script>
+  const hoverPointer = window.matchMedia('(hover: hover) and (pointer: fine)');
+
+  document.querySelectorAll<HTMLElement>('[data-toolbox-scene]').forEach((scene) => {
+    scene.addEventListener('pointermove', (event) => {
+      if (!hoverPointer.matches) return;
+      const bounds = scene.getBoundingClientRect();
+      const x = (event.clientX - bounds.left) / bounds.width - 0.5;
+      const y = (event.clientY - bounds.top) / bounds.height - 0.5;
+      scene.style.setProperty('--scene-rx', `${(-y * 4).toFixed(2)}deg`);
+      scene.style.setProperty('--scene-ry', `${(x * 5).toFixed(2)}deg`);
+    });
+
+    scene.addEventListener('pointerleave', () => {
+      scene.style.setProperty('--scene-rx', '0deg');
+      scene.style.setProperty('--scene-ry', '0deg');
+    });
+
+    scene.addEventListener('click', () => {
+      if (hoverPointer.matches) return;
+      const willOpen = !scene.classList.contains('is-open');
+      scene.classList.toggle('is-open', willOpen);
+      if (!willOpen) scene.blur();
+    });
+
+    scene.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      event.preventDefault();
+      scene.classList.toggle('is-open');
+    });
+  });
+</script>
+
+<style>
+  :global(html) { scroll-behavior: smooth; background: var(--dw-brand-moon); }
+  :global(body) { background: var(--dw-brand-moon); color: var(--dw-brand-deep); }
+  .toolbox-page { background: var(--dw-brand-moon); color: var(--dw-brand-deep); }
+  .toolbox-wrap { width: min(1180px, calc(100% - 40px)); margin: 0 auto; }
+  .eyebrow {
+    margin: 0 0 15px; color: #A5684D; font-size: .7rem;
+    font-weight: 900; letter-spacing: .2em; text-transform: uppercase;
+  }
+  .toolbox-hero {
+    position: relative; padding: 90px 0 104px; overflow: hidden;
+    background:
+      radial-gradient(circle at 8% 15%, rgba(255,255,255,.96), transparent 30%),
+      radial-gradient(circle at 92% 18%, rgba(212,136,106,.18), transparent 28%),
+      var(--dw-brand-moon);
+  }
+  .toolbox-hero::after {
+    content: ''; position: absolute; right: -5%; bottom: 8%; width: 330px; height: 110px;
+    border-top: 3px solid rgba(184,151,126,.36); border-radius: 50%; transform: rotate(-12deg);
+  }
+  .hero-grid { display: grid; grid-template-columns: 1fr .88fr; align-items: center; gap: 92px; }
+  .hero-copy h1 {
+    margin: 0; font-size: clamp(3.4rem, 8vw, 6.6rem); font-weight: 950;
+    letter-spacing: -.07em; line-height: .95;
+  }
+  .hero-lead { max-width: 680px; margin: 30px 0 34px; color: #625349; font-size: clamp(1.05rem, 2vw, 1.26rem); line-height: 1.9; }
+  .hero-lead strong { color: #B56749; font-weight: 950; }
+  .hero-cta {
+    display: inline-flex; align-items: center; gap: 12px; padding: 15px 22px;
+    border-radius: var(--dw-radius-control); background: var(--dw-brand-orange); color: var(--dw-brand-deep) !important;
+    font-size: .92rem; font-weight: 900; box-shadow: 0 14px 28px rgba(212,136,106,.22);
+    transition: transform .24s var(--dw-motion-spring), background .24s ease;
+  }
+  .hero-cta:hover { transform: translateY(-3px); background: #DE957A; }
+  .hero-world {
+    --scene-rx: 0deg;
+    --scene-ry: 0deg;
+    position: relative; min-height: 530px; overflow: hidden; cursor: zoom-in;
+    border: 1px solid var(--dw-warm-line); border-radius: 34px;
+    background:
+      radial-gradient(circle at 50% 64%, rgba(255,246,218,.92), transparent 27%),
+      radial-gradient(circle at 50% 12%, rgba(255,255,255,.98), transparent 42%),
+      linear-gradient(145deg, #D9C4AB, #F5F0E8 56%, #E7C8B9);
+    box-shadow: var(--dw-shadow-float); transform: rotate(.65deg); perspective: 1100px;
+    outline: none;
+  }
+  .hero-world::before {
+    content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: .32;
+    background-image: radial-gradient(rgba(111,80,62,.28) 1px, transparent 1px);
+    background-size: 18px 18px;
+    -webkit-mask-image: linear-gradient(180deg, transparent 3%, #000 34%, #000 78%, transparent 100%);
+    mask-image: linear-gradient(180deg, transparent 3%, #000 34%, #000 78%, transparent 100%);
+  }
+  .hero-world:focus-visible { box-shadow: 0 0 0 4px rgba(212,136,106,.34), var(--dw-shadow-float); }
+  .hero-world-glow {
+    position: absolute; left: 50%; bottom: 16px; z-index: 0; width: 78%; height: 58%; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,248,218,.92), rgba(255,255,255,.28) 48%, transparent 72%);
+    filter: blur(22px); transform: translateX(-50%); animation: scene-glow 3.4s ease-in-out infinite;
+  }
+  .hero-characters { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+  .hero-character {
+    position: absolute; top: 28px; z-index: 1; width: 35%; height: 250px; overflow: hidden;
+    border: 1px solid rgba(58,46,38,.08); border-radius: 28px;
+    box-shadow: 0 20px 42px rgba(58,46,38,.12); opacity: .48; filter: saturate(.88);
+    transition: transform .55s var(--dw-motion-spring), opacity .38s ease, filter .38s ease;
+  }
+  .hero-character img { width: 100%; height: 100%; object-fit: cover; object-position: center 18%; }
+  .hero-character-planner { left: -4%; transform: rotate(-7deg) scale(.9); }
+  .hero-character-resource { left: 31%; z-index: 2; transform: translateY(-8px) rotate(-1deg) scale(1.04); opacity: .62; }
+  .hero-character-intuitive { right: -4%; transform: rotate(7deg) scale(.9); }
+  .hero-world:is(:hover,:focus-within,.is-open) { cursor: default; }
+  .hero-world:is(:hover,:focus-within,.is-open) .hero-character { opacity: .12; filter: saturate(.58) blur(.7px); }
+  .hero-world:is(:hover,:focus-within,.is-open) .hero-character-planner { transform: translate(-20px,-16px) rotate(-10deg) scale(.84); }
+  .hero-world:is(:hover,:focus-within,.is-open) .hero-character-resource { transform: translateY(-28px) rotate(-1deg) scale(.96); }
+  .hero-world:is(:hover,:focus-within,.is-open) .hero-character-intuitive { transform: translate(20px,-16px) rotate(10deg) scale(.84); }
+  .toolbox-effects { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+  .burst-rays,
+  .burst-ring,
+  .burst-spark { position: absolute; left: 50%; top: 70%; opacity: 0; }
+  .burst-rays {
+    width: 360px; aspect-ratio: 1; border-radius: 50%;
+    background: repeating-conic-gradient(from 0deg, rgba(244,193,101,.62) 0 5deg, transparent 5deg 18deg);
+    -webkit-mask-image: radial-gradient(circle, transparent 0 28%, #000 34% 62%, transparent 72%);
+    mask-image: radial-gradient(circle, transparent 0 28%, #000 34% 62%, transparent 72%);
+    transform: translate(-50%,-50%) scale(.12) rotate(-18deg);
+  }
+  .burst-ring {
+    width: 110px; aspect-ratio: 1; border: 3px solid rgba(244,193,101,.82); border-radius: 50%;
+    box-shadow: 0 0 26px rgba(244,193,101,.48), inset 0 0 22px rgba(255,255,255,.6);
+    transform: translate(-50%,-50%) scale(.25);
+  }
+  .burst-ring-two { width: 160px; border-color: rgba(255,255,255,.72); }
+  .burst-spark { color: #F0AE4F; font-size: 1.45rem; text-shadow: 0 4px 14px rgba(141,80,42,.28); transform: translate(-50%,-50%) scale(.2) rotate(-20deg); }
+  .spark-one { --spark-x: -190px; --spark-y: -120px; }
+  .spark-two { --spark-x: -108px; --spark-y: -220px; font-size: .95rem; }
+  .spark-three { --spark-x: 104px; --spark-y: -214px; }
+  .spark-four { --spark-x: 202px; --spark-y: -104px; font-size: 1rem; }
+  .spark-five { --spark-x: 190px; --spark-y: 76px; }
+  .spark-six { --spark-x: -194px; --spark-y: 68px; font-size: .9rem; }
+  .hero-world:is(:hover,:focus-within,.is-open) .burst-rays { animation: ray-bloom 1.05s ease-out both; }
+  .hero-world:is(:hover,:focus-within,.is-open) .burst-ring-one { animation: ring-bloom 1s ease-out .05s both; }
+  .hero-world:is(:hover,:focus-within,.is-open) .burst-ring-two { animation: ring-bloom 1.2s ease-out .16s both; }
+  .hero-world:is(:hover,:focus-within,.is-open) .burst-spark { animation: spark-launch .82s var(--dw-motion-spring) .32s both, spark-twinkle 2.4s ease-in-out 1.15s infinite; }
+  .hero-tool-orbit { position: absolute; inset: 0; z-index: 6; pointer-events: none; }
+  .orbit-tool {
+    position: absolute; left: 50%; top: 70%; width: 80px; height: 80px;
+    display: grid; place-items: center; opacity: 0;
+    transform: translate(-50%,-50%) translateY(48px) scale(.06) rotate(-68deg);
+    transition:
+      transform .82s cubic-bezier(.16,1.32,.28,1) var(--tool-delay),
+      opacity .22s ease var(--tool-delay);
+  }
+  .orbit-tool::before {
+    content: ''; position: absolute; inset: 7px; z-index: -1; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,253,248,.95), rgba(255,238,202,.66) 58%, transparent 72%);
+    filter: blur(2px); opacity: .9; transform: scale(.8);
+    box-shadow: 0 12px 28px rgba(87,57,39,.2);
+  }
+  .orbit-tool::after {
+    content: attr(data-tool-name); position: absolute; left: 50%; top: 64px; padding: 4px 8px;
+    border-radius: 999px; background: rgba(28,24,21,.82); color: #FFFDF8;
+    font-size: .54rem; font-weight: 850; white-space: nowrap; opacity: 0;
+    transform: translate(-50%,8px) scale(.86); transition: opacity .28s ease calc(var(--tool-delay) + .62s), transform .28s ease calc(var(--tool-delay) + .62s);
+  }
+  .tool-art { width: 80px; height: 80px; overflow: visible; filter: drop-shadow(0 12px 9px rgba(64,42,29,.26)); transform-origin: center; }
+  .hero-world:is(:hover,:focus-within,.is-open) .orbit-tool {
+    opacity: 1;
+    transform: translate(calc(-50% + var(--tool-x)), calc(-50% + var(--tool-y))) scale(1) rotate(var(--tool-r));
+  }
+  .hero-world:is(:hover,:focus-within,.is-open) .orbit-tool::after { opacity: 1; transform: translate(-50%,0) scale(1); }
+  .hero-world:is(:hover,:focus-within,.is-open) .tool-art { animation: tool-float 3.2s ease-in-out calc(var(--tool-delay) + .75s) infinite; }
+  .toolbox-stage {
+    position: absolute; left: 50%; bottom: 26px; z-index: 5; width: 320px; height: 270px;
+    transform: translateX(-50%) rotateX(var(--scene-rx)) rotateY(var(--scene-ry));
+    transform-style: preserve-3d; transition: transform .18s ease-out; pointer-events: none;
+  }
+  .hero-toolbox {
+    position: absolute; inset: 0; transform-style: preserve-3d; animation: toolbox-breathe 2.8s ease-in-out infinite;
+  }
+  .toolbox-handle {
+    position: absolute; left: 50%; top: -48px; width: 118px; height: 65px;
+    border: 16px solid #C96F51; border-bottom: 0; border-radius: 42px 42px 0 0;
+    transform: translateX(-50%); animation: handle-nudge 2.4s var(--dw-motion-spring) .8s infinite;
+  }
+  .toolbox-lid,
+  .toolbox-body {
+    position: absolute; left: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    border: 1px solid rgba(58,46,38,.19); color: var(--dw-brand-deep);
+    background:
+      linear-gradient(90deg, transparent 0 5%, rgba(255,255,255,.18) 13%, transparent 22%),
+      linear-gradient(180deg, #ECA080, #D98162 62%, #BE664C);
+  }
+  .toolbox-lid {
+    bottom: 96px; z-index: 4; width: 282px; height: 90px; border-radius: 28px 28px 20px 20px;
+    box-shadow: 0 18px 34px rgba(58,46,38,.24), 0 0 24px rgba(244,193,101,.34);
+    transform: translateX(-50%) translateY(72px); transform-origin: center bottom;
+    transition: transform .72s cubic-bezier(.14,1.28,.3,1), box-shadow .35s ease;
+  }
+  .toolbox-lid::before {
+    content: ''; position: absolute; left: 12%; right: 12%; bottom: -4px; height: 7px; border-radius: 999px;
+    background: #FFD674; box-shadow: 0 0 12px #F3B455, 0 0 26px rgba(255,214,116,.78);
+    animation: seam-pulse 1.55s ease-in-out infinite;
+  }
+  .toolbox-lid::after { content: ''; position: absolute; inset: 11px; border: 2px solid rgba(255,245,236,.38); border-radius: 17px; }
+  .toolbox-body {
+    bottom: 0; z-index: 3; width: 286px; height: 128px; border-radius: 24px 24px 38px 38px;
+    box-shadow: 0 28px 46px rgba(58,46,38,.32), inset 0 -9px 0 rgba(117,57,41,.16); transform: translateX(-50%);
+    transition: transform .45s var(--dw-motion-spring), box-shadow .35s ease;
+  }
+  .toolbox-body::before {
+    content: ''; position: absolute; inset: 12px; border: 2px solid rgba(255,239,224,.28); border-radius: 15px 15px 26px 26px;
+  }
+  .toolbox-body::after {
+    content: ''; position: absolute; left: 50%; top: -5px; width: 48px; height: 18px; border-radius: 0 0 12px 12px;
+    background: linear-gradient(180deg,#F2C26D,#C77A43); box-shadow: 0 6px 12px rgba(69,40,26,.2); transform: translateX(-50%);
+  }
+  .toolbox-inner {
+    position: absolute; left: 50%; bottom: 94px; z-index: 2; width: 258px; height: 86px;
+    display: flex; align-items: flex-end; justify-content: center; gap: 20px; padding: 12px 18px;
+    border-radius: 21px 21px 12px 12px; background: linear-gradient(180deg,#30241F,#6B4939);
+    box-shadow: inset 0 13px 22px rgba(0,0,0,.32), 0 0 22px rgba(244,193,101,.26);
+    opacity: 0; transform: translateX(-50%) translateY(34px) scaleY(.2); transform-origin: center bottom;
+    transition: opacity .22s ease .1s, transform .58s var(--dw-motion-spring) .12s;
+  }
+  .toolbox-inner span { width: 16px; border-radius: 9px 9px 3px 3px; background: #F1D19C; box-shadow: inset 0 -5px rgba(58,46,38,.14), 0 0 8px rgba(255,220,148,.28); }
+  .toolbox-inner span:nth-child(1) { height: 53px; transform: rotate(-12deg); background: #83A0A8; }
+  .toolbox-inner span:nth-child(2) { height: 68px; background: #E0A348; }
+  .toolbox-inner span:nth-child(3) { height: 45px; background: #D8C1A4; }
+  .toolbox-inner span:nth-child(4) { height: 60px; transform: rotate(10deg); background: #B56D4F; }
+  .hero-world:is(:hover,:focus-within,.is-open) .hero-toolbox { animation: none; }
+  .hero-world:is(:hover,:focus-within,.is-open) .toolbox-handle { animation: none; }
+  .hero-world:is(:hover,:focus-within,.is-open) .toolbox-lid {
+    box-shadow: 0 22px 40px rgba(58,46,38,.22), 0 0 42px rgba(244,193,101,.42);
+    transform: translateX(-50%) translateY(-26px) rotateX(-78deg);
+  }
+  .hero-world:is(:hover,:focus-within,.is-open) .toolbox-lid::before { opacity: .15; }
+  .hero-world:is(:hover,:focus-within,.is-open) .toolbox-body { transform: translateX(-50%) translateY(6px); box-shadow: 0 32px 55px rgba(58,46,38,.34), inset 0 -9px 0 rgba(117,57,41,.16); }
+  .hero-world:is(:hover,:focus-within,.is-open) .toolbox-inner { opacity: 1; transform: translateX(-50%) translateY(-10px) scaleY(1); }
+  .hero-toolbox strong { position: relative; z-index: 1; font-size: 1.08rem; letter-spacing: .2em; }
+  .hero-toolbox small { position: relative; z-index: 1; margin-top: 5px; font-size: .62rem; font-weight: 900; letter-spacing: .16em; }
+  .hero-world-note {
+    position: absolute; left: 50%; bottom: 220px; z-index: 8; margin: 0; padding: 10px 15px 10px 10px;
+    display: inline-flex; align-items: center; gap: 8px; border: 1px solid rgba(255,255,255,.16); border-radius: 999px;
+    background: #1C1815; color: #FFFDF8; font-size: .72rem; font-weight: 850;
+    box-shadow: 0 12px 26px rgba(58,46,38,.24); transform: translateX(-50%); white-space: nowrap;
+    transition: opacity .24s ease, transform .3s var(--dw-motion-spring); animation: hint-bob 1.8s ease-in-out infinite;
+  }
+  .hint-pointer { width: 27px; height: 27px; display: grid; place-items: center; border-radius: 50%; background: #D4886A; color: #1C1815; font-size: 1rem; }
+  .hero-world-note::after {
+    content: ''; position: absolute; left: 50%; bottom: -8px; width: 16px; height: 16px; background: #1C1815;
+    clip-path: polygon(0 0,100% 0,50% 100%); transform: translateX(-50%);
+  }
+  .hero-world:is(:hover,:focus-within,.is-open) .hero-world-note { opacity: 0; transform: translateX(-50%) translateY(-16px) scale(.9); animation: none; }
+  @keyframes scene-glow {
+    0%,100% { opacity: .7; transform: translateX(-50%) scale(.94); }
+    50% { opacity: 1; transform: translateX(-50%) scale(1.04); }
+  }
+  @keyframes toolbox-breathe {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+  @keyframes handle-nudge {
+    0%,62%,100% { transform: translateX(-50%) rotate(0); }
+    70% { transform: translateX(-50%) rotate(-4deg); }
+    78% { transform: translateX(-50%) rotate(4deg); }
+    86% { transform: translateX(-50%) rotate(-2deg); }
+  }
+  @keyframes seam-pulse {
+    0%,100% { opacity: .48; transform: scaleX(.82); }
+    50% { opacity: 1; transform: scaleX(1.04); }
+  }
+  @keyframes hint-bob {
+    0%,100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-6px); }
+  }
+  @keyframes ray-bloom {
+    0% { opacity: 0; transform: translate(-50%,-50%) scale(.08) rotate(-24deg); }
+    38% { opacity: .72; }
+    100% { opacity: .1; transform: translate(-50%,-50%) scale(1.32) rotate(15deg); }
+  }
+  @keyframes ring-bloom {
+    0% { opacity: 0; transform: translate(-50%,-50%) scale(.18); }
+    36% { opacity: .94; }
+    100% { opacity: 0; transform: translate(-50%,-50%) scale(3.6); }
+  }
+  @keyframes spark-launch {
+    0% { opacity: 0; transform: translate(-50%,-50%) scale(.1) rotate(-35deg); }
+    45% { opacity: 1; }
+    100% { opacity: .86; transform: translate(calc(-50% + var(--spark-x)), calc(-50% + var(--spark-y))) scale(1) rotate(8deg); }
+  }
+  @keyframes spark-twinkle {
+    0%,100% { filter: brightness(.85); }
+    50% { filter: brightness(1.45); }
+  }
+  @keyframes tool-float {
+    0%,100% { transform: translateY(0) rotate(0); }
+    50% { transform: translateY(-8px) rotate(3deg); }
+  }
+  .trust-strip { padding: 0 0 80px; }
+  .trust-card {
+    max-width: 1060px; padding: 30px 34px; display: grid; grid-template-columns: auto 1fr auto;
+    align-items: center; gap: 24px; border: 1px solid rgba(28,24,21,.08);
+    border-radius: 22px; background: #FFFDF8; box-shadow: 0 18px 46px rgba(79,55,39,.07);
+  }
+  .trust-badge { width: 70px; height: 70px; display: grid; place-items: center; border-radius: 22px; background: #1C1815; }
+  .trust-badge img { width: 48px; height: 48px; }
+  .trust-copy p { margin: 0; color: #67584E; font-size: .92rem; line-height: 1.7; }
+  .trust-copy .trust-title { margin-bottom: 3px; color: #1C1815; font-size: clamp(1.05rem,2vw,1.25rem); font-weight: 950; line-height: 1.45; }
+  .trust-copy > span { display: block; margin-top: 8px; color: #8A7566; font-size: .72rem; font-weight: 750; }
+  .trust-cta {
+    display: inline-flex; align-items: center; gap: 14px; padding: 13px 17px; border-radius: 12px;
+    background: #1C1815; color: #FFFDF8 !important; font-size: .78rem; font-weight: 900;
+    white-space: nowrap; transition: transform .24s var(--dw-motion-spring), background .24s ease;
+  }
+  .trust-cta span { font-size: 1rem; }
+  .trust-cta:hover { transform: translateY(-3px); background: #3A2E26; }
+  .tools-section { padding: 100px 0 112px; background: #FFFDF8; }
+  .section-heading { max-width: 720px; margin-bottom: 46px; }
+  .section-heading h2,
+  .map-copy h2 {
+    margin: 0; font-size: clamp(2rem,4vw,3.2rem); font-weight: 950;
+    letter-spacing: -.04em; line-height: 1.16;
+  }
+  .section-heading > p:last-child { margin: 17px 0 0; color: #716156; line-height: 1.75; }
+  .tools-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; align-items: stretch; }
+  .tool-card {
+    display: grid; grid-template-rows: auto 310px minmax(0,1fr); padding: 15px; border: 1px solid rgba(28,24,21,.09);
+    border-radius: 28px; background: #F5F0E8; box-shadow: 0 22px 50px rgba(73,51,36,.08);
+    transition: transform .3s var(--dw-motion-spring), box-shadow .3s ease;
+  }
+  .tool-card:hover { transform: translateY(-8px) rotate(-.35deg); box-shadow: var(--dw-shadow-float); }
+  .tool-card:nth-child(2) { background: #F2E7D8; }
+  .tool-card:nth-child(3) { background: #F2E2DA; }
+  .tool-card-topline { display: flex; justify-content: space-between; align-items: center; padding: 3px 5px 13px; }
+  .tool-card-topline span {
+    padding: 6px 9px; border-radius: 999px; background: rgba(255,255,255,.65);
+    color: #8A5B46; font-size: .65rem; font-weight: 900; letter-spacing: .08em;
+  }
+  .tool-card-topline small { color: #A09184; font-size: .67rem; font-weight: 900; letter-spacing: .14em; }
+  .tool-card :global(.resource-preview) { width: 100%; height: 310px; }
+  .tool-card-copy { display: grid; grid-template-rows: auto minmax(4.05em,auto) 1fr auto; padding: 25px 10px 10px; }
+  .tool-name { margin: 0 0 9px; color: #A3654A; font-size: .72rem; font-weight: 900; letter-spacing: .08em; }
+  .tool-card h3 { margin: 0; font-size: 1.38rem; font-weight: 950; letter-spacing: -.02em; line-height: 1.42; }
+  .tool-card h3 span { display: block; }
+  .tool-card ul { margin: 22px 0 26px; padding: 0; display: grid; gap: 10px; list-style: none; }
+  .tool-card li { position: relative; padding-left: 22px; color: #5E5147; font-size: .86rem; line-height: 1.6; }
+  .tool-card li::before {
+    content: '✓'; position: absolute; left: 0; top: 0; color: #B46F52; font-weight: 950;
+  }
+  .tool-cta {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 16px; border-radius: 12px; background: #D4886A; color: #1C1815 !important;
+    font-size: .86rem; font-weight: 950;
+  }
+  .tool-cta:hover { background: #DE957A; }
+  .map-section { padding: 112px 0; background: #F5F0E8; }
+  .map-grid { display: grid; grid-template-columns: minmax(0,1fr) minmax(430px,.92fr); align-items: start; gap: 76px; }
+  .island-slogan {
+    max-width: 600px; margin: 16px 0 0; color: #A5684D;
+    font-size: clamp(1rem,2vw,1.2rem); font-weight: 900; line-height: 1.55;
+  }
+  .map-lead { max-width: 640px; margin: 22px 0 0; color: #66574D; font-size: 1rem; line-height: 1.85; }
+  .island-highlights { margin: 28px 0 32px; padding: 0; display: grid; gap: 12px; list-style: none; }
+  .island-highlights li {
+    position: relative; padding: 14px 16px 14px 42px;
+    border: 1px solid rgba(28,24,21,.08); border-radius: 14px;
+    background: rgba(255,253,248,.72); color: #493E37;
+  }
+  .island-highlights li::before { content: '✦'; position: absolute; left: 16px; top: 15px; color: #D4886A; }
+  .island-highlights strong { display: block; font-size: .9rem; font-weight: 900; }
+  .island-highlights span { display: block; margin-top: 4px; color: #75665B; font-size: .78rem; line-height: 1.55; }
+  .map-form { max-width: 570px; display: grid; gap: 8px; }
+  .map-form label { margin-top: 7px; color: #4E4239; font-size: .76rem; font-weight: 850; }
+  .map-form label small { margin-left: 7px; color: #918277; font-weight: 600; }
+  .map-form input,
+  .map-form textarea {
+    width: 100%; padding: 13px 14px; border: 1px solid rgba(28,24,21,.11);
+    border-radius: 12px; outline: none; resize: vertical; background: rgba(255,255,255,.72);
+    color: #1C1815; font: inherit;
+  }
+  .map-form input:focus,
+  .map-form textarea:focus { box-shadow: 0 0 0 3px rgba(212,136,106,.2); }
+  .map-form button {
+    margin-top: 6px; padding: 14px 18px; border: 0; border-radius: 12px;
+    background: #D4886A; color: #1C1815; font: inherit; font-weight: 950; cursor: pointer;
+  }
+  .map-form > p { margin: 2px 0 0; color: #7F7166; font-size: .7rem; }
+  .island-visuals { min-width: 0; display: grid; gap: 18px; }
+  .route-card {
+    position: relative; min-width: 0; padding: 28px 28px 34px;
+    border: 1px solid rgba(28,24,21,.09); border-radius: 30px;
+    background: #FFFDF8; box-shadow: 0 28px 70px rgba(76,52,36,.12); overflow: hidden;
+  }
+  .route-card::before {
+    content: ''; position: absolute; width: 260px; height: 260px; right: -120px; top: -110px;
+    border-radius: 50%; background: rgba(212,136,106,.18);
+  }
+  .route-card-head { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+  .route-card-head small { color: #A5684D; font-size: .64rem; font-weight: 950; letter-spacing: .18em; }
+  .route-card-head p { margin: 7px 0 0; font-size: 1.25rem; font-weight: 950; }
+  .route-whale {
+    width: 74px; height: 74px; display: grid; place-items: center;
+    border: 1px solid rgba(184,151,126,.25); border-radius: 24px;
+    background: var(--dw-brand-deep); box-shadow: 0 15px 30px rgba(28,24,21,.18);
+  }
+  .route-whale img { width: 54px; height: 54px; object-fit: contain; }
+  .route-swipe-hint { display: none; }
+  .route-visual-scroll { position: relative; z-index: 1; margin-top: 20px; }
+  .route-visual {
+    position: relative; width: 100%; aspect-ratio: 3 / 2; overflow: hidden;
+    border: 1px solid rgba(58,46,38,.1); border-radius: 24px; background: #F5F0E8;
+  }
+  .route-visual::after {
+    content: ''; position: absolute; inset: auto 0 0; z-index: 1; height: 22%; pointer-events: none;
+    background: linear-gradient(180deg, transparent, rgba(58,46,38,.1));
+  }
+  .route-visual img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    transition: transform .6s var(--dw-motion-spring), filter .35s ease;
+  }
+  .route-card:hover .route-visual img { transform: scale(1.025); filter: saturate(1.04); }
+  .route-stops { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+  .route-stops span {
+    position: absolute; left: var(--stop-left); top: var(--stop-top);
+    width: 21px; height: 21px; display: grid; place-items: center;
+    border: 2px solid rgba(255,253,248,.88); border-radius: 50%;
+    background: #D4886A; color: #1C1815; font-size: .48rem; font-weight: 950;
+    box-shadow: 0 5px 13px rgba(58,46,38,.25); transform: translate(-50%,-50%);
+  }
+  .route-stops span:nth-child(5n) { background: #1C1815; color: #F5F0E8; }
+  .map-stage-tag {
+    position: absolute; z-index: 3; display: inline-grid; grid-template-columns: auto 1fr; align-items: center; gap: 6px;
+    max-width: 145px; padding: 6px 8px 6px 6px; border: 1px solid rgba(58,46,38,.11); border-radius: 999px;
+    background: rgba(255,253,248,.9); color: #3A2E26; box-shadow: 0 9px 22px rgba(58,46,38,.12);
+    backdrop-filter: blur(8px); transition: transform .28s var(--dw-motion-spring), background .28s ease;
+  }
+  .map-stage-tag span { width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; background: #D4886A; font-size: .54rem; font-weight: 950; }
+  .map-stage-tag strong { font-size: .57rem; line-height: 1.25; white-space: nowrap; }
+  .map-stage-tag:hover { transform: translateY(-4px); background: #FFFDF8; }
+  .stage-demolition { left: 2.5%; top: 12%; }
+  .stage-structure { left: 29%; top: 5%; }
+  .stage-fitout { left: 57%; top: 12%; }
+  .stage-complete { right: 2.5%; top: 5%; }
+  .route-phases { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; margin-top: 14px; }
+  .route-phases span {
+    padding: 7px 5px; border-radius: 999px; background: var(--dw-warm-oat);
+    color: #6D5E53; text-align: center; font-size: .61rem; font-weight: 900;
+  }
+  .route-stamp {
+    position: absolute; right: 24px; bottom: 20px; padding: 8px 11px;
+    border: 2px solid rgba(180,111,82,.42); color: #B46F52; font-size: .64rem;
+    font-weight: 950; letter-spacing: .14em; transform: rotate(-6deg);
+  }
+  .atlas-card {
+    min-height: 188px; padding: 24px; display: grid; grid-template-columns: .78fr 1.22fr;
+    align-items: center; gap: 24px; overflow: hidden;
+    border: 1px solid rgba(28,24,21,.09); border-radius: 26px;
+    background:
+      radial-gradient(circle at 96% 8%, rgba(212,136,106,.24), transparent 34%),
+      #E9DDCC;
+    box-shadow: 0 18px 45px rgba(76,52,36,.09);
+  }
+  .atlas-copy small { display: block; color: #A5684D; font-size: .6rem; font-weight: 950; letter-spacing: .16em; }
+  .atlas-copy strong { display: block; margin-top: 8px; color: #1C1815; font-size: 1.08rem; line-height: 1.35; }
+  .atlas-copy span { display: block; margin-top: 8px; color: #77665A; font-size: .7rem; font-weight: 800; line-height: 1.6; }
+  .atlas-book { position: relative; min-height: 136px; display: grid; grid-template-columns: 1fr 1fr; filter: drop-shadow(0 14px 15px rgba(58,46,38,.16)); }
+  .atlas-page { padding: 13px; display: grid; grid-template-columns: 1fr 1fr; gap: 7px; border: 1px solid rgba(58,46,38,.12); background: #FFFDF8; }
+  .atlas-page-left { border-radius: 15px 4px 4px 15px; transform: perspective(240px) rotateY(6deg); transform-origin: right; }
+  .atlas-page-right { border-radius: 4px 15px 15px 4px; transform: perspective(240px) rotateY(-6deg); transform-origin: left; }
+  .atlas-page i { min-height: 66px; border-radius: 8px; background: linear-gradient(145deg,#E6D6C0 45%,#C8A88B 46% 60%,#F2E8DA 61%); }
+  .atlas-page-left i:last-child { background: linear-gradient(145deg,#EFE5D6 44%,#DAB9A4 45% 59%,#FFF9F0 60%); }
+  .atlas-page-right i:first-child { background: linear-gradient(145deg,#E1D7C9 45%,#A89076 46% 61%,#F4EBDD 62%); }
+  .atlas-page-right i:last-child { background: linear-gradient(145deg,#D8CBBB 44%,#7E7164 45% 59%,#EEE5DA 60%); }
+  .atlas-book img {
+    position: absolute; right: -4px; bottom: -8px; z-index: 3;
+    width: 58px; height: 58px; object-fit: contain;
+    padding: 7px; border-radius: 18px; background: #1C1815;
+  }
+  @media (max-width: 980px) {
+    .hero-grid,
+    .map-grid { grid-template-columns: 1fr; }
+    .hero-world { max-width: 620px; width: 100%; margin: 0 auto; }
+    .tools-grid { grid-template-columns: 1fr 1fr; }
+    .tool-card:last-child { grid-column: 1 / -1; max-width: 560px; width: 100%; justify-self: center; }
+    .island-visuals { max-width: 620px; width: 100%; }
+  }
+  @media (max-width: 680px) {
+    .toolbox-wrap { width: min(100% - 32px,1180px); }
+    .toolbox-hero { padding: 42px 0 36px; }
+    .hero-grid { gap: 36px; }
+    .hero-copy h1 { font-size: clamp(3.15rem, 18vw, 4.6rem); }
+    .hero-lead { margin: 20px 0 22px; font-size: .98rem; line-height: 1.72; }
+    .hero-cta { padding: 12px 17px; }
+    .hero-world { display: none; }
+    .hero-character { top: 36px; width: 39%; height: 230px; }
+    .hero-tool-orbit { transform: scale(.78); }
+    .toolbox-stage { bottom: 14px; transform: translateX(-50%) scale(.88) rotateX(var(--scene-rx)) rotateY(var(--scene-ry)); }
+    .hero-world-note .note-idle { font-size: 0; }
+    .hero-world-note .note-idle::after { content: '點一下，開箱看看'; font-size: .7rem; }
+    .trust-strip { padding-bottom: 14px; }
+    .trust-card { padding: 14px 16px; grid-template-columns: auto 1fr; gap: 12px; border-radius: 18px; }
+    .trust-badge { width: 48px; height: 48px; border-radius: 15px; }
+    .trust-badge img { width: 34px; height: 34px; }
+    .trust-copy > p:not(.trust-title) { display: none; }
+    .trust-copy .trust-title { font-size: 1rem; }
+    .trust-copy > span { margin-top: 4px; font-size: .62rem; }
+    .trust-cta { display: none; }
+    .tools-section { padding: 18px 0 84px; }
+    .section-heading { margin-bottom: 14px; }
+    .section-heading h2 { font-size: 1.65rem; }
+    .section-heading > p:last-child { display: none; }
+    .tools-grid { grid-template-columns: 1fr; }
+    .tool-card:last-child { grid-column: auto; }
+    .map-section { padding: 82px 0; }
+    .route-card { padding: 26px 18px 38px; }
+    .route-swipe-hint { display: block; margin: 16px 0 8px; color: #7E6C60; font-size: .66rem; font-weight: 800; }
+    .route-visual-scroll { margin-top: 0; overflow-x: auto; border-radius: 20px; scrollbar-width: thin; overscroll-behavior-inline: contain; }
+    .route-visual { width: 700px; border-radius: 20px; }
+    .route-phases { min-width: 0; }
+    .route-whale { width: 60px; height: 60px; border-radius: 19px; }
+    .route-whale img { width: 44px; height: 44px; }
+    .atlas-card { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 430px) {
+    .route-card-head p { font-size: 1.08rem; }
+    .route-phases span { font-size: .55rem; }
+    .hero-tool-orbit { transform: scale(.7); }
+    .toolbox-stage { transform: translateX(-50%) scale(.82) rotateX(var(--scene-rx)) rotateY(var(--scene-ry)); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :global(html) { scroll-behavior: auto; }
+    .hero-world-glow,
+    .hero-toolbox,
+    .toolbox-handle,
+    .toolbox-lid::before,
+    .hero-world-note,
+    .burst-rays,
+    .burst-ring,
+    .burst-spark,
+    .tool-art { animation: none !important; }
+    .hero-cta,
+    .hero-character,
+    .orbit-tool,
+    .toolbox-stage,
+    .toolbox-lid,
+    .toolbox-inner,
+    .route-visual img,
+    .tool-card,
+    .map-stage-tag { transition: none; }
+    .hero-cta:hover,
+    .tool-card:hover { transform: none; }
+  }
+</style>

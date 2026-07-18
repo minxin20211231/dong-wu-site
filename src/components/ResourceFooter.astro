@@ -1,0 +1,47 @@
+<footer class="resource-footer">
+  <div class="resource-footer-inner">
+    <div>
+      <p class="resource-footer-name">懂屋 Know Your Home</p>
+      <p class="resource-footer-slogan">新成屋屋主的裝修決策系統</p>
+    </div>
+    <nav aria-label="頁尾導覽">
+      <a href="/about/">關於懂屋</a>
+      <a href="/posts/">所有文章</a>
+      <a href="/toolbox/">裝修工具箱</a>
+      <a href="/subscribe/">訂閱電子報</a>
+    </nav>
+    <p class="resource-footer-copy">© 2026 懂屋 Know Your Home · 旻欣室內裝修設計工作室</p>
+  </div>
+</footer>
+
+<style>
+  .resource-footer {
+    border-top: 1px solid rgba(28, 24, 21, 0.08);
+    background: #EDE4D7;
+    color: #1C1815;
+  }
+  .resource-footer-inner {
+    width: min(1160px, calc(100% - 40px));
+    margin: 0 auto;
+    padding: 48px 0 30px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: start;
+    gap: 28px 48px;
+  }
+  .resource-footer-name { margin: 0 0 6px; font-size: 1rem; font-weight: 900; }
+  .resource-footer-slogan,
+  .resource-footer-copy { margin: 0; color: #74665B; font-size: 0.8rem; }
+  .resource-footer nav { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px 22px; }
+  .resource-footer nav a { color: #4F443C !important; font-size: 0.84rem; font-weight: 700; }
+  .resource-footer nav a:hover { color: #D4886A !important; }
+  .resource-footer-copy {
+    grid-column: 1 / -1;
+    padding-top: 20px;
+    border-top: 1px solid rgba(28, 24, 21, 0.08);
+  }
+  @media (max-width: 720px) {
+    .resource-footer-inner { width: min(100% - 32px, 1160px); grid-template-columns: 1fr; }
+    .resource-footer nav { justify-content: flex-start; }
+  }
+</style>

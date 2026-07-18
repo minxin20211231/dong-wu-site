@@ -8,6 +8,8 @@ interface Props {
   image?: string;
   imageAlt?: string;
   bottomNav?: boolean;
+  exactTitle?: boolean;
+  noindex?: boolean; // 軟上線頁用：不讓搜尋引擎收錄（正式開放時移除）
 }
 
 const {
@@ -16,9 +18,11 @@ const {
   image = '/images/og-default.png',
   imageAlt = '懂屋 Know Your Home — 新成屋屋主的裝修決策系統',
   bottomNav = true,
+  exactTitle = false,
+  noindex = false,
 } = Astro.props;
 
-const fullTitle = title === '懂屋 Know Your Home'
+const fullTitle = exactTitle || title === '懂屋 Know Your Home'
   ? title
   : `${title}｜懂屋 Know Your Home`;
 
@@ -68,6 +72,7 @@ const siteSchema = {
   <meta name="generator" content={Astro.generator} />
   <title>{fullTitle}</title>
   <meta name="description" content={description} />
+  {noindex && <meta name="robots" content="noindex, nofollow" />}
   <link rel="canonical" href={canonicalUrl} />
 
   <meta property="og:title" content={fullTitle} />

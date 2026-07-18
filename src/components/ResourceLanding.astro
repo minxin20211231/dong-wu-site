@@ -1,0 +1,441 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ResourceHeader from './ResourceHeader.astro';
+import ResourceFooter from './ResourceFooter.astro';
+import ResourcePreview from './ResourcePreview.astro';
+import EmailFormDemo from './EmailFormDemo.astro';
+import RevealOnScroll from './RevealOnScroll.astro';
+
+interface PreviewItem {
+  title: string;
+  text: string;
+}
+
+interface FaqItem {
+  question: string;
+  answer: string;
+}
+
+interface SecondaryOptIn {
+  name: string;
+  label: string;
+  eventName?: string;
+}
+
+interface Bridge {
+  eyebrow: string;
+  title: string;
+  text: string;
+  buttonLabel: string;
+  note: string;
+  eventName?: string;
+  href?: string;
+  external?: boolean;
+}
+
+interface Props {
+  kind: 'budget' | 'inventory';
+  seoTitle: string;
+  description: string;
+  eyebrow: string;
+  title: string;
+  lead: string;
+  ctaLabel: string;
+  unlockEvent: string;
+  formNote?: string;
+  secondaryOptIn?: SecondaryOptIn;
+  previewLabel: string;
+  pains: string[];
+  trustText: string;
+  painKicker?: string;
+  painHeading?: string;
+  insideKicker?: string;
+  previewHeading: string;
+  previewItems: PreviewItem[];
+  honestNote?: string;
+  stepsKicker?: string;
+  stepsHeading?: string;
+  steps: string[];
+  repeatKicker?: string;
+  repeatTitle?: string;
+  repeatFormNote?: string;
+  bridge: Bridge;
+  faqs: FaqItem[];
+}
+
+const {
+  kind,
+  seoTitle,
+  description,
+  eyebrow,
+  title,
+  lead,
+  ctaLabel,
+  unlockEvent,
+  formNote = '下載連結直接寄給你，隨時可退訂。',
+  secondaryOptIn,
+  previewLabel,
+  pains,
+  trustText,
+  painKicker = '先別急著做決定',
+  painHeading = '這幾句，你是不是也說過？',
+  insideKicker = '打開就能用',
+  previewHeading,
+  previewItems,
+  honestNote,
+  stepsKicker = '不用研究半天',
+  stepsHeading = '拿到後，照這 3 步用',
+  steps,
+  repeatKicker = '再給自己一次開始的機會',
+  repeatTitle = title,
+  repeatFormNote = '上方填過就不用再填一次。',
+  bridge,
+  faqs,
+} = Astro.props;
+---
+
+{/* noindex＝軟上線（header 入口「建置中」期間不收錄）；正式開放時移除 */}
+<BaseLayout title={seoTitle} description={description} exactTitle bottomNav={false} noindex>
+  <ResourceHeader />
+
+  <main class:list={['resource-page', `resource-page-${kind}`]}>
+    <section class="resource-hero">
+      <div class="resource-wrap resource-hero-grid">
+        <div class="resource-hero-copy" data-reveal>
+          <p class="resource-eyebrow">{eyebrow}</p>
+          <h1>{title}</h1>
+          <p class="resource-lead">{lead}</p>
+          <EmailFormDemo
+            formId={`${kind}-hero-form`}
+            buttonLabel={ctaLabel}
+            note={formNote}
+            eventName={unlockEvent}
+            optIn={secondaryOptIn}
+          />
+        </div>
+        <div class="hero-preview" data-reveal style="--reveal-delay: 100ms">
+          <ResourcePreview kind={kind} label={previewLabel} priority />
+        </div>
+      </div>
+    </section>
+
+    <section class="resource-section pain-section">
+      <div class="resource-wrap resource-narrow">
+        <p class="section-kicker">{painKicker}</p>
+        <h2>{painHeading}</h2>
+        <div class="pain-grid">
+          {pains.map((pain, index) => (
+            <article class="pain-card" data-reveal style={`--reveal-delay: ${index * 65}ms`}>
+              <span aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+              <p>{pain}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="trust-section">
+      <div class="resource-wrap resource-narrow">
+        <blockquote data-reveal>
+          <span class="trust-mark" aria-hidden="true">“</span>
+          <p>{trustText}</p>
+          <footer>Bibo｜旻欣室內裝修設計工作室</footer>
+        </blockquote>
+      </div>
+    </section>
+
+    <section class="resource-section inside-section">
+      <div class="resource-wrap inside-grid">
+        <div class="inside-copy" data-reveal>
+          <p class="section-kicker">{insideKicker}</p>
+          <h2>{previewHeading}</h2>
+          <div class="inside-list">
+            {previewItems.map((item, index) => (
+              <article>
+                <span>{String(index + 1).padStart(2, '0')}</span>
+                <div>
+                  <h3>{item.title}</h3>
+                  <p>{item.text}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+          {honestNote && <p class="honest-note">{honestNote}</p>}
+        </div>
+        <div class="inside-preview" data-reveal style="--reveal-delay: 90ms">
+          <ResourcePreview kind={kind} label={previewLabel} compact />
+        </div>
+      </div>
+    </section>
+
+    <section class="resource-section steps-section">
+      <div class="resource-wrap resource-narrow">
+        <p class="section-kicker">{stepsKicker}</p>
+        <h2>{stepsHeading}</h2>
+        <div class="steps-grid">
+          {steps.map((step, index) => (
+            <article data-reveal style={`--reveal-delay: ${index * 70}ms`}>
+              <strong>{index + 1}</strong>
+              <p>{step}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="repeat-section">
+      <div class="resource-wrap repeat-card" data-reveal>
+        <div>
+          <p class="section-kicker">{repeatKicker}</p>
+          <h2>{repeatTitle}</h2>
+        </div>
+        <EmailFormDemo
+          formId={`${kind}-repeat-form`}
+          buttonLabel={ctaLabel}
+          note={repeatFormNote}
+          eventName={unlockEvent}
+          optIn={secondaryOptIn}
+          compact
+        />
+      </div>
+    </section>
+
+    <section class="bridge-section">
+      <div class="resource-wrap bridge-card" data-reveal>
+        <div class="bridge-copy">
+          <p class="section-kicker">{bridge.eyebrow}</p>
+          <h2>{bridge.title}</h2>
+          <p>{bridge.text}</p>
+        </div>
+        {bridge.href ? (
+          <div class="bridge-action">
+            <a
+              class="bridge-link"
+              href={bridge.href}
+              target={bridge.external ? '_blank' : undefined}
+              rel={bridge.external ? 'noopener' : undefined}
+            >
+              {bridge.buttonLabel}<span aria-hidden="true">→</span>
+            </a>
+            <p>{bridge.note}</p>
+          </div>
+        ) : (
+          <EmailFormDemo
+            formId={`${kind}-waitlist-form`}
+            buttonLabel={bridge.buttonLabel}
+            note={bridge.note}
+            eventName={bridge.eventName}
+            compact
+          />
+        )}
+      </div>
+    </section>
+
+    <section class="resource-section faq-section">
+      <div class="resource-wrap resource-narrow">
+        <p class="section-kicker">常見問題</p>
+        <h2>你可能還會想問</h2>
+        <div class="faq-list">
+          {faqs.map((faq) => (
+            <details data-reveal>
+              <summary>{faq.question}<span aria-hidden="true">＋</span></summary>
+              <p>{faq.answer}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <ResourceFooter />
+  <RevealOnScroll />
+
+  <script>
+    import '../scripts/resource-forms.ts';
+  </script>
+</BaseLayout>
+
+<style>
+  :global(html) { scroll-behavior: smooth; background: #F5F0E8; }
+  :global(body) { background: #F5F0E8; color: #1C1815; }
+  .resource-page {
+    --page-accent: var(--dw-brand-orange);
+    --page-accent-soft: #E5B9A4;
+    --page-paper: var(--dw-warm-paper);
+    --page-ink: var(--dw-brand-deep);
+    --page-muted: var(--dw-warm-muted);
+    background: var(--dw-brand-moon);
+    color: var(--page-ink);
+  }
+  .resource-page-inventory { --page-accent-soft: var(--dw-warm-milk-tea); }
+  .resource-wrap { width: min(1160px, calc(100% - 40px)); margin: 0 auto; }
+  .resource-narrow { max-width: 960px; }
+  .resource-hero {
+    position: relative;
+    padding: 84px 0 94px;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 12% 18%, rgba(255,255,255,.92), transparent 28%),
+      radial-gradient(circle at 92% 12%, rgba(212,136,106,.15), transparent 30%),
+      #F5F0E8;
+  }
+  .resource-hero::after {
+    content: ''; position: absolute; left: 4%; bottom: 18px;
+    width: 160px; height: 12px; border-radius: 50%;
+    border-top: 3px solid rgba(184,151,126,.42); transform: rotate(-5deg);
+  }
+  .resource-hero-grid {
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(390px, .86fr);
+    align-items: center; gap: clamp(46px, 7vw, 92px);
+  }
+  .resource-hero-copy { max-width: 620px; }
+  .hero-preview,
+  .inside-preview { min-width: 0; }
+  .resource-eyebrow,
+  .section-kicker {
+    margin: 0 0 15px; color: #A5684D; font-size: .72rem;
+    font-weight: 900; letter-spacing: .18em; text-transform: uppercase;
+  }
+  .resource-hero h1 {
+    max-width: 650px; margin: 0; color: var(--page-ink);
+    font-size: clamp(2.45rem, 5.5vw, 4.7rem); font-weight: 950;
+    letter-spacing: -.055em; line-height: 1.05;
+  }
+  .resource-lead {
+    max-width: 620px; margin: 27px 0 30px; color: var(--page-muted);
+    font-size: clamp(1rem, 1.6vw, 1.17rem); line-height: 1.85;
+  }
+  .resource-section { padding: 104px 0; }
+  .resource-section h2,
+  .repeat-section h2,
+  .bridge-section h2 {
+    margin: 0; color: var(--page-ink); font-size: clamp(1.9rem, 4vw, 3rem);
+    font-weight: 950; letter-spacing: -.035em; line-height: 1.16;
+  }
+  .pain-section { background: #FFFDF8; }
+  .pain-section h2 { max-width: 620px; }
+  .pain-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 44px; }
+  .pain-card {
+    position: relative; min-height: 148px; padding: 25px 28px;
+    display: flex; align-items: flex-start; gap: 18px;
+    border: 1px solid rgba(28,24,21,.08); border-radius: 19px;
+    background: #F6EEE2; box-shadow: 0 16px 36px rgba(75,50,34,.06);
+    transition: transform .26s var(--dw-motion-spring), box-shadow .26s ease;
+  }
+  .pain-card:hover { transform: translateY(-5px); box-shadow: var(--dw-shadow-soft); }
+  .pain-card:nth-child(2), .pain-card:nth-child(3) { background: #F2E5DC; }
+  .pain-card span {
+    flex: 0 0 auto; width: 38px; height: 38px; display: grid; place-items: center;
+    border-radius: 50%; background: #1C1815; color: #F5F0E8;
+    font-size: .68rem; font-weight: 900; letter-spacing: .08em;
+  }
+  .pain-card p { margin: 2px 0 0; color: #4F433A; font-size: 1rem; font-weight: 700; line-height: 1.75; }
+  .trust-section { padding: 72px 0; background: #D9B39E; }
+  .trust-section blockquote {
+    position: relative; margin: 0; padding: 20px 54px;
+    display: grid; grid-template-columns: auto 1fr; gap: 4px 24px; align-items: start;
+  }
+  .trust-mark { grid-row: 1 / 3; color: rgba(28,24,21,.3); font-family: Georgia, serif; font-size: 5rem; line-height: .9; }
+  .trust-section blockquote p { margin: 0; max-width: 780px; font-size: clamp(1.2rem, 2.5vw, 1.75rem); font-weight: 850; line-height: 1.65; }
+  .trust-section blockquote footer { margin-top: 14px; color: #5E4639; font-size: .82rem; font-weight: 800; letter-spacing: .04em; }
+  .inside-section { background: #F1E8DB; }
+  .inside-grid { display: grid; grid-template-columns: 1fr minmax(360px, .8fr); align-items: center; gap: 78px; }
+  .inside-list { display: grid; gap: 16px; margin-top: 36px; }
+  .inside-list article {
+    display: grid; grid-template-columns: 42px 1fr; gap: 16px;
+    padding: 19px 0; border-bottom: 1px solid rgba(28,24,21,.1);
+  }
+  .inside-list article > span { color: #B87559; font-size: .73rem; font-weight: 950; letter-spacing: .12em; }
+  .inside-list h3 { margin: 0 0 5px; font-size: 1rem; font-weight: 900; }
+  .inside-list p { margin: 0; color: var(--page-muted); font-size: .92rem; line-height: 1.7; }
+  .honest-note {
+    margin: 24px 0 0; padding: 14px 16px; border-left: 3px solid #D4886A;
+    background: rgba(255,255,255,.5); color: #5D5046; font-size: .82rem; line-height: 1.7;
+  }
+  .steps-section { background: #FFFDF8; }
+  .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 42px; }
+  .steps-grid article {
+    min-height: 190px; padding: 28px; border: 1px solid rgba(28,24,21,.08);
+    border-radius: 20px; background: #F5F0E8;
+    transition: transform .26s var(--dw-motion-spring), background .26s ease;
+  }
+  .steps-grid article:hover { transform: translateY(-5px); background: #EFE6DA; }
+  .steps-grid strong {
+    width: 45px; height: 45px; display: grid; place-items: center;
+    border-radius: 14px 14px 14px 4px; background: #D4886A; color: #1C1815;
+    font-size: 1.2rem; font-weight: 950;
+  }
+  .steps-grid p { margin: 24px 0 0; color: #4F433A; font-size: .95rem; font-weight: 700; line-height: 1.72; }
+  .repeat-section { padding: 38px 0 92px; background: #FFFDF8; }
+  .repeat-card {
+    padding: 42px 46px; display: grid; grid-template-columns: 1fr minmax(380px, .8fr);
+    align-items: center; gap: 50px; border-radius: 28px;
+    background: #EADBC8; box-shadow: 0 25px 60px rgba(77,54,38,.1);
+  }
+  .repeat-card h2 { max-width: 520px; font-size: clamp(1.6rem, 3vw, 2.4rem); }
+  .bridge-section { padding: 94px 0; background: #1C1815; color: #F5F0E8; }
+  .bridge-card { display: grid; grid-template-columns: 1fr minmax(380px, .75fr); align-items: center; gap: 72px; }
+  .bridge-section h2 { color: #F5F0E8; }
+  .bridge-copy > p:last-child { max-width: 620px; margin: 20px 0 0; color: rgba(245,240,232,.7); line-height: 1.8; }
+  .bridge-action { width: 100%; max-width: 460px; }
+  .bridge-link {
+    width: 100%; min-height: 54px; padding: 14px 20px;
+    display: flex; align-items: center; justify-content: space-between; gap: 18px;
+    border: 1px solid rgba(245,240,232,.14); border-radius: 14px;
+    background: #D4886A; color: #1C1815 !important;
+    font-size: .92rem; font-weight: 950;
+    box-shadow: 0 14px 30px rgba(0,0,0,.2);
+    transition: transform .22s var(--dw-motion-spring), background .22s ease;
+  }
+  .bridge-link:hover { transform: translateY(-3px); background: #DE957A; }
+  .bridge-action > p { margin: 10px 3px 0; color: rgba(245,240,232,.58); font-size: .72rem; line-height: 1.55; }
+  .bridge-section :global(.demo-email-form label),
+  .bridge-section :global(.demo-email-form > p) { color: rgba(245,240,232,.68); }
+  .faq-section { background: #F5F0E8; }
+  .faq-list { margin-top: 34px; border-top: 1px solid rgba(28,24,21,.12); }
+  .faq-list details { border-bottom: 1px solid rgba(28,24,21,.12); }
+  .faq-list summary {
+    padding: 23px 4px; display: flex; justify-content: space-between; gap: 24px;
+    color: #2E2722; font-size: 1rem; font-weight: 850; cursor: pointer; list-style: none;
+  }
+  .faq-list summary::-webkit-details-marker { display: none; }
+  .faq-list summary span { color: #B87559; font-size: 1.2rem; transition: transform .2s ease; }
+  .faq-list details[open] summary span { transform: rotate(45deg); }
+  .faq-list details > p { margin: -4px 0 0; padding: 0 44px 24px 4px; color: var(--page-muted); line-height: 1.78; }
+  @media (max-width: 900px) {
+    .resource-hero-grid,
+    .inside-grid { grid-template-columns: 1fr; }
+    .resource-hero-copy { max-width: 720px; }
+    .hero-preview,
+    .inside-preview { max-width: 620px; width: 100%; margin: 0 auto; }
+    .repeat-card,
+    .bridge-card { grid-template-columns: 1fr; gap: 30px; }
+  }
+  @media (max-width: 700px) {
+    .resource-wrap { width: min(100% - 32px, 1160px); }
+    .resource-hero { padding: 42px 0 58px; }
+    .resource-hero-grid { gap: 34px; }
+    .resource-hero h1 { font-size: clamp(2.35rem, 12vw, 3.45rem); }
+    .resource-lead { margin: 20px 0 23px; line-height: 1.72; }
+    .hero-preview { max-height: 290px; overflow: hidden; border-radius: 24px; }
+    .hero-preview :global(.resource-preview) { min-height: 290px; }
+    .resource-section { padding: 76px 0; }
+    .pain-grid,
+    .steps-grid { grid-template-columns: 1fr; }
+    .pain-card { min-height: auto; }
+    .trust-section blockquote { padding: 12px 0; grid-template-columns: 1fr; }
+    .trust-mark { display: none; }
+    .repeat-section { padding-bottom: 72px; }
+    .repeat-card { padding: 32px 24px; }
+    .bridge-section { padding: 74px 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :global(html) { scroll-behavior: auto; }
+    .pain-card,
+    .steps-grid article,
+    .bridge-link { transition: none; }
+    .pain-card:hover,
+    .steps-grid article:hover,
+    .bridge-link:hover { transform: none; }
+  }
+</style>

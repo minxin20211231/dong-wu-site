@@ -1,0 +1,381 @@
+---
+interface Props {
+  kind: 'diagnosis' | 'budget' | 'inventory';
+  label?: string;
+  compact?: boolean;
+  priority?: boolean;
+}
+
+const { kind, label = '工具內容預覽', compact = false, priority = false } = Astro.props;
+
+const characterByKind = {
+  diagnosis: 'character_resource',
+  budget: 'character_planner',
+  inventory: 'character_intuitive',
+} as const;
+
+const character = characterByKind[kind];
+---
+
+<figure
+  class:list={['resource-preview', `resource-preview-${kind}`, compact && 'resource-preview-compact']}
+  role="img"
+  aria-label={label}
+  data-asset-slot={`tool-card-${kind}.webp`}
+>
+  <span class="preview-tape" aria-hidden="true"></span>
+  <picture class="preview-character" aria-hidden="true">
+    <source srcset={`/ai-diagnosis/assets/${character}.webp`} type="image/webp" />
+    <img
+      src={`/ai-diagnosis/assets/${character}.png`}
+      alt=""
+      width="1024"
+      height="1024"
+      loading={priority ? 'eager' : 'lazy'}
+      fetchpriority={priority ? 'high' : 'auto'}
+      decoding="async"
+    />
+  </picture>
+
+  {kind === 'diagnosis' && (
+    <div class="preview-paper diagnosis-paper" aria-hidden="true">
+      <div class="preview-paper-head">
+        <span>懂屋</span>
+        <small>AI 裝修診斷書</small>
+      </div>
+      <div class="diagnosis-score">
+        <span>你的類型</span>
+        <strong>穩健派</strong>
+      </div>
+      <div class="diagnosis-grid">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="preview-lines">
+        <i></i><i></i><i></i>
+      </div>
+    </div>
+  )}
+
+  {kind === 'budget' && (
+    <div class="course-preview" aria-hidden="true">
+      <div class="course-mail">
+        <div class="course-mail-head">
+          <span>DAY 01</span>
+          <small>裝修費用信件課</small>
+        </div>
+        <strong>先看懂錢會花去哪裡</strong>
+        <div class="course-mail-lines">
+          <i></i><i></i><i></i><i></i>
+        </div>
+      </div>
+      <div class="course-days">
+        <span class="is-active">01</span><span>02</span><span>03</span><span>04</span>
+        <span>05</span><span>06</span><span>07</span><span>08</span>
+        <span>09</span><span>10</span><span>11</span><span>12</span>
+      </div>
+      <div class="course-attachment">
+        <span>隨課附上</span>
+        <strong>預算組裝器</strong>
+        <small>24 個工程項目</small>
+      </div>
+    </div>
+  )}
+
+  {kind === 'inventory' && (
+    <div class="inventory-board" aria-hidden="true">
+      <div class="inventory-clip"></div>
+      <div class="preview-paper inventory-paper">
+        <div class="inventory-head">
+          <small>裝修前物品盤點</small>
+          <strong>先數東西，再做櫃子</strong>
+        </div>
+        <div class="inventory-tags">
+          <span>玄關</span><span>餐廚</span><span>主臥</span>
+        </div>
+        <div class="inventory-list">
+          <div><i></i><span>鞋子／安全帽／雨具</span><b>12 格</b></div>
+          <div><i></i><span>小家電／備品</span><b>4 格</b></div>
+          <div><i></i><span>換季衣物</span><b>2.4 m</b></div>
+        </div>
+        <div class="inventory-result">自動換算收納需求</div>
+      </div>
+    </div>
+  )}
+
+  <figcaption>{label}</figcaption>
+</figure>
+
+<style>
+  .resource-preview {
+    position: relative;
+    min-height: 420px;
+    display: grid;
+    place-items: center;
+    padding: 48px 34px 38px;
+    border: 1px solid rgba(28, 24, 21, 0.08);
+    border-radius: 28px;
+    background:
+      radial-gradient(circle at 18% 15%, rgba(255, 255, 255, 0.86), transparent 30%),
+      linear-gradient(145deg, #E9DAC6, #F5F0E8 54%, #E8CFC1);
+    box-shadow: 0 28px 70px rgba(96, 68, 49, 0.14);
+    overflow: hidden;
+    isolation: isolate;
+    transition: transform .32s var(--dw-motion-spring), box-shadow .32s ease;
+  }
+  .resource-preview:hover {
+    transform: translateY(-5px) rotate(-.35deg);
+    box-shadow: var(--dw-shadow-float);
+  }
+  .resource-preview::before,
+  .resource-preview::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    border-radius: 999px;
+    filter: blur(2px);
+  }
+  .resource-preview::before {
+    width: 180px; height: 180px; top: -76px; right: -54px;
+    background: rgba(212, 136, 106, 0.2);
+  }
+  .resource-preview::after {
+    width: 130px; height: 130px; bottom: -56px; left: -42px;
+    background: rgba(184, 151, 126, 0.22);
+  }
+  .preview-tape {
+    position: absolute;
+    top: 26px;
+    left: 50%;
+    z-index: 4;
+    width: 86px;
+    height: 24px;
+    transform: translateX(-50%) rotate(-2deg);
+    background: rgba(245, 220, 178, 0.75);
+    box-shadow: 0 2px 4px rgba(89, 64, 47, 0.06);
+  }
+  .preview-character {
+    position: absolute;
+    inset: 18px auto 18px 18px;
+    z-index: 0;
+    width: 58%;
+    overflow: hidden;
+    border: 1px solid rgba(58, 46, 38, .1);
+    border-radius: 22px;
+    background: #EFE6DA;
+    box-shadow: 0 18px 38px rgba(58, 46, 38, .14);
+    transform: rotate(-2.5deg);
+    transition: transform .34s var(--dw-motion-spring);
+  }
+  .preview-character::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 58%, rgba(255, 253, 248, .9));
+    pointer-events: none;
+  }
+  .preview-character img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .diagnosis-paper,
+  .course-preview,
+  .inventory-board {
+    z-index: 2;
+    margin-left: 25%;
+  }
+  .resource-preview figcaption {
+    position: absolute;
+    right: 18px;
+    bottom: 14px;
+    color: #75675B;
+    font-size: 0.66rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+  }
+  .preview-paper {
+    width: min(100%, 330px);
+    min-height: 310px;
+    padding: 24px;
+    border: 1px solid rgba(28, 24, 21, 0.1);
+    border-radius: 5px;
+    background: #FFFDF8;
+    color: #1C1815;
+    box-shadow: 0 22px 50px rgba(61, 43, 31, 0.18);
+    transform: translateX(7%) scale(.84) rotate(1.5deg);
+  }
+  .preview-paper-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding-bottom: 13px; border-bottom: 2px solid #1C1815;
+  }
+  .preview-paper-head span { font-weight: 900; letter-spacing: 0.12em; }
+  .preview-paper-head small { color: #8C796B; font-weight: 700; }
+  .diagnosis-score {
+    width: 136px; height: 136px; margin: 25px auto 21px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    border-radius: 50%;
+    background: radial-gradient(circle at center, #FFFDF8 55%, transparent 57%),
+      conic-gradient(#D4886A 0 74%, #E8DED0 74% 100%);
+  }
+  .diagnosis-score span { color: #78695E; font-size: 0.67rem; font-weight: 700; }
+  .diagnosis-score strong { margin-top: 4px; font-size: 1.16rem; }
+  .diagnosis-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .diagnosis-grid span {
+    height: 34px; border-radius: 7px; background: linear-gradient(135deg, #EADBC8, #F3EAE0);
+  }
+  .preview-lines { display: grid; gap: 7px; margin-top: 16px; }
+  .preview-lines i { height: 5px; border-radius: 999px; background: #E4D8C9; }
+  .preview-lines i:nth-child(2) { width: 86%; }
+  .preview-lines i:nth-child(3) { width: 64%; }
+
+  .course-preview {
+    position: relative; width: min(100%, 340px); min-height: 320px;
+    transform: translateX(8%) scale(.84) rotate(.5deg);
+  }
+  .course-mail {
+    position: relative; z-index: 2; min-height: 245px; padding: 23px;
+    border: 1px solid rgba(28,24,21,.1); border-radius: 18px;
+    background: #FFFDF8; color: #1C1815;
+    box-shadow: 0 22px 50px rgba(61,43,31,.18);
+  }
+  .course-mail::after {
+    content: ''; position: absolute; right: 20px; bottom: -13px;
+    width: 30px; height: 30px; border-radius: 8px;
+    background: #FFFDF8; transform: rotate(45deg);
+    box-shadow: 8px 8px 18px rgba(61,43,31,.06);
+  }
+  .course-mail-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .course-mail-head span {
+    padding: 7px 9px; border-radius: 999px; background: #D4886A;
+    color: #1C1815; font-size: .62rem; font-weight: 950; letter-spacing: .08em;
+  }
+  .course-mail-head small { color: #8B7768; font-size: .67rem; font-weight: 800; }
+  .course-mail > strong { display: block; margin-top: 27px; font-size: 1.16rem; line-height: 1.45; }
+  .course-mail-lines { display: grid; gap: 9px; margin-top: 22px; }
+  .course-mail-lines i { height: 6px; border-radius: 999px; background: #E4D8C9; }
+  .course-mail-lines i:nth-child(2) { width: 92%; }
+  .course-mail-lines i:nth-child(3) { width: 74%; }
+  .course-mail-lines i:nth-child(4) { width: 84%; }
+  .course-days {
+    position: relative; z-index: 3; margin: -22px 18px 0; padding: 10px;
+    display: grid; grid-template-columns: repeat(6,1fr); gap: 5px;
+    border: 1px solid rgba(28,24,21,.08); border-radius: 13px;
+    background: #EFE6DA; box-shadow: 0 12px 26px rgba(61,43,31,.1);
+  }
+  .course-days span {
+    aspect-ratio: 1; display: grid; place-items: center; border-radius: 7px;
+    background: rgba(255,255,255,.6); color: #76665B; font-size: .51rem; font-weight: 900;
+  }
+  .course-days .is-active { background: #1C1815; color: #F5F0E8; }
+  .course-attachment {
+    position: absolute; right: -20px; bottom: -4px; z-index: 4;
+    min-width: 152px; padding: 14px 16px 13px 42px;
+    border-radius: 14px; background: #D4886A; color: #1C1815;
+    box-shadow: 0 16px 30px rgba(89,55,38,.2); transform: rotate(-3deg);
+  }
+  .course-attachment::before {
+    content: '↳'; position: absolute; left: 14px; top: 15px; font-size: 1.35rem; font-weight: 950;
+  }
+  .course-attachment span,
+  .course-attachment strong,
+  .course-attachment small { display: block; }
+  .course-attachment span { font-size: .56rem; font-weight: 850; letter-spacing: .08em; }
+  .course-attachment strong { margin-top: 3px; font-size: .86rem; }
+  .course-attachment small { margin-top: 2px; font-size: .58rem; font-weight: 750; }
+
+  .inventory-board {
+    position: relative; width: min(100%, 340px); padding: 15px 13px 13px;
+    border-radius: 16px; background: #9C785F;
+    box-shadow: 0 22px 50px rgba(61, 43, 31, 0.2); transform: translateX(8%) scale(.84) rotate(1deg);
+  }
+  .inventory-clip {
+    position: absolute; top: -7px; left: 50%; z-index: 3;
+    width: 92px; height: 34px; transform: translateX(-50%);
+    border-radius: 8px 8px 4px 4px; background: #C8B39F;
+    box-shadow: inset 0 -4px 0 rgba(28, 24, 21, 0.08);
+  }
+  .inventory-paper { width: 100%; min-height: 300px; padding: 26px 20px 20px; transform: none; box-shadow: none; }
+  .inventory-head small,
+  .inventory-head strong { display: block; }
+  .inventory-head small { color: #A36E56; font-size: 0.65rem; font-weight: 800; letter-spacing: 0.08em; }
+  .inventory-head strong { margin-top: 5px; font-size: 1.12rem; }
+  .inventory-tags { display: flex; gap: 6px; margin: 16px 0; }
+  .inventory-tags span {
+    padding: 5px 8px; border-radius: 999px; background: #EEE3D5;
+    color: #5E4E43; font-size: 0.62rem; font-weight: 800;
+  }
+  .inventory-list { display: grid; gap: 8px; }
+  .inventory-list div {
+    display: grid; grid-template-columns: 15px 1fr auto; align-items: center; gap: 7px;
+    padding: 9px; border: 1px solid #E1D6C9; border-radius: 8px;
+    color: #5E5147; font-size: 0.64rem;
+  }
+  .inventory-list i { width: 13px; height: 13px; border: 1px solid #BDAA99; border-radius: 3px; }
+  .inventory-list b { color: #A36E56; }
+  .inventory-result {
+    margin-top: 13px; padding: 9px; border-radius: 8px;
+    background: #1C1815; color: #F5F0E8; text-align: center;
+    font-size: 0.68rem; font-weight: 800;
+  }
+  .resource-preview-compact {
+    min-height: 310px;
+    height: 310px;
+    padding: 26px 20px 20px;
+    border-radius: 22px;
+  }
+  .resource-preview-compact .preview-character {
+    inset: 12px auto auto 50%;
+    z-index: 1;
+    width: 70%;
+    height: 72%;
+    border-radius: 20px;
+    transform: translateX(-50%);
+  }
+  .resource-preview-compact .preview-character::after { display: none; }
+  .resource-preview-compact .preview-character img { object-position: center 18%; }
+  .resource-preview-compact:hover .preview-character { transform: translateX(-50%) translateY(-7px) scale(1.025); }
+  .resource-preview-compact .diagnosis-paper {
+    position: absolute;
+    left: 50%;
+    bottom: -72px;
+    z-index: 3;
+    width: 106%;
+    margin: 0;
+    transform: translateX(-50%) scale(.58) rotate(1.2deg);
+    transform-origin: center bottom;
+  }
+  .resource-preview-compact .course-preview {
+    position: absolute;
+    left: 50%;
+    bottom: -38px;
+    z-index: 3;
+    width: 100%;
+    margin: 0;
+    transform: translateX(-50%) scale(.65) rotate(-.5deg);
+    transform-origin: center bottom;
+  }
+  .resource-preview-compact .inventory-board {
+    position: absolute;
+    left: 50%;
+    bottom: -47px;
+    z-index: 3;
+    width: 100%;
+    margin: 0;
+    transform: translateX(-50%) scale(.62) rotate(.5deg);
+    transform-origin: center bottom;
+  }
+  @media (max-width: 520px) {
+    .resource-preview { min-height: 360px; padding-inline: 22px; }
+    .resource-preview-compact { min-height: 310px; height: 310px; }
+    .preview-character { inset: 16px auto 16px 12px; width: 62%; }
+    .preview-paper { transform: translateX(9%) scale(0.75) rotate(1deg); }
+    .course-preview,
+    .inventory-board { transform: translateX(9%) scale(0.75); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .resource-preview,
+    .preview-character { transition: none; }
+    .resource-preview:hover { transform: none; }
+    .resource-preview-compact:hover .preview-character { transform: translateX(-50%); }
+  }
+</style>

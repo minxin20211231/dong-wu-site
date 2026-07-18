@@ -11,6 +11,8 @@ dist_skip*/
 dist_stale*/
 dist_verify*/
 .astro_stale*/
+# 暫存夾（可隨時刪，依全區檔案落點規則）
+_tmp/
 
 # 本地部署/維護工具（含 account id 與本機路徑，不進 public repo）
 deploy_pages.py

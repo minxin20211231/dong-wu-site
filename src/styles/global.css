@@ -5,6 +5,29 @@
  */
 
 :root {
+  /* 懂屋品牌框層：全站識別，不隨單一產品頁變動 */
+  --dw-brand-deep: #1C1815;
+  --dw-brand-card: #2A2420;
+  --dw-brand-gold: #B8977E;
+  --dw-brand-bronze: #A68768;
+  --dw-brand-orange: #D4886A;
+  --dw-brand-moon: #F5F0E8;
+
+  /* 工具箱內容暖色層：人物卡、表單與工具預覽共用 */
+  --dw-warm-paper: #FFFDF8;
+  --dw-warm-oat: #EFE6DA;
+  --dw-warm-milk-tea: #D9C4AB;
+  --dw-warm-caramel: #D4886A;
+  --dw-warm-ink: #3A2E26;
+  --dw-warm-muted: #6E5F54;
+  --dw-warm-line: rgba(58, 46, 38, 0.12);
+
+  --dw-shadow-soft: 0 22px 55px rgba(58, 46, 38, 0.11);
+  --dw-shadow-float: 0 30px 72px rgba(58, 46, 38, 0.16);
+  --dw-radius-card: 28px;
+  --dw-radius-control: 14px;
+  --dw-motion-spring: cubic-bezier(.2, .82, .2, 1);
+
   --bg: #1C1815;
   --bg-deeper: #0E0B09;
   --bg-light: #F5F0E8;
@@ -72,3 +95,13 @@ img { max-width: 100%; display: block; }
     radial-gradient(ellipse at 80% 70%, var(--glow2) 0%, transparent 55%);
   opacity: 0.6;
 }
+
+/* 工具箱／登島表單送出訊息（由 resource-forms.ts 動態插入，故置於全域非 scoped） */
+.form-msg {
+  margin: 9px 4px 0;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  font-weight: 750;
+}
+.form-msg[data-kind='error'] { color: #C0492F; }
+.form-msg[data-kind='success'] { color: #2F7D4F; }

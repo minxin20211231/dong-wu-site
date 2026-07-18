@@ -1,20 +1,10 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
 ---
 
 <BaseLayout title="找不到頁面" description="這個網址在懂屋找不到對應的內容。可能網址打錯了，或文章已經搬家。">
-  <header class="nf-topbar">
-    <div class="nf-topbar-inner">
-      <a href="/" class="nf-brand">
-        <img src="/images/logo-dongwu-white.png" alt="" class="nf-brand-logo" width="32" height="32" />
-        <span>懂屋 · Know Your Home</span>
-      </a>
-      <nav class="nf-nav" aria-label="主導覽">
-        <a href="/about/" class="nf-nav-link">關於懂屋</a>
-        <a href="/posts/" class="nf-nav-link">所有文章</a>
-      </nav>
-    </div>
-  </header>
+  <SiteHeader />
 
   <main class="nf-main">
     <div class="nf-inner">
@@ -39,58 +29,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </BaseLayout>
 
 <style>
-  .nf-topbar {
-    border-bottom: 1px solid rgba(184, 151, 126, 0.22);
-    background: #1C1815;
-    position: sticky;
-    top: 0;
-    z-index: 50;
-  }
-
-  .nf-topbar-inner {
-    max-width: 1180px;
-    margin: 0 auto;
-    padding: 16px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-  }
-
-  .nf-brand {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.9rem;
-    letter-spacing: 0.18em;
-    color: #F5F0E8;
-    font-weight: 700;
-    text-decoration: none;
-  }
-
-  .nf-brand-logo {
-    height: 32px;
-    width: 32px;
-    display: block;
-  }
-
-  .nf-nav {
-    display: flex;
-    gap: 28px;
-  }
-
-  .nf-nav-link {
-    font-size: 0.9rem;
-    color: #F5F0E8;
-    letter-spacing: 0.06em;
-    font-weight: 600;
-    text-decoration: none;
-  }
-
-  .nf-nav-link:hover {
-    color: #B8977E;
-  }
-
   .nf-main {
     background: #FFFFFF;
     min-height: calc(100vh - 70px);
