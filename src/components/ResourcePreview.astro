@@ -372,13 +372,19 @@ const character = characterByKind[kind];
     .course-preview,
     .inventory-board { transform: translateX(9%) scale(0.75); }
   }
-  /* 工具卡（compact）手機版：卡片全寬時紙卡撐高蓋住人物，加高容器＋紙卡縮小貼底讓人物露臉 */
+  /* 工具卡（compact）手機版：明確雙欄拼貼——人物完整在左、紙卡完整顯示在右下（不貼負值、不裁切） */
   @media (max-width: 680px) {
-    .resource-preview-compact { min-height: 400px; height: 400px; }
-    .resource-preview-compact .preview-character { inset: 14px auto 14px 12px; width: 64%; }
-    .resource-preview-compact .diagnosis-paper { transform: translateX(-50%) scale(.5) rotate(1.2deg); }
-    .resource-preview-compact .course-preview { transform: translateX(-50%) scale(.55) rotate(-.5deg); }
-    .resource-preview-compact .inventory-board { transform: translateX(-50%) scale(.55) rotate(.5deg); }
+    .resource-preview-compact { min-height: 380px; height: 380px; }
+    .resource-preview-compact .preview-character { inset: 12px auto 12px 12px; width: 56%; }
+    .resource-preview-compact .diagnosis-paper,
+    .resource-preview-compact .course-preview,
+    .resource-preview-compact .inventory-board {
+      position: absolute; left: auto; right: 8px; bottom: 8px; top: auto;
+      width: 340px; margin: 0;
+      transform: scale(.58); transform-origin: right bottom;
+    }
+    .resource-preview-compact .diagnosis-paper { transform: scale(.58) rotate(1deg); }
+    .resource-preview-compact .inventory-board { transform: scale(.58) rotate(.5deg); }
   }
   @media (prefers-reduced-motion: reduce) {
     .resource-preview,
