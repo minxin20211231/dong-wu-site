@@ -869,7 +869,7 @@
     margin: 0 auto -34px;
     overflow: hidden;
     border-radius: 18px 18px 0 0;
-    background: #efe6da url('/map/map-whale-keyframe-v1.webp') var(--map-focus-x) var(--map-focus-y) / 230% auto no-repeat;
+    background: #efe6da url('/island/map-whale-keyframe-v1.webp') var(--map-focus-x) var(--map-focus-y) / 230% auto no-repeat;
     box-shadow: 0 20px 42px rgba(58,46,38,.13);
   }
   .map-station__miniature img { display: none; }
