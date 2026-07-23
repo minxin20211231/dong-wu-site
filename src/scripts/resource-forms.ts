@@ -36,7 +36,9 @@ function markDone(email: string, source: string, allForms: HTMLFormElement[]) {
         btn.disabled = true;
         btn.textContent = '✓ 已送出';
       }
-      setMsg(f, `送出成功，確認信會寄到 ${email}`, 'success');
+      // 預設句適用「送出後會寄信」的名單（如信件課）；純收名單的表單（如登島預約）
+      // 用 data-success-msg 覆寫，不承諾不會立刻發生的信
+      setMsg(f, f.dataset.successMsg || `送出成功，確認信會寄到 ${email}`, 'success');
     });
 }
 
