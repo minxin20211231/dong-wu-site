@@ -453,6 +453,76 @@
 
 .map-hero__start:hover span { transform: translateY(2px); }
 
+.map-hero__notify {
+  display: inline-flex;
+  align-items: center;
+  min-height: 54px;
+  padding: 8px 24px;
+  color: var(--map-deep);
+  background: rgba(255,253,248,.55);
+  border: 1px solid rgba(137,99,62,.36);
+  border-radius: 999px;
+  backdrop-filter: blur(8px);
+  text-decoration: none;
+  font-size: .9rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  transition: border-color .24s ease, background .24s ease, transform .24s var(--dw-motion-spring);
+}
+
+.map-hero__notify:hover {
+  color: var(--map-deep);
+  background: rgba(255,253,248,.9);
+  border-color: var(--map-orange);
+  transform: translateY(-2px);
+}
+
+.island-notify-pill {
+  position: fixed;
+  z-index: 180;
+  top: 76px;
+  right: 22px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  color: var(--map-moon);
+  background: rgba(28,24,21,.88);
+  border: 1px solid rgba(184,151,126,.45);
+  border-radius: 999px;
+  backdrop-filter: blur(8px);
+  text-decoration: none;
+  font-size: .82rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  box-shadow: 0 10px 24px rgba(28,24,21,.28);
+  transition: background .24s ease, transform .24s var(--dw-motion-spring);
+}
+
+.island-notify-pill::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--map-orange);
+  box-shadow: 0 0 0 3px rgba(212,136,106,.28);
+}
+
+.island-notify-pill:hover {
+  color: var(--map-moon);
+  background: rgba(28,24,21,.98);
+  transform: translateY(-2px);
+}
+
+.map-outro__form .form-msg {
+  margin: 10px 0 0;
+  font-size: .86rem;
+  line-height: 1.6;
+}
+
+.map-outro__form .form-msg[data-kind='error'] { color: #c4553f; }
+.map-outro__form .form-msg[data-kind='success'] { color: var(--map-deep); font-weight: 700; }
+
 .island-community-dock {
   position: fixed;
   z-index: 180;
@@ -834,6 +904,8 @@
   .map-hero__title { max-width: none; font-size: clamp(2.1rem, 9vw, 3rem); }
   .map-hero__actions { align-items: flex-start; flex-direction: column; gap: 12px; }
   .map-hero__actions p { max-width: 20rem; color: var(--map-ink); background: rgba(255,253,248,.74); padding: 6px 8px; }
+  .map-hero__notify { min-height: 46px; padding: 6px 18px; }
+  .island-notify-pill { top: 66px; right: 12px; padding: 8px 14px; font-size: .78rem; }
 
   .island-community-dock { right: 12px; bottom: calc(58px + env(safe-area-inset-bottom)); }
   .island-community-dock__trigger { width: 54px; }

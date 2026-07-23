@@ -89,6 +89,7 @@ const faqSchema = {
   <SiteHeader variant="page" />
 
   <main class="map-page">
+    <a href="#registration" class="island-notify-pill">登島通知</a>
     <section class="map-film" aria-labelledby="map-title">
       <div class="map-stage-shell">
         <MapStage stations={mapStations} />
@@ -120,6 +121,7 @@ const faqSchema = {
             <p class="map-hero__eyebrow">你不用一次懂完裝修，只要知道下一站往哪走</p>
             <div class="map-hero__actions">
               <a href="#s01" class="map-hero__start">從買屋驗屋開始 <span aria-hidden="true">↓</span></a>
+              <a href="#registration" class="map-hero__notify">先收登島通知</a>
               <p>跟著島上的路線往下走：走到哪一站，路就亮到哪。</p>
             </div>
           </div>
@@ -181,7 +183,7 @@ const faqSchema = {
     </section>
     <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
 
-    <section class="map-outro map-outro--registration" aria-labelledby="map-outro-title">
+    <section id="registration" class="map-outro map-outro--registration" aria-labelledby="map-outro-title">
       <div class="map-outro__registration">
         <picture class="map-outro__logo">
           <source srcset="/island/map-logo-island-v1.webp" type="image/webp" />
@@ -198,7 +200,7 @@ const faqSchema = {
         <h2 id="map-outro-title">先讓我們認識你</h2>
         <p>留下稱呼和 Email。登島通道準備好時，再通知你回來。</p>
 
-        <form class="map-outro__form" data-island-registration-form>
+        <form class="map-outro__form" data-integration="pending" data-event="island_waitlist_join">
           <div class="map-outro__fields">
             <label for="island-registration-name">
               <span>怎麼稱呼您？</span>
@@ -210,8 +212,7 @@ const faqSchema = {
             </label>
           </div>
           <button type="submit">完成登島</button>
-          <p class="map-outro__form-note">目前先預留登島通道；尚未串接前，資料不會送出。</p>
-          <p class="map-outro__form-status" data-island-registration-status role="status"></p>
+          <p class="map-outro__form-note">只寄登島與新站開放通知，不亂寄廣告，每封信都能取消訂閱。</p>
         </form>
       </div>
     </section>
@@ -222,49 +223,6 @@ const faqSchema = {
 
   <script>
     import '../scripts/map/bootstrap';
-
-    type RegistrationResult = boolean | void | Promise<boolean | void>;
-    type IslandCallbacks = {
-      onRegistrationRequest?: (name: string, email: string, channel?: string) => RegistrationResult;
-    };
-
-    const registrationForm = document.querySelector<HTMLFormElement>('[data-island-registration-form]');
-    registrationForm?.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      if (!registrationForm.reportValidity()) return;
-
-      const data = new FormData(registrationForm);
-      const name = String(data.get('name') ?? '').trim();
-      const email = String(data.get('email') ?? '').trim();
-      const channel = new URLSearchParams(window.location.search).get('ch') ?? undefined;
-      const status = registrationForm.querySelector<HTMLElement>('[data-island-registration-status]');
-      const button = registrationForm.querySelector<HTMLButtonElement>('button[type="submit"]');
-      const callbacks = (window as Window & { dongWuIslandCallbacks?: IslandCallbacks }).dongWuIslandCallbacks;
-
-      if (button) {
-        button.disabled = true;
-        button.textContent = '確認中…';
-      }
-      if (status) status.textContent = '';
-
-      try {
-        window.dispatchEvent(new CustomEvent('island:registration-request', { detail: { name, email, channel } }));
-        if (!callbacks?.onRegistrationRequest) {
-          if (status) status.textContent = '欄位已確認，目前資料沒有送出。';
-          return;
-        }
-        const accepted = await callbacks.onRegistrationRequest(name, email, channel);
-        if (accepted === false) throw new Error('registration-rejected');
-        if (status) status.textContent = '登島資料已送出，我們會用 Email 通知你。';
-        registrationForm.reset();
-      } catch {
-        if (status) status.textContent = '現在沒辦法完成登島，請稍後再試一次。';
-      } finally {
-        if (button) {
-          button.disabled = false;
-          button.textContent = '完成登島';
-        }
-      }
-    });
+    import '../scripts/resource-forms';
   </script>
 </BaseLayout>
