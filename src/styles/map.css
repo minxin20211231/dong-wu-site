@@ -798,7 +798,7 @@
 .map-outro__logo { display: block; width: clamp(190px, 28vw, 320px); margin: 0 auto 24px; }
 .map-outro__logo img { display: block; width: 100%; height: auto; }
 .map-outro--registration .map-outro__eyebrow { margin-bottom: 12px; font-size: 1.25rem; font-weight: 750; }
-.map-outro--registration h2 { max-width: none; font-size: clamp(2.1rem, 4.2vw, 4rem); line-height: 1.1; }
+.map-outro--registration h2 { max-width: none; font-size: clamp(2.1rem, 4.2vw, 4rem); line-height: 1.18; letter-spacing: .06em; }
 .map-outro--registration h2 + p { max-width: 34rem; margin: 20px auto 0; }
 .map-outro__form { margin-top: 34px; }
 .map-outro__fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; text-align: left; }
