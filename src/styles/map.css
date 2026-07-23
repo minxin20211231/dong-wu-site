@@ -244,8 +244,8 @@
 
 @media (min-width: 821px) {
   .map-static-stop[data-map-overview-stop="s15"] a {
-    width: clamp(24px, 2.15vw, 34px);
-    font-size: clamp(.54rem, .68vw, .68rem);
+    width: clamp(22px, 1.95vw, 30px);
+    font-size: clamp(.5rem, .62vw, .62rem);
   }
 }
 

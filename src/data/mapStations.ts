@@ -179,7 +179,7 @@ export const mapStations: MapStation[] = [
       intro: '從尺寸、插座到進場順序，把家具和家電安排在對的時間、放進對的位置。',
       points: ['大型家具先量尺寸，確認搬得進門、轉得過彎', '家電規格先對照插座與專用迴路', '進場先大件後小件，保護好已完工的地板與牆面'],
     },
-    characters: ['resource'], sceneKind: 'furnishing', d1Event: 'map_s15_view', mapPosition: { x: 70.8, y: 61, island: 6 },
+    characters: ['resource'], sceneKind: 'furnishing', d1Event: 'map_s15_view', mapPosition: { x: 72.3, y: 58.2, island: 6 },
   },
   {
     id: 's16', number: '16', phase: 4, phaseName: phaseNames[4], name: '幸福入住站', status: 'coming-soon',
