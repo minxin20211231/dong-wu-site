@@ -908,11 +908,11 @@
   .map-hero__title-wrap { width: min(100%, 22rem); margin-top: 18px; padding: 8px 14px 12px; }
   .map-hero__eyebrow { max-width: 19rem; margin: 12px auto 0; }
   .map-hero__title { max-width: none; font-size: clamp(2.1rem, 9vw, 3rem); }
-  .map-hero__actions { align-items: flex-start; flex-direction: column; gap: 12px; }
-  .map-hero__actions p { max-width: 20rem; color: var(--map-ink); background: rgba(255,253,248,.74); padding: 6px 8px; }
-  .map-hero__start { min-height: 54px; padding: 8px 10px 8px 22px; font-size: .92rem; }
-  .map-hero__start span { width: 36px; height: 36px; }
-  .map-hero__notify { min-height: 54px; padding: 6px 22px; font-size: .92rem; }
+  .map-hero__actions { align-items: center; flex-direction: row; flex-wrap: nowrap; justify-content: center; gap: 10px; }
+  .map-hero__actions p { display: none; }
+  .map-hero__start { min-height: 50px; padding: 6px 8px 6px 16px; font-size: .85rem; gap: 10px; }
+  .map-hero__start span { width: 32px; height: 32px; }
+  .map-hero__notify { min-height: 50px; padding: 6px 16px; font-size: .85rem; }
   .island-notify-pill { top: 66px; right: 12px; padding: 12px 20px; font-size: .9rem; }
   .map-hero__logo { width: clamp(128px, 30vw, 168px); margin-top: -2.2rem; }
 
