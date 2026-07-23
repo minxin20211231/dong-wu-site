@@ -1,0 +1,11 @@
+請先讀：
+C:\Users\winte\Documents\AI workflow\懂屋KYH\dong-wu-site\docs\map\CLAUDE_HANDOFF_2026-07-20.md
+
+這是裝修新手島目前唯一有效的交接基準。舊的 2026-07-17 文件只留作歷程，不可把 `/map/`、15 站或藍色海路改回來。
+
+接手後先做：
+1. git status --short
+2. npm.cmd run build
+3. 讀 src/pages/island.astro、src/data/mapStations.ts、src/styles/map.css
+
+注意：目前地圖模組是未提交工作。不要執行 git clean、git reset --hard，也不要重新生成或覆蓋 public/map 的底圖與素材。

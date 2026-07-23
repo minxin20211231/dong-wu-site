@@ -1,0 +1,40 @@
+---
+type IconKind = 'route' | 'checklist' | 'budget' | 'question';
+
+interface Props {
+  kind: IconKind;
+}
+
+const { kind } = Astro.props;
+---
+
+<span class="island-card-icon" aria-hidden="true">
+  {kind === 'route' && (
+    <svg viewBox="0 0 48 48" role="presentation">
+      <path d="M12 36c8-1 7-10 15-11s7-9 9-13" />
+      <circle cx="11" cy="36" r="4" />
+      <path d="M36 8a6 6 0 0 0-6 6c0 5 6 10 6 10s6-5 6-10a6 6 0 0 0-6-6Z" />
+      <circle cx="36" cy="14" r="2" />
+    </svg>
+  )}
+  {kind === 'checklist' && (
+    <svg viewBox="0 0 48 48" role="presentation">
+      <rect x="10" y="8" width="28" height="34" rx="5" />
+      <path d="m16 18 3 3 6-7M16 30l3 3 6-7M29 19h4M29 31h4" />
+    </svg>
+  )}
+  {kind === 'budget' && (
+    <svg viewBox="0 0 48 48" role="presentation">
+      <path d="M11 8h26v32l-4-3-4 3-5-3-5 3-4-3-4 3V8Z" />
+      <path d="M17 16h14M17 23h8" />
+      <circle cx="31" cy="29" r="5" />
+      <path d="M31 26v6M29 28h3a2 2 0 0 1 0 4h-3" />
+    </svg>
+  )}
+  {kind === 'question' && (
+    <svg viewBox="0 0 48 48" role="presentation">
+      <path d="M8 11h26a6 6 0 0 1 6 6v11a6 6 0 0 1-6 6H22l-9 7v-7H8a6 6 0 0 1-6-6V17a6 6 0 0 1 6-6Z" />
+      <path d="M18 20a6 6 0 1 1 7 6v3M25 34h.01" />
+    </svg>
+  )}
+</span>

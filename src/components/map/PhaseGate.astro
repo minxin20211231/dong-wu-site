@@ -1,0 +1,18 @@
+---
+interface Props {
+  phase: number;
+  name: string;
+  kicker: string;
+}
+
+const { phase, name, kicker } = Astro.props;
+---
+
+<header class="phase-gate" data-phase-gate={phase}>
+  <p class="phase-gate__number">0{phase}</p>
+  <div>
+    <p class="phase-gate__kicker">{kicker}</p>
+    <h2>{name}</h2>
+  </div>
+</header>
+

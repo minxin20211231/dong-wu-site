@@ -4960,7 +4960,7 @@ function populateGateExtras() {
 // 開關：/booking 預約頁上線（含金流過渡方案就緒）後改 true 一起部署，避免線上出現 404 連結。
 const SHOW_NEXT_STEP = true;
 // 導讀影片（上手節點）：影片上傳 YouTube 後填入 embed 連結（格式 https://www.youtube-nocookie.com/embed/VIDEO_ID），
-// 空字串＝整張影片卡不渲染。素材：診斷書導讀影片\YouTube上架包.md（2026-07-03 定案公開上架）。
+// 空字串＝整張影片卡不渲染。素材＝精華版 8:03（2026-07-15 定為導讀主片），上架文案：診斷書導讀影片\YouTube上架包.md。
 const GUIDE_VIDEO_URL = '';
 // 懂屋官方 LINE 加好友連結（帳號 @731chcqb，2026-07-08 Bibo 提供；booking.astro 也有同名常數）
 const LINE_OA_URL = 'https://line.me/R/ti/p/@731chcqb';
@@ -5353,9 +5353,9 @@ function generateResults() {
     <div class="glass-card anim-in" data-chapter="使用導讀">
       <div class="card-label">不知道從哪看起？陪你把診斷書走一遍</div>
       <div class="card-body">
-        <div style="font-size:14.5px;color:rgba(245,240,232,.7);line-height:1.9;margin-bottom:12px">每一段在講什麼、預算儀表板怎麼看、哪些提醒要先處理——41 分鐘完整導讀，開著影片對照你自己的診斷書看。</div>
+        <div style="font-size:14.5px;color:rgba(245,240,232,.7);line-height:1.9;margin-bottom:12px">預算怎麼估、儀表板怎麼看、哪些錢能省哪些不能省——8 分鐘精華導讀，看完再對照你自己的診斷書。</div>
         <div style="position:relative;padding-bottom:56.25%;border-radius:12px;overflow:hidden;border:1px solid rgba(245,240,232,.12)">
-          <iframe src="${GUIDE_VIDEO_URL}" title="懂屋 AI 裝修診斷書完整導讀" allow="accelerometer; encrypted-media; picture-in-picture; web-share" allowfullscreen loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe>
+          <iframe src="${GUIDE_VIDEO_URL}" title="懂屋 AI 裝修診斷書導讀（8 分鐘精華）" allow="accelerometer; encrypted-media; picture-in-picture; web-share" allowfullscreen loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe>
         </div>
       </div>
     </div>
@@ -5561,6 +5561,15 @@ function generateResults() {
       </div>
     </div>
 
+    <div class="glass-card anim-in" data-chapter="屋況檔案">
+      <div class="card-label">帶著走的屋況檔案</div>
+      <div class="card-body">
+        <div style="font-size:14.5px;color:rgba(245,240,232,.7);line-height:1.9;margin-bottom:14px">把這份診斷整理成一段文字，貼進你常用的 AI（ChatGPT、Gemini、Claude 都可以），它就會記住你家的條件——之後問裝修問題，不用每次從頭解釋一遍。裡面也幫你寫好了台灣裝修的規則，AI 不會拿別的地區的做法唬你。</div>
+        <button class="result-action-btn secondary" onclick="copyHomeProfile(this)" style="display:inline-flex;align-items:center;gap:6px">📋 複製我的屋況檔案</button>
+        <div style="font-size:11.5px;color:rgba(245,240,232,.35);margin-top:10px">複製後直接貼上就能用。這段文字不含你的姓名或 Email</div>
+      </div>
+    </div>
+
     ${SHOW_NEXT_STEP ? getNextStepHTML((archetype && archetype.primary) || '') : ''}
 
     </div><!-- /locked-zone -->
@@ -5600,6 +5609,129 @@ function generateResults() {
 }
 
 // ══════════ HELPERS ══════════
+
+// ══════════ 屋況檔案（裝潢導航秘書 prompt）══════════
+// 規格與欄位對照：docs/prompt-kit/屋況檔案prompt_v1_草稿.md
+// 答案代號 → prompt 用語。缺答的欄位整行省略，不寫「未填」。
+const PROFILE_TEXT_MAP = {
+  layout:     { A: '維持原格局', B: '小改一面牆', C: '整體重新規劃' },
+  sprinkler:  { A: '有灑水頭，接受管線外露', B: '有灑水頭，希望藏進天花板', C: '無灑水頭，或待現場確認' },
+  timeline:   { A: '一個月內（急）', B: '三個月左右', C: '半年以上（不急）' },
+  budget:     { A: '標準型，每坪 5–7 萬', B: '精緻型，每坪 7–8 萬', C: '客製型，每坪 8–9 萬' },
+  appliances: { A: '沿用舊家電', B: '部分買新（另列 10–15 萬）', C: '全部買新（另列 15–25 萬）' },
+  family:     { A: '自己或夫妻', B: '0–6 歲小孩', C: '小學到高中的孩子', D: '長輩同住', E: '毛小孩' },
+  wfh:        { A: '不在家工作', B: '偶爾在家工作', C: '經常在家工作（需要獨立工作區）' },
+  kitchen:    { A: '很少開伙', B: '天天開伙、油煙多', C: '有烘焙或手沖習慣' },
+  shoes:      { A: '20 雙以內', B: '20–50 雙', C: '50 雙以上' },
+  clothes:    { A: '夠穿就好', B: '偏多，需要換季收納', C: '非常多，需要更衣室' },
+  bigstuff:   { A: '無', B: '行李箱、露營裝備', C: '嬰兒車、腳踏車', D: '行李箱、露營裝備、嬰兒車、腳踏車都有' },
+  style:      { A: '北歐風（溫暖白木系）', B: '日式 MUJI（自然無印感）', C: '工業風（俐落黑白灰）', D: '奶油風（柔柔奶茶色）',
+                E: '輕鄉村（復古柔美鄉村）', F: '現代簡約（乾淨俐落線條）', G: '法式輕奢（大理石金屬質感）', H: '侘寂風（自然粗獷不完美）' },
+  cleaning:   { A: '願意花時間保養', B: '偏好低維護的材質' },
+  fear:       { A: '控制成本', B: '空間利用最大化', C: '質感最大化', D: '最快入住' },
+};
+
+// 五型屋主 → 給 AI 的溝通指示（口徑同 ARCHETYPE_TYPES，濃縮成秘書可執行的一句話）
+const PROFILE_ARCHETYPE_MAP = {
+  researcher: { name: '資料控屋主', brief: '我習慣比完資料才決定，需要依據。',
+    guide: '給我建議時附上比較表或數字依據；當我陷入比較太久，幫我收斂成「只剩兩個選項」的決策題。' },
+  intuitive:  { name: '直覺派屋主', brief: '我用感覺選，但說不出規格。',
+    guide: '幫我把「感覺」翻譯成具體的材質、顏色、尺寸；多用反問確認我的場景，避免只靠形容詞溝通。' },
+  defender:   { name: '守備型屋主', brief: '我最怕踩雷，凡事先看風險。',
+    guide: '先講風險、合約與驗收要點；但當防護項目吃掉太多預算時，主動提醒我留一部分給居住質感。' },
+  planner:    { name: '規劃型屋主', brief: '我會把五年十年後都算進來。',
+    guide: '給我含時間軸的方案；當我在「萬一」裡打轉太久，幫我設定「夠好就停」的判斷點。' },
+  solo:       { name: '自包派屋主', brief: '我自己發包，全程自己盯。',
+    guide: '按工序拆解回答，標出工序銜接、分期付款節點和驗收時機的雷區；提醒我漏估細項的風險。' },
+};
+
+function buildHomeProfilePrompt() {
+  const t = (id) => (PROFILE_TEXT_MAP[id] || {})[answers[id]] || '';
+  const multi = (id) => Array.isArray(answers[id])
+    ? answers[id].map(v => (PROFILE_TEXT_MAP[id] || {})[v]).filter(Boolean).join('、') : '';
+  const now = new Date();
+  const dateStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+  let arch = null;
+  try { arch = PROFILE_ARCHETYPE_MAP[(calculateArchetype(answers) || {}).primary] || null; } catch (e) {}
+
+  const L = [];
+  L.push('你是我的「裝潢導航秘書」。');
+  L.push('以下是我家的屋況檔案，由「懂屋 Know Your Home」（dong-wu.com）的 AI 裝修診斷書產生。');
+  L.push('請記住這份檔案，之後我問的所有裝修問題，都以這份檔案為前提回答。');
+  L.push('');
+  L.push('【我家的基本資料】');
+  if (answers.sqm) L.push('- 室內面積：約 ' + answers.sqm + ' 坪（台灣以「坪」為單位，1 坪約 3.3 平方公尺，請一律用坪溝通）');
+  if (answers.rooms && answers.halls) L.push('- 格局：' + answers.rooms + ' 房 ' + answers.halls + ' 廳');
+  if (answers.people) L.push('- 居住成員：' + answers.people + ' 人' + (multi('family') ? '（' + multi('family') + '）' : ''));
+  if (t('layout')) L.push('- 格局調整計畫：' + t('layout'));
+  if (t('sprinkler')) L.push('- 天花板灑水頭：' + t('sprinkler'));
+  if (t('timeline')) L.push('- 期望入住時程：' + t('timeline'));
+  L.push('');
+  L.push('【預算條件】');
+  if (t('budget')) L.push('- 裝修預算帶：' + t('budget') + '，不含家電與活動家具');
+  if (t('appliances')) L.push('- 家電規劃：' + t('appliances'));
+  L.push('');
+  L.push('【生活型態】');
+  if (t('wfh')) L.push('- 在家工作：' + t('wfh'));
+  if (multi('kitchen')) L.push('- 廚房使用習慣：' + multi('kitchen'));
+  const storage = [t('shoes') && ('鞋子 ' + t('shoes')), t('clothes') && ('衣物' + t('clothes')), t('bigstuff') && ('大型物品：' + t('bigstuff'))].filter(Boolean).join('；');
+  if (storage) L.push('- 收納量：' + storage);
+  if (t('cleaning')) L.push('- 打掃習慣：' + t('cleaning'));
+  L.push('');
+  L.push('【風格與優先順序】');
+  if (t('style')) L.push('- 喜歡的風格：' + t('style'));
+  if (t('fear')) L.push('- 我最在意的事：' + t('fear') + '。請把這一條當成所有建議的第一排序原則。');
+  if (arch) {
+    L.push('');
+    L.push('【我的決策風格】');
+    L.push('診斷結果我是「' + arch.name + '」。' + arch.brief);
+    L.push('請配合這個風格跟我溝通：' + arch.guide);
+  }
+  L.push('');
+  L.push('【你必須遵守的台灣裝修規則】');
+  L.push('1. 面積用「坪」，規格與工法以台灣現行做法為準，不要套用中國或其他地區的數值與用語。');
+  L.push('2. 瓦斯管一律走明管，不可埋入牆體或地坪。相關問題請提醒我找合格的燃氣承裝業者。');
+  L.push('3. 廚房排油煙的正確用語是「當層排氣」。');
+  L.push('4. 結構（拆牆、打牆）、防水、消防、電力迴路這四類問題，你可以幫我整理疑點和提問清單，但不可以下最終判斷——一律提醒我找現場專業者確認。');
+  L.push('5. 系統櫃保固在台灣實務上多為 1 年，不要引用品牌廣告的 5 到 10 年說法。');
+  L.push('6. 不確定的行情、工法或法規，直接說不確定，不可以編造數字或名詞。');
+  L.push('');
+  L.push('【資料來源與更新】');
+  L.push('這份檔案產生於 ' + dateStr + '，來自懂屋 AI 裝修診斷書。');
+  L.push('之後我拿到更新版檔案時，請用新版取代這一份。裝修知識可參考懂屋文章庫：dong-wu.com');
+  return L.join('\n');
+}
+
+function copyHomeProfile(btn) {
+  const text = buildHomeProfilePrompt();
+  const done = () => {
+    if (btn) {
+      const orig = btn.innerHTML;
+      btn.innerHTML = '✅ 已複製，貼進你的 AI 就能用';
+      btn.disabled = true;
+      setTimeout(() => { btn.innerHTML = orig; btn.disabled = false; }, 2600);
+    }
+    trackEvent('prompt_copy', 'ai-diagnosis-result');
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+  } else {
+    fallbackCopy(text, done);
+  }
+}
+
+function fallbackCopy(text, done) {
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;top:-999px;opacity:0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    done();
+  } catch (e) {}
+}
 
 // Change 5: Personality with long descriptions
 function getPersonality(budget, fear) {

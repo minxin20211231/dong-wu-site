@@ -1,0 +1,74 @@
+---
+import { islandCommunity } from '../../data/islandCommunity';
+
+const isOpen = islandCommunity.status === 'open' && islandCommunity.href.trim().length > 0;
+---
+
+<aside class="island-community-dock" data-island-community-dock>
+  <button
+    class="island-community-dock__trigger"
+    type="button"
+    aria-expanded="false"
+    aria-controls="island-community-card"
+    aria-label="查看裝修新手島社群資訊"
+    data-island-community-trigger
+  >
+    <picture aria-hidden="true">
+      <source srcset="/map/map-community-v1.webp" type="image/webp" />
+      <img src="/map/map-community-v1.png" width="479" height="600" alt="" decoding="async" />
+    </picture>
+    <span>社群</span>
+  </button>
+
+  <section
+    class="island-community-dock__card"
+    id="island-community-card"
+    aria-labelledby="island-community-title"
+    data-island-community-card
+    hidden
+  >
+    <button class="island-community-dock__close" type="button" aria-label="關閉社群資訊" data-island-community-close>×</button>
+    <p class="island-community-dock__eyebrow">免費社群</p>
+    <h2 id="island-community-title">{islandCommunity.title}</h2>
+    <p>{islandCommunity.description}</p>
+    {isOpen ? (
+      <a href={islandCommunity.href} target="_blank" rel="noopener noreferrer">{islandCommunity.openLabel}</a>
+    ) : (
+      <span class="island-community-dock__status" aria-disabled="true">{islandCommunity.comingSoonLabel}</span>
+    )}
+  </section>
+</aside>
+
+<script>
+  const dock = document.querySelector<HTMLElement>('[data-island-community-dock]');
+  const trigger = dock?.querySelector<HTMLButtonElement>('[data-island-community-trigger]');
+  const card = dock?.querySelector<HTMLElement>('[data-island-community-card]');
+  const close = dock?.querySelector<HTMLButtonElement>('[data-island-community-close]');
+
+  const setExpanded = (expanded: boolean) => {
+    if (!dock || !trigger || !card) return;
+    trigger.setAttribute('aria-expanded', String(expanded));
+    card.hidden = !expanded;
+    dock.classList.toggle('is-expanded', expanded);
+    if (expanded) close?.focus({ preventScroll: true });
+  };
+
+  trigger?.addEventListener('click', () => {
+    setExpanded(trigger.getAttribute('aria-expanded') !== 'true');
+  });
+  close?.addEventListener('click', () => {
+    setExpanded(false);
+    trigger?.focus({ preventScroll: true });
+  });
+  document.addEventListener('pointerdown', (event) => {
+    if (dock?.classList.contains('is-expanded') && event.target instanceof Node && !dock.contains(event.target)) {
+      setExpanded(false);
+    }
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && dock?.classList.contains('is-expanded')) {
+      setExpanded(false);
+      trigger?.focus({ preventScroll: true });
+    }
+  });
+</script>

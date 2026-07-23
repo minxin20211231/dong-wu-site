@@ -1,0 +1,268 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import MapStage from '../components/map/MapStage.astro';
+import ProgressRail from '../components/map/ProgressRail.astro';
+import PhaseGate from '../components/map/PhaseGate.astro';
+import MapStation from '../components/map/MapStation.astro';
+import StationPanel from '../components/map/StationPanel.astro';
+import IslandCommunityDock from '../components/map/IslandCommunityDock.astro';
+import IslandPainIcon from '../components/map/IslandPainIcon.astro';
+import { mapPhases, mapStations } from '../data/mapStations';
+import '../styles/map.css';
+
+const phaseKickers = [
+  '先把生活和圖面想清楚',
+  '動工以前，先守住不能出錯的地方',
+  '看不見的骨架，決定住起來順不順',
+  '最後不是收尾，是開始好好生活',
+];
+
+const islandPains = [
+  {
+    icon: 'route' as const,
+    pain: '網路文章每篇講一段，拼不起來',
+    answer: '島把裝修排成一條路：四個階段、十六站，照順序走，永遠知道下一站是什麼。',
+  },
+  {
+    icon: 'checklist' as const,
+    pain: '怕漏做哪一步，事後才發現',
+    answer: '每一站把該做的事、該問的問題收在同一個地方，走過一站，就補上一塊。',
+  },
+  {
+    icon: 'budget' as const,
+    pain: '怕爆預算、怕被亂加價',
+    answer: '規劃階段就有預算與合約站：報價單怎麼看、追加怎麼留紀錄，先看懂再簽名。',
+  },
+  {
+    icon: 'question' as const,
+    pain: '想問師傅，又怕被當外行',
+    answer: '每站先幫你把該問的問題準備好，到現場帶著問就好，不用先裝懂。',
+  },
+];
+
+const islandSteps = [
+  { title: '拿屋主卡', body: '先做 AI 裝修診斷書，3 分鐘拿到你的屋主卡。' },
+  { title: '登島', body: '用 Email、姓名和你的稱號完成登島手續。' },
+  { title: '走站', body: '照裝修順序一站一站走。每站先看重點，走過的站會幫你記著。' },
+  { title: '帶進現場', body: '把每站的檢查重點帶去工地、帶進會議，當場一條一條對。' },
+];
+
+const islandFaq = [
+  {
+    q: '我完全沒裝修過，看得懂嗎？',
+    a: '裝修新手島就是為第一次裝修的人做的。每一站用白話講這站要注意什麼，不從專有名詞開始。看不懂的地方，把問題帶去問你的設計師或工班，也是這座島的用法之一。',
+  },
+  {
+    q: '為什麼有些站還不能開？',
+    a: '規劃階段的前四站先開放，其他站陸續上線。之後會照候補登記的數量決定先開哪座島——在你想去的站留下登記，就是投它一票。',
+  },
+  {
+    q: '要怎麼登島？',
+    a: '先完成 AI 裝修診斷書，拿到你的屋主卡，再用 Email、姓名和你的稱號完成登島。之後新站開放時會通知你。我們不亂寄廣告、不把 Email 給任何人，每封信都有取消訂閱的連結。',
+  },
+  {
+    q: '進度會不會不見？',
+    a: '走過的站會記在你這台裝置的瀏覽器裡，下次回來會從上次的位置繼續。目前換一台裝置不會同步。',
+  },
+];
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: islandFaq.map((item) => ({
+    '@type': 'Question',
+    name: item.q,
+    acceptedAnswer: { '@type': 'Answer', text: item.a },
+  })),
+};
+---
+
+<BaseLayout
+  title="裝修新手島"
+  description="第一次裝修不知道從哪開始？裝修新手島把裝修流程整理成四個階段、十六站：從買屋驗屋、設計與合約，一路走到施工、軟裝、驗收與入住，每站附帶得進現場的檢查重點。"
+  bottomNav={false}
+>
+  <a class="map-skip-link" href="#s01">跳到第一站</a>
+  <SiteHeader variant="page" />
+
+  <main class="map-page">
+    <section class="map-film" aria-labelledby="map-title">
+      <div class="map-stage-shell">
+        <MapStage stations={mapStations} />
+        <ProgressRail stations={mapStations} />
+      </div>
+
+      <div class="map-journey" data-map-journey>
+        <header class="map-hero">
+          <div class="map-hero__topline">
+            <picture class="map-hero__logo" aria-hidden="true">
+              <source srcset="/map/map-logo-island-v1.webp" type="image/webp" />
+              <img
+                src="/map/map-logo-island-v1.png"
+                width="752"
+                height="357"
+                alt=""
+                loading="eager"
+                fetchpriority="high"
+                decoding="sync"
+              />
+            </picture>
+            <p>四個階段 · 十六站</p>
+          </div>
+          <div class="map-hero__title-wrap">
+            <h1 id="map-title" class="map-hero__title">
+              <span class="map-hero__brand">裝修新手島</span>
+              <span class="map-hero__slogan">裝修有導航<br /><em class="map-hero__hl">新手</em>不迷路</span>
+            </h1>
+            <p class="map-hero__eyebrow">你不用一次懂完裝修，只要知道下一站往哪走</p>
+            <div class="map-hero__actions">
+              <a href="#s01" class="map-hero__start">從買屋驗屋開始 <span aria-hidden="true">↓</span></a>
+              <p>跟著島上的路線往下走：走到哪一站，路就亮到哪。</p>
+            </div>
+          </div>
+        </header>
+
+        {mapPhases.map((phaseGroup, phaseIndex) => (
+          <div class:list={['map-phase', `map-phase--${phaseGroup.phase}`]}>
+            <PhaseGate
+              phase={phaseGroup.phase}
+              name={phaseGroup.name}
+              kicker={phaseKickers[phaseIndex]}
+            />
+            {phaseGroup.stations.map((station, stationIndex) => (
+              <MapStation station={station} side={(stationIndex + phaseIndex) % 2 === 0 ? 'left' : 'right'} />
+            ))}
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="island-section" aria-labelledby="island-pains-title">
+      <p class="island-section__eyebrow">第一次裝修，是不是也這樣？</p>
+      <h2 id="island-pains-title">卡住的不是你，是沒有人給過你一條路</h2>
+      <div class="island-grid">
+        {islandPains.map((item) => (
+          <article>
+            <IslandPainIcon kind={item.icon} />
+            <h3>{item.pain}</h3>
+            <p>{item.answer}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="island-section island-section--alt" aria-labelledby="island-steps-title">
+      <p class="island-section__eyebrow">島上怎麼走</p>
+      <h2 id="island-steps-title">登島之後，照這四步走</h2>
+      <ol class="island-steps">
+        {islandSteps.map((step) => (
+          <li>
+            <h3>{step.title}</h3>
+            <p>{step.body}</p>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="island-section" aria-labelledby="island-faq-title">
+      <p class="island-section__eyebrow">登島指南</p>
+      <h2 id="island-faq-title">常見問題</h2>
+      <div class="island-faq">
+        {islandFaq.map((item) => (
+          <details>
+            <summary>{item.q}</summary>
+            <p>{item.a}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+    <section class="map-outro map-outro--registration" aria-labelledby="map-outro-title">
+      <div class="map-outro__registration">
+        <picture class="map-outro__logo">
+          <source srcset="/map/map-logo-island-v1.webp" type="image/webp" />
+          <img
+            src="/map/map-logo-island-v1.png"
+            width="752"
+            height="357"
+            alt="裝修新手島"
+            loading="eager"
+            decoding="sync"
+          />
+        </picture>
+        <p class="map-outro__eyebrow">準備登島</p>
+        <h2 id="map-outro-title">先讓我們認識你</h2>
+        <p>留下稱呼和 Email。登島通道準備好時，再通知你回來。</p>
+
+        <form class="map-outro__form" data-island-registration-form>
+          <div class="map-outro__fields">
+            <label for="island-registration-name">
+              <span>怎麼稱呼您？</span>
+              <input id="island-registration-name" name="name" type="text" autocomplete="name" placeholder="你的稱呼" required />
+            </label>
+            <label for="island-registration-email">
+              <span>Email</span>
+              <input id="island-registration-email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com" required />
+            </label>
+          </div>
+          <button type="submit">完成登島</button>
+          <p class="map-outro__form-note">目前先預留登島通道；尚未串接前，資料不會送出。</p>
+          <p class="map-outro__form-status" data-island-registration-status role="status"></p>
+        </form>
+      </div>
+    </section>
+
+    <StationPanel />
+    <IslandCommunityDock />
+  </main>
+
+  <script>
+    import '../scripts/map/bootstrap';
+
+    type RegistrationResult = boolean | void | Promise<boolean | void>;
+    type IslandCallbacks = {
+      onRegistrationRequest?: (name: string, email: string, channel?: string) => RegistrationResult;
+    };
+
+    const registrationForm = document.querySelector<HTMLFormElement>('[data-island-registration-form]');
+    registrationForm?.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!registrationForm.reportValidity()) return;
+
+      const data = new FormData(registrationForm);
+      const name = String(data.get('name') ?? '').trim();
+      const email = String(data.get('email') ?? '').trim();
+      const channel = new URLSearchParams(window.location.search).get('ch') ?? undefined;
+      const status = registrationForm.querySelector<HTMLElement>('[data-island-registration-status]');
+      const button = registrationForm.querySelector<HTMLButtonElement>('button[type="submit"]');
+      const callbacks = (window as Window & { dongWuIslandCallbacks?: IslandCallbacks }).dongWuIslandCallbacks;
+
+      if (button) {
+        button.disabled = true;
+        button.textContent = '確認中…';
+      }
+      if (status) status.textContent = '';
+
+      try {
+        window.dispatchEvent(new CustomEvent('island:registration-request', { detail: { name, email, channel } }));
+        if (!callbacks?.onRegistrationRequest) {
+          if (status) status.textContent = '欄位已確認，目前資料沒有送出。';
+          return;
+        }
+        const accepted = await callbacks.onRegistrationRequest(name, email, channel);
+        if (accepted === false) throw new Error('registration-rejected');
+        if (status) status.textContent = '登島資料已送出，我們會用 Email 通知你。';
+        registrationForm.reset();
+      } catch {
+        if (status) status.textContent = '現在沒辦法完成登島，請稍後再試一次。';
+      } finally {
+        if (button) {
+          button.disabled = false;
+          button.textContent = '完成登島';
+        }
+      }
+    });
+  </script>
+</BaseLayout>

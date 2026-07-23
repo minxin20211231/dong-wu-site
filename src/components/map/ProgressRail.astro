@@ -1,0 +1,29 @@
+---
+import type { MapStation } from '../../data/mapStations';
+
+interface Props {
+  stations: MapStation[];
+}
+
+const { stations } = Astro.props;
+---
+
+<nav class="progress-rail" aria-label="裝修新手島進度">
+  <span class="progress-rail__track" aria-hidden="true"><i class="progress-rail__fill"></i></span>
+  <ol>
+    {stations.map((station) => (
+      <li>
+        <a
+          href={`#${station.id}`}
+          class:list={['progress-rail__stop', station.status === 'coming-soon' && 'is-locked']}
+          data-progress-stop={station.id}
+          aria-label={`${station.number} ${station.name}${station.status === 'coming-soon' ? '，即將開放' : ''}`}
+        >
+          <span class="progress-rail__dot" aria-hidden="true"></span>
+          <span class="progress-rail__label"><b>{station.number}</b>{station.name}</span>
+        </a>
+      </li>
+    ))}
+  </ol>
+</nav>
+

@@ -1,0 +1,76 @@
+---
+import type { MapStation } from '../../data/mapStations';
+
+interface Props {
+  stations: MapStation[];
+}
+
+const { stations } = Astro.props;
+---
+
+<div class="map-stage" data-map-stage data-mode="poster">
+  <div class="map-static-overview" data-map-static>
+    <picture class="map-static-overview__picture">
+      <source srcset="/map/map-island-v2.webp" type="image/webp" />
+      <img
+        src="/map/map-island-v2.png"
+        width="1672"
+        height="941"
+        alt="大翅鯨造型的裝修導航島鏈，十六站從鯨頭走到尾鰭，再搭船前往下方島鏈"
+        fetchpriority="high"
+        decoding="async"
+      />
+    </picture>
+    <svg class="map-static-overview__road" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <mask id="map-sea-route-reveal" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">
+          <path class="map-route__sea-mask" pathLength="1" d="M88 58 C94 67 94 79 88 85 C80 94 64 94 49 94 C36 94 25 92 22 84 C20 78 23 69 30 62" />
+        </mask>
+      </defs>
+      <path class="map-route__base" d="M13 30 C18 29 25 31 32 35 S38 37 41 39 C46 35 49 33 51 33 C57 31 64 34 70 38 C77 34 82 29 86 25 C87 31 85 36 84 42 S86 51 88 58" />
+      <path class="map-route__base" d="M30 62 C34 65 41 73 47 75 C54 74 59 69 63 66 C66 64 69 63 72 63 C73 67 74 71 74 75" />
+      <path class="map-route__progress map-route__progress--outbound" pathLength="1" d="M13 30 C18 29 25 31 32 35 S38 37 41 39 C46 35 49 33 51 33 C57 31 64 34 70 38 C77 34 82 29 86 25 C87 31 85 36 84 42 S86 51 88 58" />
+      <path class="map-route__sea-base" pathLength="1" d="M88 58 C94 67 94 79 88 85 C80 94 64 94 49 94 C36 94 25 92 22 84 C20 78 23 69 30 62" />
+      <path class="map-route__sea-progress" pathLength="1" mask="url(#map-sea-route-reveal)" d="M88 58 C94 67 94 79 88 85 C80 94 64 94 49 94 C36 94 25 92 22 84 C20 78 23 69 30 62" />
+      <path data-map-sea-motion-path fill="none" stroke="none" d="M89 82 C82 91 67 94 50 94 C37 94 29 89 25 81 C24 79 24 77 25 75" />
+      <path class="map-route__progress map-route__progress--return" pathLength="1" d="M30 62 C34 65 41 73 47 75 C54 74 59 69 63 66 C66 64 69 63 72 63 C73 67 74 71 74 75" />
+    </svg>
+    <div class="map-sailboat-layer" aria-hidden="true">
+      <div class="map-sailboat" data-map-sailboat>
+        <picture>
+          <source srcset="/map/map-sailboat-v2.webp" type="image/webp" />
+          <img src="/map/map-sailboat-v2.png" width="266" height="320" alt="" decoding="async" />
+        </picture>
+      </div>
+    </div>
+    <ol class="map-static-overview__stations" aria-label="裝修新手島十六站">
+      {stations.map((station) => (
+        <li
+          class:list={['map-static-stop', station.status === 'coming-soon' && 'is-locked']}
+          style={`--map-x:${station.mapPosition.x}%;--map-y:${station.mapPosition.y}%`}
+          data-map-overview-stop={station.id}
+          data-island={station.mapPosition.island}
+        >
+          <a href={`#${station.id}`} aria-label={`${station.number} ${station.name}${station.status === 'coming-soon' ? '，即將開放' : ''}`}>
+            <span>{station.number}</span>
+          </a>
+        </li>
+      ))}
+    </ol>
+    <div class="map-static-overview__legend">
+      <span><i class="is-open"></i>目前開放</span>
+      <span><i class="is-locked"></i>分站上線</span>
+    </div>
+  </div>
+
+  <div class="map-frame" aria-hidden="true">
+    <i class="map-frame__corner map-frame__corner--tl"></i>
+    <i class="map-frame__corner map-frame__corner--tr"></i>
+    <i class="map-frame__corner map-frame__corner--bl"></i>
+    <i class="map-frame__corner map-frame__corner--br"></i>
+    <p class="map-frame__phase" data-map-phase>第一階段 · 籌備與規劃</p>
+    <p class="map-frame__status"><span data-map-current>01</span><span>/ 16</span></p>
+  </div>
+
+  <p class="sr-only" data-map-live aria-live="polite"></p>
+</div>

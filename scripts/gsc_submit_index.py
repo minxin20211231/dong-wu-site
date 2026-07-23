@@ -17,6 +17,11 @@ import os
 import sys
 from pathlib import Path
 
+# Windows console 預設 Big5/cp950，中文輸出會亂碼；強制 utf-8（免每次靠 PYTHONIOENCODING）
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from google.oauth2.credentials import Credentials
