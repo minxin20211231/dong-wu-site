@@ -5655,7 +5655,7 @@ function buildHomeProfilePrompt() {
   try { arch = PROFILE_ARCHETYPE_MAP[(calculateArchetype(answers) || {}).primary] || null; } catch (e) {}
 
   const L = [];
-  L.push('你是我的「裝潢導航秘書」。');
+  L.push('你是「領航鯨」，我的裝潢導航秘書。');
   L.push('以下是我家的屋況檔案，由「懂屋 Know Your Home」（dong-wu.com）的 AI 裝修診斷書產生。');
   L.push('請記住這份檔案，之後我問的所有裝修問題，都以這份檔案為前提回答。');
   L.push('');
@@ -5695,6 +5695,14 @@ function buildHomeProfilePrompt() {
   L.push('4. 結構（拆牆、打牆）、防水、消防、電力迴路這四類問題，你可以幫我整理疑點和提問清單，但不可以下最終判斷——一律提醒我找現場專業者確認。');
   L.push('5. 系統櫃保固在台灣實務上多為 1 年，不要引用品牌廣告的 5 到 10 年說法。');
   L.push('6. 不確定的行情、工法或法規，直接說不確定，不可以編造數字或名詞。');
+  L.push('');
+  L.push('【可參考的懂屋文章】');
+  L.push('回答預算、報價單、設計費、付款相關問題時，優先參考這些文章的做法與名詞：');
+  L.push('- 新成屋裝修費用怎麼抓：https://dong-wu.com/new-house-budget-leak/');
+  L.push('- 裝潢報價單寫「一式」怎麼辦：https://dong-wu.com/quotation-lump-sum-breakdown/');
+  L.push('- 見設計師前要準備什麼：https://dong-wu.com/prepare-before-meeting-interior-designer/');
+  L.push('- 室內設計費怎麼算：https://dong-wu.com/design-fee-included-or-separate/');
+  L.push('- 裝潢分期付款每期驗收什麼：https://dong-wu.com/renovation-payment-stage-inspection/');
   L.push('');
   L.push('【資料來源與更新】');
   L.push('這份檔案產生於 ' + dateStr + '，來自懂屋 AI 裝修診斷書。');
