@@ -414,8 +414,8 @@
   align-items: center;
   justify-content: space-between;
   gap: 18px;
-  min-height: 54px;
-  padding: 8px 9px 8px 22px;
+  min-height: 66px;
+  padding: 10px 12px 10px 30px;
   color: var(--map-deep);
   background: rgba(255,253,248,.9);
   border: 1px solid rgba(137,99,62,.52);
@@ -423,7 +423,7 @@
   box-shadow: 0 12px 30px rgba(58,46,38,.14), inset 0 1px 0 rgba(255,255,255,.72);
   backdrop-filter: blur(8px);
   text-decoration: none;
-  font-size: .9rem;
+  font-size: 1.05rem;
   font-weight: 700;
   letter-spacing: .06em;
   white-space: nowrap;
@@ -431,8 +431,8 @@
 }
 
 .map-hero__start span {
-  width: 36px;
-  height: 36px;
+  width: 42px;
+  height: 42px;
   display: grid;
   flex: 0 0 auto;
   place-items: center;
@@ -457,14 +457,14 @@
 .map-hero__notify {
   display: inline-flex;
   align-items: center;
-  min-height: 60px;
-  padding: 8px 28px;
+  min-height: 66px;
+  padding: 10px 34px;
   color: #fff;
   background: var(--map-orange);
   border: 1px solid rgba(255,255,255,.35);
   border-radius: 999px;
   text-decoration: none;
-  font-size: .98rem;
+  font-size: 1.05rem;
   font-weight: 700;
   letter-spacing: .04em;
   box-shadow: 0 12px 30px rgba(212,136,106,.32);
@@ -486,13 +486,13 @@
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  padding: 14px 28px;
+  padding: 17px 34px;
   color: #fff;
   background: var(--map-orange);
   border: 1px solid rgba(255,255,255,.35);
   border-radius: 999px;
   text-decoration: none;
-  font-size: .95rem;
+  font-size: 1.05rem;
   font-weight: 700;
   letter-spacing: .06em;
   box-shadow: 0 12px 28px rgba(212,136,106,.4);
@@ -904,8 +904,10 @@
   .map-hero__title { max-width: none; font-size: clamp(2.1rem, 9vw, 3rem); }
   .map-hero__actions { align-items: flex-start; flex-direction: column; gap: 12px; }
   .map-hero__actions p { max-width: 20rem; color: var(--map-ink); background: rgba(255,253,248,.74); padding: 6px 8px; }
-  .map-hero__notify { min-height: 48px; padding: 6px 20px; font-size: .9rem; }
-  .island-notify-pill { top: 66px; right: 12px; padding: 10px 18px; font-size: .85rem; }
+  .map-hero__start { min-height: 54px; padding: 8px 10px 8px 22px; font-size: .92rem; }
+  .map-hero__start span { width: 36px; height: 36px; }
+  .map-hero__notify { min-height: 54px; padding: 6px 22px; font-size: .92rem; }
+  .island-notify-pill { top: 66px; right: 12px; padding: 12px 20px; font-size: .9rem; }
   .map-hero__topline { justify-content: space-between; }
   .map-hero__topline p { position: static; }
   .map-hero__logo { width: clamp(128px, 30vw, 168px); margin-top: -2.2rem; }
