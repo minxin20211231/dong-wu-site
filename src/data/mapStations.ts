@@ -169,7 +169,7 @@ export const mapStations: MapStation[] = [
       intro: '按空間與工種走一輪，把需要修正的地方標清楚，也留下雙方都看得懂的紀錄。',
       points: ['從使用動作開始驗', '側光、開關與排水都要實際操作', '缺失要有位置、照片與狀態'],
     },
-    characters: ['defender'], sceneKind: 'handover', d1Event: 'map_s14_view', mapPosition: { x: 60, y: 65, island: 6 },
+    characters: ['defender'], sceneKind: 'handover', d1Event: 'map_s14_view', mapPosition: { x: 62, y: 61.5, island: 6 },
   },
   {
     id: 's15', number: '15', phase: 4, phaseName: phaseNames[4], name: '軟裝家電站', status: 'coming-soon',
@@ -179,7 +179,7 @@ export const mapStations: MapStation[] = [
       intro: '從尺寸、插座到進場順序，把家具和家電安排在對的時間、放進對的位置。',
       points: ['大型家具先量尺寸，確認搬得進門、轉得過彎', '家電規格先對照插座與專用迴路', '進場先大件後小件，保護好已完工的地板與牆面'],
     },
-    characters: ['resource'], sceneKind: 'furnishing', d1Event: 'map_s15_view', mapPosition: { x: 73, y: 54, island: 6 },
+    characters: ['resource'], sceneKind: 'furnishing', d1Event: 'map_s15_view', mapPosition: { x: 70.8, y: 61, island: 6 },
   },
   {
     id: 's16', number: '16', phase: 4, phaseName: phaseNames[4], name: '幸福入住站', status: 'coming-soon',
@@ -189,7 +189,7 @@ export const mapStations: MapStation[] = [
       intro: '把設備、材料與需要回頭照顧的地方收在一起，日後出現狀況不用重新找線索。',
       points: ['留下設備與材料資料', '把保固聯絡方式整理在同一處', '用生活中的變化更新維護紀錄'],
     },
-    characters: ['resource', 'intuitive', 'defender', 'planner', 'solo', 'whale'], sceneKind: 'movein', d1Event: 'map_s16_view', mapPosition: { x: 80, y: 76, island: 6 },
+    characters: ['resource', 'intuitive', 'defender', 'planner', 'solo', 'whale'], sceneKind: 'movein', d1Event: 'map_s16_view', mapPosition: { x: 72.5, y: 64, island: 6 },
   },
 ];
 

@@ -73,7 +73,8 @@
   inset: 0;
   min-height: 100%;
   overflow: hidden;
-  background: #f6eee2;
+  /* 底色貼齊島圖邊緣色＋左上暖光暈接續圖內陽光，超寬螢幕下兩側不出現色階斷層 */
+  background: radial-gradient(120% 95% at 16% 6%, rgba(246,205,170,.55), transparent 55%), #f0e4d4;
   opacity: 1;
 }
 
@@ -89,7 +90,13 @@
   transform: translate(-50%, -50%);
 }
 
-.map-static-overview__picture { z-index: 0; display: block; }
+.map-static-overview__picture {
+  z-index: 0;
+  display: block;
+  /* 左右邊緣淡出融入容器底色（同上：消除超寬螢幕的邊界線） */
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 4%, #000 96%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, #000 4%, #000 96%, transparent 100%);
+}
 .map-static-overview__picture img { display: block; width: 100%; height: 100%; object-fit: cover; }
 
 .map-static-overview__road {
@@ -328,16 +335,15 @@
 }
 
 .map-hero__topline {
-  position: relative;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   padding: 3.6rem 4.5rem 0 1rem;
   font-size: .72rem;
   font-weight: 700;
   letter-spacing: .13em;
 }
 
-.map-hero__topline p { margin: 0; position: absolute; right: 4.5rem; top: 3.6rem; }
+.map-hero__topline p { margin: 0; }
 
 .map-hero__logo {
   display: block;
@@ -908,8 +914,6 @@
   .map-hero__start span { width: 36px; height: 36px; }
   .map-hero__notify { min-height: 54px; padding: 6px 22px; font-size: .92rem; }
   .island-notify-pill { top: 66px; right: 12px; padding: 12px 20px; font-size: .9rem; }
-  .map-hero__topline { justify-content: space-between; }
-  .map-hero__topline p { position: static; }
   .map-hero__logo { width: clamp(128px, 30vw, 168px); margin-top: -2.2rem; }
 
   .island-community-dock { right: 12px; bottom: calc(58px + env(safe-area-inset-bottom)); }
