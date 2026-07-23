@@ -14,6 +14,10 @@ const stage = document.querySelector<HTMLElement>('[data-map-stage]');
 const journey = document.querySelector<HTMLElement>('[data-map-journey]');
 const panel = document.querySelector<HTMLDialogElement>('[data-station-panel]');
 
+// 島名單送出（與登島表單同 source，統一進 MailerLite 島 group）；localhost 只模擬不寫正式名單
+const WORKER_ENDPOINT = 'https://dongwu-subscribe.minxin20211231.workers.dev';
+const IS_LOCAL = ['localhost', '127.0.0.1', '0.0.0.0', ''].includes(location.hostname);
+
 if (stage && journey && panel) {
   const channel = new URLSearchParams(window.location.search).get('ch') ?? undefined;
   const callbacks = () => (window as Window & { dongWuMapCallbacks?: MapCallbacks }).dongWuMapCallbacks;
@@ -146,13 +150,14 @@ if (stage && journey && panel) {
     const tool = panel.querySelector<HTMLElement>('[data-panel-tool]');
     const gate = panel.querySelector<HTMLElement>('[data-panel-gate]');
     const waitlist = panel.querySelector<HTMLElement>('[data-panel-waitlist]');
-    const lockedByEmail = station.status === 'open' && !isEmailUnlocked();
+    // 2026-07-24 Bibo：16 站內容皆尚未開放，一律顯示「先收登島通知」；
+    // Email 解鎖閘門保留結構，等站點內容真正開放時再啟用
     if (tool) {
-      tool.classList.toggle('is-gated', lockedByEmail);
-      tool.setAttribute('aria-hidden', lockedByEmail ? 'true' : 'false');
+      tool.classList.remove('is-gated');
+      tool.setAttribute('aria-hidden', 'false');
     }
-    if (gate) gate.hidden = !lockedByEmail || station.status !== 'open';
-    if (waitlist) waitlist.hidden = station.status !== 'coming-soon';
+    if (gate) gate.hidden = true;
+    if (waitlist) waitlist.hidden = false;
     panel.dataset.stationId = station.id;
     panel.dataset.stationStatus = station.status;
   };
@@ -182,6 +187,27 @@ if (stage && journey && panel) {
     button.textContent = busy ? pendingText : button.dataset.label;
   };
 
+  const subscribeToIsland = async (email: string, name: string, question?: string) => {
+    if (IS_LOCAL) {
+      console.warn('[map] localhost 模擬送出，未呼叫 Worker。', { email, name, question });
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      return;
+    }
+    const res = await fetch(WORKER_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        name,
+        source: 'island_waitlist_join',
+        ...(channel ? { channel } : {}),
+        ...(question ? { question } : {}),
+      }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !(data as { ok?: boolean }).ok) throw new Error('subscribe_failed');
+  };
+
   panel.querySelector<HTMLFormElement>('[data-email-unlock-form]')?.addEventListener('submit', async (event) => {
     event.preventDefault();
     const form = event.currentTarget as HTMLFormElement;
@@ -194,12 +220,12 @@ if (stage && journey && panel) {
     setFormBusy(form, true, '解鎖中…');
     if (status) status.textContent = '';
     try {
-      const accepted = await callbacks()?.onEmailUnlockRequest?.(stationId, email, channel, name);
-      if (accepted === false) throw new Error('unlock-rejected');
+      await subscribeToIsland(email, name);
       storage.write(storageKeys.unlocked, '1');
       const station = getStation(stationId);
       if (station) setPanelAccessState(station);
       if (liveRegion) liveRegion.textContent = '前四站工具已解鎖。';
+      if (status) status.textContent = '前四站已解鎖！新站開放時會用 Email 通知你。';
       window.dispatchEvent(new CustomEvent('map:email-unlock-request', { detail: { stationId, name, email, channel } }));
     } catch {
       if (status) status.textContent = '現在沒辦法完成解鎖，請稍後再試一次。';
@@ -220,9 +246,9 @@ if (stage && journey && panel) {
     setFormBusy(form, true, '登記中…');
     if (status) status.textContent = '';
     try {
-      const accepted = await callbacks()?.onWaitlistRequest?.(stationId, email, channel, name);
-      if (accepted === false) throw new Error('waitlist-rejected');
-      if (status) status.textContent = 'Demo 已完成登記流程；資料沒有送出。';
+      const stationName = getStation(stationId)?.name ?? stationId;
+      await subscribeToIsland(email, name, `登島通知登記：${stationName}`);
+      if (status) status.textContent = '已收到！這站開放時會第一時間用 Email 通知你。';
       window.dispatchEvent(new CustomEvent('map:waitlist-request', { detail: { stationId, name, email, channel } }));
     } catch {
       if (status) status.textContent = '現在沒辦法完成登記，請稍後再試一次。';

@@ -22,7 +22,7 @@
       <section class="station-panel__gate" data-panel-gate>
         <p class="station-panel__eyebrow">免費解鎖</p>
         <h3>把前四站的工具一起打開</h3>
-        <p>留下稱呼和 Email，就能一次打開前四站。這份 Demo 不會真的寄出資料。</p>
+        <p>留下稱呼和 Email，就能一次打開前四站。新站開放時也會通知你。</p>
         <form class="station-panel__form" data-email-unlock-form>
           <label for="map-unlock-name">怎麼稱呼您？</label>
           <input id="map-unlock-name" name="name" type="text" autocomplete="name" required placeholder="您的稱呼" data-email-unlock-name />
@@ -36,16 +36,16 @@
       </section>
 
       <section class="station-panel__waitlist" data-panel-waitlist hidden>
-        <p class="station-panel__eyebrow">分站上線</p>
-        <h3>這站正在把工具內容整理好</h3>
-        <p>想等這站上線，可以先登記。這份 Demo 只示範流程，不會真的寄出資料。</p>
+        <p class="station-panel__eyebrow">登島通知</p>
+        <h3>這一站還在整理，尚未開放</h3>
+        <p>留下稱呼和 Email，這站開放時第一時間通知你。</p>
         <form class="station-panel__form" data-waitlist-form>
           <label for="map-waitlist-name">怎麼稱呼您？</label>
           <input id="map-waitlist-name" name="name" type="text" autocomplete="name" required placeholder="您的稱呼" data-waitlist-name />
           <label for="map-waitlist-email">Email</label>
           <div>
             <input id="map-waitlist-email" name="email" type="email" autocomplete="email" required placeholder="name@example.com" />
-            <button type="submit" data-waitlist-submit>搶先登記</button>
+            <button type="submit" data-waitlist-submit>先收登島通知</button>
           </div>
           <p class="station-panel__form-status" data-waitlist-status role="status"></p>
         </form>
