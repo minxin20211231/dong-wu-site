@@ -328,27 +328,28 @@
 }
 
 .map-hero__topline {
+  position: relative;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   padding: 3.6rem 4.5rem 0 1rem;
   font-size: .72rem;
   font-weight: 700;
   letter-spacing: .13em;
 }
 
-.map-hero__topline p { margin: 0; }
+.map-hero__topline p { margin: 0; position: absolute; right: 4.5rem; top: 3.6rem; }
 
 .map-hero__logo {
   display: block;
-  width: clamp(128px, 11vw, 168px);
-  margin-top: -2.2rem;
+  width: clamp(168px, 16vw, 248px);
+  margin-top: -1.6rem;
   filter: drop-shadow(0 7px 11px rgba(58,46,38,.16));
 }
 
 .map-hero__logo img { display: block; width: 100%; height: auto; }
 
 .map-hero__title-wrap {
-  width: min(100%, 42rem);
+  width: min(100%, 50rem);
   margin: clamp(1.6rem, 4.8vh, 4.2rem) auto 0;
   padding: 1rem 2.4rem 1.25rem;
   text-align: center;
@@ -358,7 +359,7 @@
 .map-hero__eyebrow {
   max-width: none;
   margin: 14px 0 0;
-  font-size: clamp(.88rem, 1.3vw, 1.02rem);
+  font-size: clamp(.95rem, 1.5vw, 1.18rem);
   font-weight: 700;
   letter-spacing: .08em;
 }
@@ -369,7 +370,7 @@
   justify-content: center;
   gap: 14px;
   margin-bottom: 16px;
-  font-size: clamp(1rem, 1.5vw, 1.25rem);
+  font-size: clamp(1.05rem, 1.7vw, 1.45rem);
   font-weight: 800;
   letter-spacing: .42em;
   text-indent: .42em;
@@ -388,7 +389,7 @@
 .map-hero__title {
   max-width: none;
   margin: 0;
-  font-size: clamp(2.4rem, 4.6vw, 4.7rem);
+  font-size: clamp(2.6rem, 5.2vw, 5.9rem);
   font-weight: 850;
   line-height: 1.14;
   letter-spacing: -.065em;
@@ -456,24 +457,24 @@
 .map-hero__notify {
   display: inline-flex;
   align-items: center;
-  min-height: 54px;
-  padding: 8px 24px;
-  color: var(--map-deep);
-  background: rgba(255,253,248,.55);
-  border: 1px solid rgba(137,99,62,.36);
+  min-height: 60px;
+  padding: 8px 28px;
+  color: #fff;
+  background: var(--map-orange);
+  border: 1px solid rgba(255,255,255,.35);
   border-radius: 999px;
-  backdrop-filter: blur(8px);
   text-decoration: none;
-  font-size: .9rem;
+  font-size: .98rem;
   font-weight: 700;
   letter-spacing: .04em;
-  transition: border-color .24s ease, background .24s ease, transform .24s var(--dw-motion-spring);
+  box-shadow: 0 12px 30px rgba(212,136,106,.32);
+  transition: background .24s ease, box-shadow .24s ease, transform .24s var(--dw-motion-spring);
 }
 
 .map-hero__notify:hover {
-  color: var(--map-deep);
-  background: rgba(255,253,248,.9);
-  border-color: var(--map-orange);
+  color: #fff;
+  background: #c1745a;
+  box-shadow: 0 16px 34px rgba(212,136,106,.42);
   transform: translateY(-2px);
 }
 
@@ -484,33 +485,32 @@
   right: 22px;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  color: var(--map-moon);
-  background: rgba(28,24,21,.88);
-  border: 1px solid rgba(184,151,126,.45);
+  gap: 9px;
+  padding: 14px 28px;
+  color: #fff;
+  background: var(--map-orange);
+  border: 1px solid rgba(255,255,255,.35);
   border-radius: 999px;
-  backdrop-filter: blur(8px);
   text-decoration: none;
-  font-size: .82rem;
+  font-size: .95rem;
   font-weight: 700;
   letter-spacing: .06em;
-  box-shadow: 0 10px 24px rgba(28,24,21,.28);
+  box-shadow: 0 12px 28px rgba(212,136,106,.4);
   transition: background .24s ease, transform .24s var(--dw-motion-spring);
 }
 
 .island-notify-pill::before {
   content: '';
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background: var(--map-orange);
-  box-shadow: 0 0 0 3px rgba(212,136,106,.28);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(255,255,255,.3);
 }
 
 .island-notify-pill:hover {
-  color: var(--map-moon);
-  background: rgba(28,24,21,.98);
+  color: #fff;
+  background: #c1745a;
   transform: translateY(-2px);
 }
 
@@ -904,8 +904,11 @@
   .map-hero__title { max-width: none; font-size: clamp(2.1rem, 9vw, 3rem); }
   .map-hero__actions { align-items: flex-start; flex-direction: column; gap: 12px; }
   .map-hero__actions p { max-width: 20rem; color: var(--map-ink); background: rgba(255,253,248,.74); padding: 6px 8px; }
-  .map-hero__notify { min-height: 46px; padding: 6px 18px; }
-  .island-notify-pill { top: 66px; right: 12px; padding: 8px 14px; font-size: .78rem; }
+  .map-hero__notify { min-height: 48px; padding: 6px 20px; font-size: .9rem; }
+  .island-notify-pill { top: 66px; right: 12px; padding: 10px 18px; font-size: .85rem; }
+  .map-hero__topline { justify-content: space-between; }
+  .map-hero__topline p { position: static; }
+  .map-hero__logo { width: clamp(128px, 30vw, 168px); margin-top: -2.2rem; }
 
   .island-community-dock { right: 12px; bottom: calc(58px + env(safe-area-inset-bottom)); }
   .island-community-dock__trigger { width: 54px; }
