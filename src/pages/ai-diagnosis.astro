@@ -4671,10 +4671,12 @@ function getOrCreateChannel() {
 // 版本演進：legacy（6/13 前原版）→ a/b（A/B 實驗期，B 勝出 20.0% vs 8.3%）
 // → 'c'（2026-07-05 B 版轉正，寫死進 HTML，實驗分流移除）
 // → 'd'（2026-07 五型引言＋指名鎖定章節＋拆心防 FAQ）
-// → 'e'（2026-07-09 閘門加真實社會證明數字「500+ 位屋主已完成」）。
-// 下一個閘門改版時把代號遞增為 'f'，不需要恢復分流機制。
+// → 'e'（2026-07-09 閘門加真實社會證明數字「500+ 位屋主已完成」）
+// → 'f'（2026-07-28 影片誘因明示化：鎖章籤「使用導讀」改「導讀影片」＋誘因區加「8 分鐘影片講解」行；
+//        同日徽章 500+→600+、佔比句更新，屬數字維護不算版位變因）。
+// 下一個閘門改版時把代號遞增為 'g'，不需要恢復分流機制。
 function getOrCreateVariant() {
-  return 'e';
+  return 'f';
 }
 
 // 本地預覽防護：localhost 不打正式埋點/訂閱，避免污染 D1 漏斗數據
@@ -5343,7 +5345,8 @@ function generateResults() {
           <div class="email-gate-proof"><span class="proof-num">600+</span> 位屋主已完成這份診斷</div>
           <div class="email-gate-locked-list" id="gateLockedList"></div>
           <div class="email-gate-sub">填 Email 立即看完整版，<br>順便收每週裝修知識信</div>
-          <div class="email-gate-gift" style="margin-top:10px;font-size:13px;color:var(--accent);font-weight:700;letter-spacing:.5px">📋 留 Email 再送你《20 項預算隱形清單》</div>
+          <div class="email-gate-gift" style="margin-top:10px;font-size:13px;color:var(--accent);font-weight:700;letter-spacing:.5px">🎬 解鎖就能看：8 分鐘影片講解，帶你把這份診斷書用對</div>
+          <div class="email-gate-gift" style="margin-top:6px;font-size:13px;color:var(--accent);font-weight:700;letter-spacing:.5px">📋 再送你《20 項預算隱形清單》</div>
         </div>
         <form class="email-gate-form" onsubmit="submitEmailGate(event)">
           <input type="text" placeholder="你的名字（怎麼稱呼你）" id="nameGateInput" autocomplete="name">
@@ -5361,8 +5364,8 @@ function generateResults() {
     <!-- ═══ LOCKED ZONE ═══ -->
     <div class="locked-zone locked" id="lockedZone">
     ${GUIDE_VIDEO_URL ? `
-    <!-- 診斷書使用導讀（上手節點）：GUIDE_VIDEO_URL 有值才渲染 -->
-    <div class="glass-card anim-in" data-chapter="使用導讀">
+    <!-- 診斷書使用導讀（上手節點）：GUIDE_VIDEO_URL 有值才渲染。data-chapter 同步餵閘門鎖章籤與 TOC，改名兩處都會變 -->
+    <div class="glass-card anim-in" data-chapter="導讀影片">
       <div class="card-label">不知道從哪看起？陪你把診斷書走一遍</div>
       <div class="card-body">
         <div style="font-size:14.5px;color:rgba(245,240,232,.7);line-height:1.9;margin-bottom:12px">預算怎麼估、儀表板怎麼看、哪些錢能省哪些不能省——8 分鐘精華導讀，看完再對照你自己的診斷書。</div>
