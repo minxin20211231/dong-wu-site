@@ -35,7 +35,10 @@ const isOpen = islandCommunity.status === 'open' && islandCommunity.href.trim().
     {isOpen ? (
       <>
         <div class="island-community-modal__qr">
-          <img src={islandCommunity.qrSrc} width="1000" height="1000" alt="裝修新手島 LINE 社群 QR code" loading="lazy" decoding="async" />
+          <picture>
+            <source srcset="/island/line-community-qr.webp" type="image/webp" />
+            <img src={islandCommunity.qrSrc} width="1000" height="1000" alt="裝修新手島 LINE 社群 QR code" decoding="async" />
+          </picture>
         </div>
         <p class="island-community-modal__hint">{islandCommunity.qrHint}</p>
         <a
