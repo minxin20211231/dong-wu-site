@@ -563,6 +563,7 @@
 .island-community-dock__trigger:focus-visible picture { transform: translateY(-3px) scale(1.04); }
 
 .island-community-dock__trigger > span {
+  white-space: nowrap;
   min-width: 48px;
   margin-top: -2px;
   border: 1px solid rgba(58,46,38,.24);
