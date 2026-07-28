@@ -9,8 +9,8 @@ export const islandCommunity = {
   openLabel: '用 LINE 加入社群',
   qrSrc: '/island/line-community-qr.png',
   qrHint: '手機點按鈕，電腦掃 QR code',
-  passwordLabel: '通關密語',
-  passwordHint: '填完診斷書領取',
-  diagnosisCtaLabel: '免費做 AI 診斷書',
+  passwordLabel: '入群需要通關密語',
+  passwordHint: '做完免費 AI 診斷書，結果頁就會給你密語',
+  diagnosisCtaLabel: '去做診斷書，領通關密語 →',
   diagnosisHref: '/ai-diagnosis?ch=island',
 };

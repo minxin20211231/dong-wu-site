@@ -600,11 +600,11 @@
 .island-community-modal__status { border: 1px solid rgba(58,46,38,.2); color: var(--map-muted); background: rgba(232,220,200,.6); }
 .island-community-modal__line { color: var(--map-deep); background: var(--map-gold); text-decoration: none; }
 .island-community-modal__line:hover { background: var(--map-orange); }
-.island-community-modal__password { margin-top: 16px; border-top: 1px dashed rgba(184,151,126,.5); padding-top: 14px; }
-.island-community-modal__password p { margin: 0 0 10px; font-size: .82rem; line-height: 1.6; }
-.island-community-modal__password p span { display: block; margin-bottom: 2px; color: var(--map-orange); font-size: .7rem; font-weight: 800; letter-spacing: .1em; }
-.island-community-modal__cta { display: flex; min-height: 42px; align-items: center; justify-content: center; border-radius: 10px; padding: 10px 14px; color: var(--map-gold); background: var(--map-deep); font-size: .78rem; font-weight: 800; letter-spacing: .05em; text-decoration: none; }
-.island-community-modal__cta:hover { filter: brightness(1.25); }
+.island-community-modal__password { margin-top: 16px; border: 1px dashed rgba(184,151,126,.55); border-radius: 14px; padding: 14px; background: rgba(184,151,126,.12); }
+.island-community-modal__password p { margin: 0 0 10px; font-size: .86rem; line-height: 1.6; color: var(--map-ink); }
+.island-community-modal__password p span { display: block; margin-bottom: 3px; color: var(--map-orange); font-size: .78rem; font-weight: 800; letter-spacing: .08em; }
+.island-community-modal__cta { display: flex; min-height: 44px; align-items: center; justify-content: center; border-radius: 10px; padding: 10px 14px; color: var(--map-deep); background: linear-gradient(135deg, var(--map-gold), var(--map-orange)); font-size: .82rem; font-weight: 800; letter-spacing: .05em; text-decoration: none; }
+.island-community-modal__cta:hover { filter: brightness(1.08); }
 .map-page:has(.station-panel[open]) .island-community-dock { opacity: 0; pointer-events: none; transform: translateY(8px); }
 
 .map-phase { position: relative; }
