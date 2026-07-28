@@ -5116,14 +5116,14 @@ function calculateArchetype(ans) {
   };
 }
 
-// 同型佔比（D1 實查 2026-07-09，n=515）：資料控 36.5%｜直覺派 26.0%｜規劃型 18.6%｜自包派 11.8%｜守備型 7.0%
+// 同型佔比（D1 實查 2026-07-28，n=628）：資料控 35.0%｜直覺派 28.0%｜規劃型 18.0%｜自包派 12.1%｜守備型 6.8%
 // 每次跑漏斗儀表板順手對照「屋主輪廓分布」，漂移超過 ±3 個百分點再更新這裡的數字。
 const ARCH_PCT_LINE = {
-  researcher: '在 500+ 位做過診斷的屋主裡，36% 和你一樣是資料控——最大的一群',
-  intuitive: '在 500+ 位做過診斷的屋主裡，26% 和你一樣是直覺派',
-  planner: '在 500+ 位做過診斷的屋主裡，19% 和你一樣是規劃型',
-  solo: '在 500+ 位做過診斷的屋主裡，12% 和你一樣是自包派',
-  defender: '在 500+ 位做過診斷的屋主裡，只有 7% 是守備型——你是少數會先想到風險的人'
+  researcher: '在 600+ 位做過診斷的屋主裡，35% 和你一樣是資料控——最大的一群',
+  intuitive: '在 600+ 位做過診斷的屋主裡，28% 和你一樣是直覺派',
+  planner: '在 600+ 位做過診斷的屋主裡，18% 和你一樣是規劃型',
+  solo: '在 600+ 位做過診斷的屋主裡，12% 和你一樣是自包派',
+  defender: '在 600+ 位做過診斷的屋主裡，只有 7% 是守備型——你是少數會先想到風險的人'
 };
 
 function renderArchetypeCard(arch) {
@@ -5326,11 +5326,11 @@ function generateResults() {
     <!-- 登島快速入口（輕量版，Email Gate 前曝光；完整卡在頁尾。source=ai-diagnosis-mid 與頁尾拆位置，上線後盯 email_unlock 是否被蠶食）-->
     <div class="anim-in" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;border:1px solid rgba(184,151,126,.35);background:rgba(184,151,126,.07);border-radius:14px;padding:14px 18px;margin:0 0 26px">
       <div style="flex:1;min-width:200px">
-        <div style="font-size:12px;font-weight:800;letter-spacing:1.5px;color:var(--accent);margin-bottom:4px">🔑 通關密語「登島」已到手</div>
+        <div style="font-size:15px;font-weight:800;letter-spacing:1px;color:var(--accent);margin-bottom:5px">🔑 通關密語「<span style="font-size:22px;color:var(--text);letter-spacing:3px">登島</span>」已到手</div>
         <div style="font-size:13.5px;color:rgba(245,240,232,.65);line-height:1.7">憑這兩個字可以加入「裝修新手島」LINE 社群，問題帶進來一起問、一起避坑。</div>
       </div>
       <a href="${ISLAND_LINE_URL}" target="_blank" rel="noopener noreferrer" onclick="try{trackEvent('island_join_click','ai-diagnosis-mid')}catch(e){}"
-         style="flex-shrink:0;display:inline-flex;align-items:center;padding:10px 18px;border-radius:10px;background:rgba(184,151,126,.16);border:1.5px solid rgba(184,151,126,.5);color:var(--accent);font-size:14px;font-weight:800;text-decoration:none">用 LINE 加入 →</a>
+         style="flex-shrink:0;display:inline-flex;align-items:center;padding:12px 20px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#1C1815;font-size:14.5px;font-weight:800;text-decoration:none">用 LINE 加入 →</a>
     </div>
 
     <!-- ═══ EMAIL GATE — 訂閱電子報、贈完整診斷書 ═══ -->
@@ -5339,8 +5339,8 @@ function generateResults() {
         <div class="email-gate-text">
           <div class="email-gate-lead" id="gateLeadLine"></div>
           <div class="email-gate-title">你的完整診斷書好了，剩最後一步</div>
-          <!-- 社會證明徽章：500+ 為 D1 實查真實數（2026-07-09 累計 526 完成），只寫下限不灌水；破 600 再改 600+ -->
-          <div class="email-gate-proof"><span class="proof-num">500+</span> 位屋主已完成這份診斷</div>
+          <!-- 社會證明徽章：600+ 為 D1 實查真實數（2026-07-28 累計 639 完成），只寫下限不灌水；破 700 再改 700+ -->
+          <div class="email-gate-proof"><span class="proof-num">600+</span> 位屋主已完成這份診斷</div>
           <div class="email-gate-locked-list" id="gateLockedList"></div>
           <div class="email-gate-sub">填 Email 立即看完整版，<br>順便收每週裝修知識信</div>
           <div class="email-gate-gift" style="margin-top:10px;font-size:13px;color:var(--accent);font-weight:700;letter-spacing:.5px">📋 留 Email 再送你《20 項預算隱形清單》</div>
