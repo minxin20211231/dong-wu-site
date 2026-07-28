@@ -6,5 +6,11 @@ export const islandCommunity = {
   title: '裝修新手島免費社群',
   description: '第一次裝修，問題一定很多。進來一起問、一起避坑。',
   comingSoonLabel: 'LINE 社群籌備中',
-  openLabel: '加入免費社群',
+  openLabel: '用 LINE 加入社群',
+  qrSrc: '/island/line-community-qr.png',
+  qrHint: '手機點按鈕，電腦掃 QR code',
+  passwordLabel: '通關密語',
+  passwordHint: '填完診斷書領取',
+  diagnosisCtaLabel: '免費做 AI 診斷書',
+  diagnosisHref: '/ai-diagnosis?ch=island',
 };

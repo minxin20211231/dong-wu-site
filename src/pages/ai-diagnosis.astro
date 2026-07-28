@@ -4962,8 +4962,10 @@ const SHOW_NEXT_STEP = true;
 // 導讀影片（上手節點）：影片上傳 YouTube 後填入 embed 連結（格式 https://www.youtube-nocookie.com/embed/VIDEO_ID），
 // 空字串＝整張影片卡不渲染。素材＝精華版 8:03（2026-07-15 定為導讀主片），上架文案：診斷書導讀影片\YouTube上架包.md。
 const GUIDE_VIDEO_URL = 'https://www.youtube-nocookie.com/embed/zLuEYAbe8Yk';
-// 懂屋官方 LINE 加好友連結（帳號 @731chcqb，2026-07-08 Bibo 提供；booking.astro 也有同名常數）
+// 懂屋官方 LINE@ 加好友連結（帳號 @731chcqb，2026-07-08 Bibo 提供；booking.astro 也有同名常數）
 const LINE_OA_URL = 'https://line.me/R/ti/p/@731chcqb';
+// 裝修新手島 LINE 社群邀請連結（與 src/data/islandCommunity.ts 同源，改連結時兩處一起改）
+const ISLAND_LINE_URL = 'https://line.me/ti/g2/yJkYsGqwt4GP6bC9m9AfXWJZJQSG_3vvBPVclw?utm_source=invitation&utm_medium=link_copy&utm_campaign=default';
 const NEXT_STEP_COPY = {
   researcher: {
     lead: '你已經查了很多資料——診斷書幫你把重點收攏了，剩下那些查不到答案的問題，帶著它們來。',
@@ -5573,6 +5575,25 @@ function generateResults() {
     ${SHOW_NEXT_STEP ? getNextStepHTML((archetype && archetype.primary) || '') : ''}
 
     </div><!-- /locked-zone -->
+
+    <!-- ═══ 登島邀請：裝修新手島 LINE 社群（不綁 Email，完成診斷書即給通關密語）═══ -->
+    <div class="glass-card anim-in" data-chapter="裝修新手島">
+      <div class="card-label">免費社群・裝修新手島</div>
+      <div class="card-body">
+        <div style="font-size:14.5px;color:rgba(245,240,232,.7);line-height:1.9;margin-bottom:16px">做完診斷書，你已經拿到登島門票。島上都是跟你一樣第一次裝修的屋主——問題帶進來一起問、一起避坑。</div>
+        <div style="background:rgba(184,151,126,.08);border:1.5px dashed rgba(184,151,126,.45);border-radius:14px;padding:16px 18px;text-align:center;margin-bottom:16px">
+          <div style="font-size:12px;font-weight:800;letter-spacing:2px;color:var(--accent);margin-bottom:6px">🔑 入群通關密語</div>
+          <div style="font-family:'Noto Serif TC',Georgia,serif;font-size:34px;font-weight:900;letter-spacing:8px;text-indent:8px;color:var(--text)">登島</div>
+          <div style="font-size:12px;color:rgba(245,240,232,.5);margin-top:6px">加入時把密語打進去，就會放行</div>
+        </div>
+        <a href="${ISLAND_LINE_URL}" target="_blank" rel="noopener noreferrer" onclick="try{trackEvent('island_join_click','ai-diagnosis-result')}catch(e){}"
+           style="display:block;text-align:center;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#1C1815;font-size:16px;font-weight:800;letter-spacing:1px;text-decoration:none;margin-bottom:14px">用 LINE 加入社群 →</a>
+        <div style="text-align:center">
+          <img src="/island/line-community-qr.png" alt="裝修新手島 LINE 社群 QR code" loading="lazy" style="display:block;margin:0 auto;width:150px;height:150px;border-radius:12px;border:1px solid rgba(245,240,232,.15)">
+          <div style="font-size:11.5px;color:rgba(245,240,232,.35);margin-top:8px">用電腦看的話，拿手機掃這個 QR code</div>
+        </div>
+      </div>
+    </div>
 
     <!-- ═══ 底部最後一次提醒：訂閱電子報 ═══ -->
     <div class="email-reminder-bottom anim-in" id="emailReminderBottom">

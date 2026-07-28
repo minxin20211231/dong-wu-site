@@ -8,8 +8,8 @@ const isOpen = islandCommunity.status === 'open' && islandCommunity.href.trim().
   <button
     class="island-community-dock__trigger"
     type="button"
-    aria-expanded="false"
-    aria-controls="island-community-card"
+    aria-haspopup="dialog"
+    aria-controls="island-community-modal"
     aria-label="查看裝修新手島社群資訊"
     data-island-community-trigger
   >
@@ -19,56 +19,82 @@ const isOpen = islandCommunity.status === 'open' && islandCommunity.href.trim().
     </picture>
     <span>社群</span>
   </button>
-
-  <section
-    class="island-community-dock__card"
-    id="island-community-card"
-    aria-labelledby="island-community-title"
-    data-island-community-card
-    hidden
-  >
-    <button class="island-community-dock__close" type="button" aria-label="關閉社群資訊" data-island-community-close>×</button>
-    <p class="island-community-dock__eyebrow">免費社群</p>
-    <h2 id="island-community-title">{islandCommunity.title}</h2>
-    <p>{islandCommunity.description}</p>
-    {isOpen ? (
-      <a href={islandCommunity.href} target="_blank" rel="noopener noreferrer">{islandCommunity.openLabel}</a>
-    ) : (
-      <span class="island-community-dock__status" aria-disabled="true">{islandCommunity.comingSoonLabel}</span>
-    )}
-  </section>
 </aside>
 
-<script>
-  const dock = document.querySelector<HTMLElement>('[data-island-community-dock]');
-  const trigger = dock?.querySelector<HTMLButtonElement>('[data-island-community-trigger]');
-  const card = dock?.querySelector<HTMLElement>('[data-island-community-card]');
-  const close = dock?.querySelector<HTMLButtonElement>('[data-island-community-close]');
+<dialog
+  class="island-community-modal"
+  id="island-community-modal"
+  aria-labelledby="island-community-title"
+  data-island-community-modal
+>
+  <div class="island-community-modal__body">
+    <button class="island-community-modal__close" type="button" aria-label="關閉社群資訊" data-island-community-close>×</button>
+    <p class="island-community-modal__eyebrow">免費社群</p>
+    <h2 id="island-community-title">{islandCommunity.title}</h2>
+    <p class="island-community-modal__desc">{islandCommunity.description}</p>
+    {isOpen ? (
+      <>
+        <div class="island-community-modal__qr">
+          <img src={islandCommunity.qrSrc} width="1000" height="1000" alt="裝修新手島 LINE 社群 QR code" loading="lazy" decoding="async" />
+        </div>
+        <p class="island-community-modal__hint">{islandCommunity.qrHint}</p>
+        <a
+          class="island-community-modal__line"
+          href={islandCommunity.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-island-community-line
+        >{islandCommunity.openLabel}</a>
+        <div class="island-community-modal__password">
+          <p><span>🔑 {islandCommunity.passwordLabel}</span>{islandCommunity.passwordHint}</p>
+          <a class="island-community-modal__cta" href={islandCommunity.diagnosisHref} data-island-community-diagnosis>{islandCommunity.diagnosisCtaLabel}</a>
+        </div>
+      </>
+    ) : (
+      <span class="island-community-modal__status" aria-disabled="true">{islandCommunity.comingSoonLabel}</span>
+    )}
+  </div>
+</dialog>
 
-  const setExpanded = (expanded: boolean) => {
-    if (!dock || !trigger || !card) return;
-    trigger.setAttribute('aria-expanded', String(expanded));
-    card.hidden = !expanded;
-    dock.classList.toggle('is-expanded', expanded);
-    if (expanded) close?.focus({ preventScroll: true });
+<script>
+  const trigger = document.querySelector<HTMLButtonElement>('[data-island-community-trigger]');
+  const modal = document.querySelector<HTMLDialogElement>('[data-island-community-modal]');
+  const close = modal?.querySelector<HTMLButtonElement>('[data-island-community-close]');
+
+  // 輕量埋點：與 ai-diagnosis 共用 session/channel（localStorage），島頁只讀不寫 channel，
+  // 讓診斷書頁的 ?ch=island 落地邏輯保持唯一寫入點
+  const TRACK_ENDPOINT = 'https://dongwu-subscribe.minxin20211231.workers.dev';
+  const track = (event_type: string) => {
+    try {
+      if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) return;
+      let sid = localStorage.getItem('dongwu_diag_session');
+      if (!sid && typeof crypto !== 'undefined' && crypto.randomUUID) {
+        sid = crypto.randomUUID();
+        localStorage.setItem('dongwu_diag_session', sid);
+      }
+      if (!sid) return;
+      const channel = localStorage.getItem('dongwu_diag_channel') || 'island';
+      fetch(TRACK_ENDPOINT + '/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ session_id: sid, event_type, source: 'island', channel }),
+        keepalive: true,
+      }).catch(() => {});
+    } catch (err) {}
   };
 
   trigger?.addEventListener('click', () => {
-    setExpanded(trigger.getAttribute('aria-expanded') !== 'true');
+    if (!modal) return;
+    modal.showModal();
+    track('island_community_open');
   });
   close?.addEventListener('click', () => {
-    setExpanded(false);
+    modal?.close();
     trigger?.focus({ preventScroll: true });
   });
-  document.addEventListener('pointerdown', (event) => {
-    if (dock?.classList.contains('is-expanded') && event.target instanceof Node && !dock.contains(event.target)) {
-      setExpanded(false);
-    }
+  modal?.addEventListener('click', (event) => {
+    if (event.target === modal) modal.close();
   });
-  document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && dock?.classList.contains('is-expanded')) {
-      setExpanded(false);
-      trigger?.focus({ preventScroll: true });
-    }
-  });
+  modal?.querySelector('[data-island-community-line]')?.addEventListener('click', () => track('island_community_line_click'));
+  modal?.querySelector('[data-island-community-diagnosis]')?.addEventListener('click', () => track('island_community_to_diagnosis'));
 </script>
